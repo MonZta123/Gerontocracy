@@ -8,10 +8,7 @@
 
 ## Einmalige weitere Vorbereitungen nachdem du ausgecheckt hast
 
-Connection String in der appsettings.Development.json einfügen  
-`Host=localhost;Port=5432;Database=<DEIN-DB-NAME>;Username=<DEIN-USER>;Password=<DEIN-PASSWORT>`
-
-Deinen SendgridApi Code in der appsettings.json einfügen
+Connection String in der appsettings.Development.json einfügen oder per Umgebungsvariable `ConnectionString__Gerontocracy=Host=localhost;Port=5432;Database=<DEIN-DB-NAME>;Username=<DEIN-USER>;Password=<DEIN-PASSWORT>` setzen.
 
 ## Vor dem Entwickeln folgendes ausführen
 
@@ -32,6 +29,7 @@ Um eine Datenbankmigration anzulegen
 2. `dotnet ef migrations add Migrationname` generiert eine Datenbank-Migration
 3. `dotnet ef database update` bringt eure Datenbank auf den neuesten Stand
 
-## Build - zum Entwickeln ungeeignet, eher zum Testen, ob der Build-Server durchlaufen würde
+## Build
 
+Dieser Schritt ist nur notwendig, um zu testen, ob ein Prod-Build möglich ist.  
 Konsolenbefehl `ng build --prod` baut das Frontend und legt das Resultat in den wwwroot-Ordner.

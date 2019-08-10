@@ -11,13 +11,10 @@ namespace Gerontocracy.Data
     {
         public GerontocracyContext CreateDbContext(string[] args)
         {
-            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            var fileName = !string.IsNullOrEmpty(env) ? env : "Development";
-
             var configBuilder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory() + "/../Gerontocracy.App")
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{fileName}.json", optional: false)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+                .AddJsonFile($"appsettings." + Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") + ".json", optional: false)
                 .AddEnvironmentVariables();
             var configurationRoot = configBuilder.Build();
 
