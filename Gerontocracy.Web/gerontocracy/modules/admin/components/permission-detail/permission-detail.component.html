@@ -1,0 +1,35 @@
+<div class="geronto-loading-shade" *ngIf="isLoading">
+  <mat-spinner></mat-spinner>
+</div>
+
+<div class="geronto-nav-container">
+  <app-nav-top-bar (close)="close.emit($event)" (sizeChanged)="toggleSize($event)"></app-nav-top-bar>
+
+  <h1 mat-dialog-title>Useradministration</h1>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        {{data.id}} - {{data.userName}}
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <table>
+      <tr>
+        <td>Registriert seit</td>
+        <td>{{data.registerDate}}</td>
+      </tr>
+      <tr>
+        <td>Vorfälle eingereicht</td>
+        <td>{{data.vorfallCount}}</td>
+      </tr>
+      <tr>
+        <td>Email bestätigt</td>
+        <td>{{data.emailConfirmed ? "Ja": "Nein"}}</td>
+      </tr>
+      <tr *ngIf="data.lockoutEnd">
+        <td>Gesperrt bis:</td>
+        <td>{{data.lockoutEnd | date: 'dd.MM.yyyy hh:mm:ss'}}</td>
+      </tr>
+    </table>
+  </mat-expansion-panel>
+</div>

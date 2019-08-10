@@ -1,0 +1,45 @@
+.geronto_toolbar {
+  height: 48px;
+}
+
+.geronto_container {
+  position: absolute;
+  top: 48px;
+  right: 0px;
+  left: 0px;
+  bottom: 0px;
+}
+
+.geronto_sidenav {
+  display: flex;
+  flex-direction: column;
+}
+
+.geronto_sidenav_buttons {
+  display: flex;
+  flex-direction: column;
+}
+
+.geronto_filler {
+  flex: 1 1 auto;
+}
+
+.geronto_layout {
+  position: absolute;
+  top: 48px;
+  bottom: 0px;
+}
+
+.geronto_sidenav_toggle {
+  display: none;
+}
+
+@media only screen and (max-width: 768px) {
+  .geronto_sidenav_toggle {
+    display: unset;
+  }
+
+  .geronto_toolbar_buttons {
+    display: none;
+  }
+}

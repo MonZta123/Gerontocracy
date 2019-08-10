@@ -1,0 +1,34 @@
+<div class="geronto-loading-shade" *ngIf="isLoading">
+    <mat-spinner *ngIf="isLoading"></mat-spinner>
+</div>
+
+<div *ngIf="!isLoading" style="display: flex; flex-direction: row; flex-wrap: wrap">
+    <mat-list style="width: 33%">
+        <mat-card *ngFor="let artikel of dashboard.news" style="margin-bottom: 5px">
+            <mat-card-subtitle>
+                <!-- #69f0ae -->
+                <!-- #9c27b0 -->
+                <p>
+                    <a target="_blank" style="color: #69f0ae" [href]="artikel.link">
+                        {{artikel.title}}
+                    </a>
+                </p>
+                <p>
+                    {{artikel.author}} - {{artikel.pubDate | date: 'dd.MM.yyyy hh:mm'}}
+                </p>
+            </mat-card-subtitle>
+            <mat-card-content [matTooltip]="artikel.description">
+                <p>
+                    {{artikel.description | stringTrim: '150'}}
+                </p>
+            </mat-card-content>
+            <mat-card-actions align="end">
+                <button mat-stroked-button color="accent" *ngIf="!artikel.vorfallId"
+                    (click)="addAffair(artikel.id)">Vorfall anlegen <mat-icon>add</mat-icon></button>
+                <button mat-stroked-button color="warn" *ngIf="artikel.vorfallId"
+                    (click)="showAffair(artikel.vorfallId)">Vorfall anzeigen <mat-icon>arrow_right</mat-icon></button>
+            </mat-card-actions>
+        </mat-card>
+        <hr />
+    </mat-list>
+</div>

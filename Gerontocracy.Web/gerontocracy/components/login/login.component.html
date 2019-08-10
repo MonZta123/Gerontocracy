@@ -1,0 +1,32 @@
+<div [formGroup]="loginForm" class="geronto_dialog">
+
+  <h1 mat-dialog-title>
+    Login
+  </h1>
+
+  <mat-spinner class="dialog_spinner" *ngIf="isLoginIn"></mat-spinner>
+
+  <mat-dialog-content>
+    <div class="dialog_content">
+      <mat-form-field>
+        <input matInput placeholder="Username" formControlName="name" required />
+      </mat-form-field>
+
+      <mat-form-field>
+        <input type="password" matInput placeholder="Password" formControlName="pass" required />
+      </mat-form-field>
+
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions style="display: flex; justify-content: space-between;">
+    <mat-checkbox color="accent" formControlName="remember">Remember me!</mat-checkbox>
+    <div>
+      <button mat-raised-button (click)="loginUser($event)" color="accent">Login</button>
+      <button mat-flat-button [mat-dialog-close]="false">Cancel</button>
+    </div>
+  </mat-dialog-actions>
+</div>
+
+<span hidden #loginErrorTitle>Fehler</span>
+<span hidden #loginErrorContent>Fehler beim Login - Bitte die Login-Information überprüfen!</span>

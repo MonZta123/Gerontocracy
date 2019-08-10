@@ -1,0 +1,56 @@
+<div class="geronto-loading-shade" *ngIf="isLoading">
+  <mat-spinner></mat-spinner>
+</div>
+
+<div class="geronto-nav-container">
+  <app-nav-top-bar (close)="close.emit($event)" (sizeChanged)="toggleSize($event)"></app-nav-top-bar>
+
+  <h1 mat-dialog-title>{{data.titel}}</h1>
+
+  <mat-dialog-content>
+    <mat-card>
+      <mat-card-subtitle>Vorfallbeschreibung</mat-card-subtitle>
+      {{data.beschreibung}}
+    </mat-card>
+
+    <table mat-table class="geronto_table" [dataSource]="data.quellen">
+
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>Id</th>
+        <td mat-cell *matCellDef="let quelle">{{ quelle.id }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="url">
+        <th mat-header-cell *matHeaderCellDef>Url</th>
+        <td mat-cell *matCellDef="let quelle">{{ quelle.url }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="zusatz">
+        <th mat-header-cell *matHeaderCellDef>Zusatz</th>
+        <td mat-cell *matCellDef="let quelle">{{ quelle.zusatz }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="legitimitaet">
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-icon>thumb_up</mat-icon>
+        </th>
+        <td mat-cell *matCellDef="let quelle">{{ quelle.legitimitaet }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <div style="width: 100%; display: flex; flex-direction: row; margin-top: 5px;">
+      <button (click)="onVoteClicked(VoteType.up)" mat-stroked-button [color]="voteToColor(VoteType.up)"
+        style="margin-right: 5px">
+        <mat-icon>thumb_up_alt</mat-icon>
+      </button>
+      <button (click)="onVoteClicked(VoteType.down)" mat-stroked-button [color]="voteToColor(VoteType.down)">
+        <mat-icon>thumb_down_alt</mat-icon>
+      </button>
+    </div>
+  </mat-dialog-actions>
+</div>

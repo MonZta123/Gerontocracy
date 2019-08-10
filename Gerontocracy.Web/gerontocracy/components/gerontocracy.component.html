@@ -1,0 +1,85 @@
+<div class="geronto-layout">
+  <div class="geronto-loading-shade" *ngIf="isLoading">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <div *ngIf="!isLoading">
+    <mat-toolbar color="primary" class="geronto_toolbar">
+
+      <div>
+        <button mat-icon-button class="geronto_sidenav_toggle" (click)="sidenav.toggle()">
+          <mat-icon>menu</mat-icon>
+        </button>
+      </div>
+
+      <div class="geronto_toolbar_buttons">
+        <a mat-button href="/">
+          <mat-icon>business_center</mat-icon> Gerontocracy
+        </a>
+        <a mat-button routerLink="/" routerLinkActive="active">
+          <mat-icon>dashboard</mat-icon> Home
+        </a>
+        <a mat-button routerLink="/party" routerLinkActive="active">
+          <mat-icon>account_balance</mat-icon> Parteiübersicht
+        </a>
+        <a mat-button routerLink="/affair" routerLinkActive="active">
+          <mat-icon>gavel</mat-icon> Vorfälle
+        </a>
+        <a mat-button routerLink="/board" routerLinkActive="active">
+          <mat-icon>storage</mat-icon> Boards
+        </a>
+        <a mat-button routerLink="/admin" routerLinkActive="active" *ngIf="isAdmin">
+          <mat-icon>build</mat-icon> Administration
+        </a>
+      </div>
+
+      <span class="geronto_filler"></span>
+
+      <span *ngIf="!accountData">
+        <button mat-button (click)="login($event)">Login</button>
+        <button mat-button (click)="signup($event)">SignUp</button>
+      </span>
+
+      <span *ngIf="accountData">
+        <button mat-button [matMenuTriggerFor]="menu">
+          <mat-icon>face</mat-icon> {{accountData.userName}}
+        </button>
+
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="logout($event)">
+            <mat-icon>close</mat-icon>Logout
+          </button>
+        </mat-menu>
+      </span>
+
+    </mat-toolbar>
+
+    <mat-sidenav-container class="geronto_container">
+      <mat-sidenav #sidenav class="geronto_sidenav">
+
+        <div class="geronto_sidenav_buttons">
+          <a mat-button routerLink="/" routerLinkActive="active" (click)="sidenav.toggle()">
+            <mat-icon>dashboard</mat-icon> Home
+          </a>
+          <a mat-button routerLink="/party" routerLinkActive="active" (click)="sidenav.toggle()">
+            <mat-icon>account_balance</mat-icon> Parteiübersicht
+          </a>
+          <a mat-button routerLink="/affair" routerLinkActive="active" (click)="sidenav.toggle()">
+            <mat-icon>gavel</mat-icon> Vorfälle
+          </a>
+          <a mat-button routerLink="/board" routerLinkActive="active" (click)="sidenav.toggle()">
+            <mat-icon>storage</mat-icon> Boards
+          </a>
+          <a mat-button routerLink="/admin" routerLinkActive="active" (click)="sidenav.toggle()" *ngIf="isAdmin">
+            <mat-icon>build</mat-icon> Administration
+          </a>
+        </div>
+      </mat-sidenav>
+
+      <mat-sidenav-content class="geronto_sidenav_content">
+        <router-outlet></router-outlet>
+      </mat-sidenav-content>
+
+    </mat-sidenav-container>
+  </div>
+</div>

@@ -1,0 +1,29 @@
+<h1 mat-dialog-title>Quelle {{data ? 'bearbeiten' : 'hinzufügen'}}</h1>
+<div mat-dialog-content style="display: flex; flex-direction: column;" [formGroup]="formGroup">
+  <mat-form-field>
+    <input matInput placeholder="Url" formControlName="url">
+    <button mat-raised-button matSuffix (click)="onTestUrlClicked($event)">
+      <mat-icon>call_made</mat-icon>
+    </button>
+    <mat-error *ngIf="formGroup.controls.url.hasError('required')">
+      Bitte Url angeben
+    </mat-error>
+    <mat-error *ngIf="formGroup.controls.url.hasError('pattern')">
+      Url nicht im richtigen Format! (zB: https://www.google.at/)
+    </mat-error>
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput placeholder="Zusätzliche Infos" formControlName="zusatz">
+    <mat-error *ngIf="formGroup.controls.zusatz.hasError('required')">
+      Bitte Zusatzinfo angeben!
+    </mat-error>
+    <mat-error *ngIf="formGroup.controls.zusatz.hasError('maxLength')">
+      Bitte maximal 255 Zeichen!
+    </mat-error>
+  </mat-form-field>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="onSaveClicked($event)" color="accent">
+    Quelle {{data ? 'bearbeiten' : 'hinzufügen'}}</button>
+  <button mat-button (click)="onCancelClicked()">Abbrechen</button>
+</div>

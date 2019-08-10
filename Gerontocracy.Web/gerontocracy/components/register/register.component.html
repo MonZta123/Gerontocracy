@@ -1,0 +1,69 @@
+<div [formGroup]="registerForm" class="geronto_dialog">
+
+  <h1 mat-dialog-title>
+    Register
+  </h1>
+
+  <mat-spinner class="dialog_spinner" *ngIf="isRegistering"></mat-spinner>
+
+  <mat-dialog-content>
+    <div class="dialog_content">
+      <mat-form-field>
+        <input matInput placeholder="Username" (focusout)="checkUserExists()" formControlName="user" required />
+
+        <mat-error *ngIf="registerForm.controls.user.touched && registerForm.controls.user.hasError('required')">
+          Username required!</mat-error>
+        <mat-error *ngIf="registerForm.controls.user.touched && registerForm.controls.user.hasError('minlength')">
+          Username is too small!</mat-error>
+        <mat-error *ngIf="registerForm.controls.user.touched && registerForm.controls.user.hasError('maxlength')">
+          Username is too long!</mat-error>
+        <mat-error *ngIf="registerForm.controls.user.touched && registerForm.controls.user.hasError('alreadyInUse')">
+          Username already in use!</mat-error>
+        <mat-error *ngIf="registerForm.controls.user.touched && registerForm.controls.user.hasError('pattern')">Only
+          capitalized and small letters allowed!</mat-error>
+        <mat-icon matSuffix *ngIf="registerForm.controls.user.touched && registerForm.controls.user.valid"
+          color="accent">check_circle_outline</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput placeholder="E-Mail" (focusout)="checkEmailExists()" formControlName="mail" required />
+        <mat-error *ngIf="registerForm.controls.mail.touched && registerForm.controls.mail.hasError('email')">Invalid
+          E-Mail!</mat-error>
+        <mat-error *ngIf="registerForm.controls.mail.touched && registerForm.controls.mail.hasError('maxlength')">E-Mail
+          too long!</mat-error>
+        <mat-error *ngIf="registerForm.controls.mail.touched && registerForm.controls.mail.hasError('alreadyInUse')">
+          E-Mail already in use!</mat-error>
+        <mat-icon matSuffix *ngIf="registerForm.controls.mail.touched && registerForm.controls.mail.valid"
+          color="accent">check_circle_outline</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput type="password" placeholder="Password" formControlName="pass1" required />
+        <mat-error *ngIf="registerForm.controls.pass1.touched && registerForm.controls.pass1.hasError('minlength')">
+          Password too small!</mat-error>
+        <mat-error *ngIf="registerForm.controls.pass1.touched && registerForm.controls.pass1.hasError('maxlength')">
+          Password too long!</mat-error>
+        <mat-icon matSuffix *ngIf="registerForm.controls.pass1.touched && registerForm.controls.pass1.valid"
+          color="accent">check_circle_outline</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput type="password" placeholder="Repeat Password" formControlName="pass2" required />
+        <mat-error *ngIf="registerForm.controls.pass2.touched && registerForm.controls.pass2.hasError('notSame')">
+          Password not matching!</mat-error>
+        <mat-icon matSuffix *ngIf="registerForm.controls.pass2.touched && registerForm.controls.pass2.valid"
+          color="accent">check_circle_outline</mat-icon>
+      </mat-form-field>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions style="width: 100%; display: flex; justify-content: right;">
+    <button mat-raised-button (click)="registerUser()" color="accent" [disabled]="isRegistering">Register</button>
+    <button mat-flat-button [mat-dialog-close]="false" [disabled]="isRegistering">Cancel</button>
+  </mat-dialog-actions>
+</div>
+
+<span hidden #registrationTitle>Registrierung erfolgreich!</span>
+<span hidden #registrationContent>Bitte überprüfe deinen Posteingang um einen Bestätigungslink!</span>
+<span hidden #errorTitle>Fehler</span>
+<span hidden #errorMessage>Der Server lieferte einen unerwarteten Fehler - bitte probiere es später nocheinmal!</span>

@@ -1,0 +1,43 @@
+<div class="geronto-loading-shade" *ngIf="isLoading">
+  <mat-spinner></mat-spinner>
+</div>
+<form autocomplete="off" *ngIf="!isLoading"
+  style="display: flex; flex-direction: column; margin-top: 3%; margin-left: 3%; margin-right: 3%;"
+  [formGroup]="formGroup">
+
+  <mat-form-field style="width: 30%">
+    <input matInput placeholder="Titel" formControlName="titel">
+    <mat-hint>{{formGroup.controls.titel.value.length}} / 200</mat-hint>
+    <mat-error *ngIf="formGroup.controls.titel.hasError('required')">Kein Titel eingegeben!</mat-error>
+    <mat-error *ngIf="formGroup.controls.titel.hasError('maxLength')">Titel darf maximal 50 Zeichen lang sein!
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <textarea matInput placeholder="Postinhalt" rows="10" formControlName="content"></textarea>
+    <mat-hint>{{formGroup.controls.content.value.length}} / 4000</mat-hint>
+    <mat-error *ngIf="formGroup.controls.content.hasError('required')">Keine Beschreibung eingegeben!</mat-error>
+    <mat-error *ngIf="formGroup.controls.content.hasError('maxLength')">Beschreibung darf maximal 4000 Zeichen lang
+      sein!</mat-error>
+  </mat-form-field>
+
+  <mat-form-field autocomplete="off" style="width: 30%">
+    <input type="text" #vorfallInput matInput (keyup)="onKeyUp($event)" [matAutocomplete]="auto"
+      placeholder="Vorfall (optional)" formControlName="vorfallName">
+    <mat-icon matSuffix *ngIf="isRefreshingAutocomplete">refresh</mat-icon>
+    <button mat-icon-button matSuffix *ngIf="vorfallInput.disabled" (click)="unlockVorfall($event)">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </mat-form-field>
+
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="lockVorfall($event)">
+    <mat-option *ngFor="let option of options" [value]="option">
+      {{option.titel}} {{option.id}} {{option.user}}</mat-option>
+  </mat-autocomplete>
+
+  <div>
+    <button mat-raised-button color="primary" (click)="addThread($event)">
+      <mat-icon>cloud_upload</mat-icon> Abschicken
+    </button>
+  </div>
+</form>

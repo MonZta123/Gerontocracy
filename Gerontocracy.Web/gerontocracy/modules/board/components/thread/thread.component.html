@@ -1,0 +1,27 @@
+<div class="geronto-loading-shade" *ngIf="isLoadingData">
+  <mat-spinner></mat-spinner>
+</div>
+<div class="geronto-nav-container">
+  <app-nav-top-bar (close)="close.emit($event)" (sizeChanged)="toggleSize($event)" ></app-nav-top-bar>
+  
+  <h1 mat-dialog-title>{{data.id}} {{data.titel}}</h1>
+  <h2 mat-dialog-title *ngIf="data.vorfallId"></h2>
+
+  <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+    <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
+      <div style="margin-top: 5px;">
+        <app-post [data]="node" (reply)="onRefresh()"></app-post>
+      </div>
+    </mat-tree-node>
+
+    <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodeToggle>
+      <div style="margin-top: 5px;">
+        <app-post [data]="node" (reply)="onRefresh()"></app-post>
+      </div>
+      <div style="margin-left: 15px">
+        <ng-container matTreeNodeOutlet></ng-container>
+      </div>
+    </mat-nested-tree-node>
+  </mat-tree>
+
+</div>

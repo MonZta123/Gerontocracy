@@ -1,0 +1,51 @@
+<div class="geronto_dialog" *ngIf="!isLoading">
+
+  <h1 mat-dialog-title color="accent">
+    <mat-icon>add_comment</mat-icon> Neues Diskussionsboard?
+  </h1>
+
+  <mat-dialog-content>
+    <p> Soll für diesen Artikel wirklich ein neuer Vorfall mit einem Thread angelegt werden?</p>
+
+
+    <form autocomplete="off" [formGroup]="formGroup" style="display: flex; flex-direction:column">
+
+      <mat-form-field>
+        <textarea matInput placeholder="Zusätzliches (optional)" rows="10" formControlName="beschreibung"></textarea>
+        <mat-error *ngIf="formGroup.controls.beschreibung.hasError('maxLength')">Beschreibung darf maximal 4000 Zeichen
+          lang
+          sein!</mat-error>
+      </mat-form-field>
+
+      <mat-form-field autocomplete="off" style="width: 50%" style="margin-top: 5px">
+        <input type="text" #politikerInput matInput (keyup)="onKeyUp($event)" [matAutocomplete]="auto"
+          placeholder="Politiker zuweisen (optional)" formControlName="politikerName">
+        <mat-icon matSuffix *ngIf="isRefreshingAutocomplete">refresh</mat-icon>
+        <button mat-icon-button matSuffix *ngIf="politikerInput.disabled" (click)="unlockPolitiker($event)">
+          <mat-icon>delete</mat-icon>
+        </button>
+        <mat-error *ngIf="formGroup.controls.politikerName.hasError('notLocked')">Kein Politiker ausgewählt!</mat-error>
+      </mat-form-field>
+
+      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="lockPolitiker($event)">
+        <mat-option *ngFor="let option of options" [value]="option">
+          {{option.nachname}}, {{option.vorname}}</mat-option>
+      </mat-autocomplete>
+
+      <div *ngIf="formGroup.controls.politikerId.value" style="margin-top: 5px">
+        <mat-button-toggle-group formControlName="reputationType">
+          <mat-button-toggle value="positive">Positiv</mat-button-toggle>
+          <mat-button-toggle value="neutral" [checked]="true">Neutral</mat-button-toggle>
+          <mat-button-toggle value="negative">Negativ</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-stroked-button style="margin-right: 5px;" (click)="okClicked($event)" color="accent">
+      Neuen Thread anlegen
+    </button>
+    <button mat-button [mat-dialog-close]="false">Abbrechen</button>
+  </mat-dialog-actions>
+</div>

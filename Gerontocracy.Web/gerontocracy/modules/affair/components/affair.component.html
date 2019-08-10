@@ -1,0 +1,15 @@
+<div class="geronto-loading-shade" *ngIf="isLoadingData">
+    <mat-spinner *ngIf="!navLinks"></mat-spinner>
+</div>
+
+<nav *ngIf="navLinks" mat-tab-nav-bar>
+    <a mat-tab-link *ngFor="let link of navLinks" [routerLink]="link.path" routerLinkActive #rla="routerLinkActive"
+        [active]="rla.isActive">
+        {{link.label}}
+    </a>
+    <a mat-tab-link *ngIf="!isLoggedIn" (click)="showRegister()">Neuer Eintrag</a>
+</nav>
+
+<div style="bottom: 0px; position:absolute; left: 0px; right: 0px; top: 48px">
+    <router-outlet></router-outlet>
+</div>

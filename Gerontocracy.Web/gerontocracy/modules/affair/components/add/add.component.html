@@ -1,0 +1,93 @@
+<div class="geronto-loading-shade" *ngIf="isLoading">
+  <mat-spinner></mat-spinner>
+</div>
+
+<form autocomplete="off" *ngIf="!isLoading"
+  style="display: flex; flex-direction: column; margin-top: 3%; margin-left: 3%; margin-right: 3%;"
+  [formGroup]="formGroup">
+
+  <mat-form-field style="width: 30%">
+    <input matInput placeholder="Titel" formControlName="titel">
+    <mat-error *ngIf="formGroup.controls.titel.hasError('required')">Kein Titel eingegeben!</mat-error>
+    <mat-error *ngIf="formGroup.controls.titel.hasError('maxLength')">Titel darf maximal 50 Zeichen lang sein!
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <textarea matInput placeholder="Inhaltliche Beschreibung des Vorfalls" rows="10"
+      formControlName="beschreibung"></textarea>
+    <mat-error *ngIf="formGroup.controls.beschreibung.hasError('required')">Keine Beschreibung eingegeben!</mat-error>
+    <mat-error *ngIf="formGroup.controls.beschreibung.hasError('maxLength')">Beschreibung darf maximal 4000 Zeichen lang
+      sein!</mat-error>
+  </mat-form-field>
+
+  <mat-form-field autocomplete="off" style="width: 30%">
+    <input type="text" #politikerInput matInput (keyup)="onKeyUp($event)" [matAutocomplete]="auto"
+      placeholder="Politiker auswählen (optional)" formControlName="politikerName">
+    <mat-icon matSuffix *ngIf="isRefreshingAutocomplete">refresh</mat-icon>
+    <button mat-icon-button matSuffix *ngIf="politikerInput.disabled" (click)="unlockPolitiker($event)">
+      <mat-icon>delete</mat-icon>
+    </button>
+    <mat-error *ngIf="formGroup.controls.politikerName.hasError('notLocked')">Kein Politiker ausgewählt!</mat-error>
+  </mat-form-field>
+
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="lockPolitiker($event)">
+    <mat-option *ngFor="let option of options" [value]="option">
+      {{option.nachname}}, {{option.vorname}}</mat-option>
+  </mat-autocomplete>
+
+  <div *ngIf="formGroup.controls.politikerId.value">
+    <mat-button-toggle-group formControlName="reputationType">
+      <mat-button-toggle value="positive">Positiv</mat-button-toggle>
+      <mat-button-toggle value="neutral" [checked]="true">Neutral</mat-button-toggle>
+      <mat-button-toggle value="negative">Negativ</mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+
+  <div>
+    <button mat-button (click)="addSource($event)" color="accent">
+      <mat-icon>attachment</mat-icon> Quelle hinzufügen
+    </button>
+  </div>
+
+  <table mat-table [dataSource]="sources" class="mat-elevation-z8">
+    <ng-container matColumnDef="position">
+      <th mat-header-cell *matHeaderCellDef style="width: 10%"> Pos. </th>
+      <td mat-cell *matCellDef="let element"> {{element.index + 1}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="text">
+      <th mat-header-cell *matHeaderCellDef> Text </th>
+      <td mat-cell *matCellDef="let element"> {{element.zusatz}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="url">
+      <th mat-header-cell *matHeaderCellDef style="width: 25%"> Url </th>
+      <td mat-cell *matCellDef="let element"> {{shorten(element.url)}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="call">
+      <th mat-header-cell *matHeaderCellDef style="width: 5%"> Aufruf </th>
+      <td mat-cell *matCellDef="let element"><button mat-icon-button (click)="onTestUrlClicked(element.url)">
+          <mat-icon>call_made</mat-icon>
+        </button></td>
+    </ng-container>
+
+    <ng-container matColumnDef="delete">
+      <th mat-header-cell *matHeaderCellDef style="width: 5%"> Löschen </th>
+      <td mat-cell *matCellDef="let element"><button mat-icon-button (click)="onRemoveClicked(element.index)">
+          <mat-icon>delete</mat-icon>
+        </button></td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+  <mat-error *ngIf="showSourcesError">Es muss mindestens eine Quelle angegeben werden!</mat-error>
+
+  <div>
+    <button mat-raised-button color="primary" (click)="addAffair($event)">
+      <mat-icon>cloud_upload</mat-icon> Abschicken
+    </button>
+  </div>
+</form>

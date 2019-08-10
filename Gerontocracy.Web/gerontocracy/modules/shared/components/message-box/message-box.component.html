@@ -1,0 +1,16 @@
+<div class="geronto_dialog">
+
+  <h1 mat-dialog-title color="accent" *ngIf="data.message">
+    <mat-icon *ngIf="icon">{{icon}}</mat-icon> {{data.title}}
+  </h1>
+
+  <mat-dialog-content *ngIf="data.message">
+    {{data.message}}
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="okClicked($event)" color="accent">
+      Okay
+    </button>
+  </mat-dialog-actions>
+</div>

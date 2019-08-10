@@ -1,0 +1,113 @@
+<div class="geronto-loading-shade" *ngIf="isLoadingData">
+  <mat-spinner *ngIf="isLoadingData"></mat-spinner>
+</div>
+
+<mat-sidenav-container style="height: 100%; width: 100%;">
+  <mat-sidenav-content>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon>search</mat-icon> Suchfilter
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <mat-card class="mat-elevation-z8">
+        <mat-card-content>
+          <div [formGroup]="searchForm">
+            <div class="geronto_search_form">
+              <h3>Threadinfo</h3>
+              <div class="geronto_search_form_section" style="width: 40% important!;">
+                <mat-form-field appearance="standard" class="geronto_form_field">
+                  <mat-label>Titel</mat-label>
+                  <input matInput formControlName="title" />
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-raised-button color="primary" (click)="loadData($event)">
+            <mat-icon>search</mat-icon>
+            Suchen
+          </button>
+          <button mat-button color="accent" (click)="searchForm.reset()">Zurücksetzen</button>
+        </mat-card-actions>
+      </mat-card>
+
+    </mat-expansion-panel>
+
+    <div *ngIf="data">
+      <table mat-table [dataSource]="data" class="geronto_table" matSort matSortActive="created" matSortDisableClear
+        matSortDirection="asc">
+
+        <!-- Id -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef>#</th>
+          <td mat-cell *matCellDef="let row">{{row.id}}</td>
+        </ng-container>
+
+        <!-- numPosts -->
+        <ng-container matColumnDef="numPosts">
+          <th mat-header-cell *matHeaderCellDef>Anzahl Posts</th>
+          <td mat-cell *matCellDef="let row">{{row.numPosts}}</td>
+        </ng-container>
+
+        <!-- Titel -->
+        <ng-container matColumnDef="titel">
+          <th mat-header-cell *matHeaderCellDef>Titel / Vorfall</th>
+          <td mat-cell *matCellDef="let row">
+            {{row.titel === row.vorfallTitel ? row.titel : row.vorfallTitel ? row.titel + '/' + row.vorfallTitel : row.titel}}
+          </td>
+        </ng-container>
+
+        <!-- Politikername -->
+        <ng-container matColumnDef="politiker">
+          <th mat-header-cell *matHeaderCellDef>Politikername</th>
+          <td mat-cell *matCellDef="let row">{{row.politikerName}}</td>
+        </ng-container>
+
+        <!-- Erstellt -->
+        <ng-container matColumnDef="createdOn">
+          <th mat-header-cell *matHeaderCellDef>Erstellt</th>
+          <td mat-cell *matCellDef="let row">{{row.createdOn | date: 'dd.MM.yyyy hh:mm:ss'}}</td>
+        </ng-container>
+
+        <!-- Ersteller -->
+        <ng-container matColumnDef="createdBy">
+          <th mat-header-cell *matHeaderCellDef>Ersteller</th>
+          <td mat-cell *matCellDef="let row">{{row.userName}}</td>
+        </ng-container>
+
+        <!-- Generiert -->
+        <ng-container matColumnDef="generated">
+          <th mat-header-cell *matHeaderCellDef>Generiert</th>
+          <td mat-cell *matCellDef="let row">
+            <mat-icon *ngIf="row.generated">done</mat-icon>
+          </td>
+        </ng-container>
+
+        <!-- Advanced Data Button -->
+        <ng-container matColumnDef="detailButton" stickyEnd>
+          <th mat-header-cell *matHeaderCellDef>Detailansicht</th>
+          <td mat-cell *matCellDef="let row"><button mat-stroked-button color="accent"
+              (click)="showNav($event, row.id)">
+              <mat-icon>navigate_next</mat-icon>
+            </button></td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <mat-paginator [length]="maxResults" [pageSize]="pageSize" [pageIndex]="pageIndex"
+        (page)="paginatorChanged($event)" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+    </div>
+  </mat-sidenav-content>
+  <mat-sidenav position="end" mode="side"
+    [ngClass]="{'geronto-sidenav-full': isFullscreen, 'geronto-sidenav-half': !isFullscreen}" #detailNav>
+    <div class="geronto-loading-shade-sidenav" *ngIf="!detailData">
+      <mat-spinner></mat-spinner>
+    </div>
+    <app-thread (fullscreen)="fullscreen($event)" (close)="hideNav($event)" *ngIf="detailData" [data]="detailData">
+    </app-thread>
+  </mat-sidenav>
+</mat-sidenav-container>

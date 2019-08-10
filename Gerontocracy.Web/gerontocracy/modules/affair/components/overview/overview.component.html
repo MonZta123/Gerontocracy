@@ -1,0 +1,140 @@
+<div class="geronto-loading-shade" *ngIf="isLoadingData">
+  <mat-spinner *ngIf="isLoadingData"></mat-spinner>
+</div>
+
+<mat-sidenav-container style="height: 100%; width: 100%;">
+  <mat-sidenav-content>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon>search</mat-icon> Suchfilter
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <mat-card class="mat-elevation-z8">
+        <mat-card-content>
+          <div [formGroup]="searchForm">
+            <div class="geronto_search_form">
+              <h3>Vorfall</h3>
+              <div class="geronto_search_form_section">
+                <mat-form-field appearance="standard" class="geronto_form_field">
+                  <mat-label>Titel</mat-label>
+                  <input matInput formControlName="title" />
+                </mat-form-field>
+              </div>
+
+              <h3>Politikername</h3>
+              <div class="geronto_search_form_section">
+                <mat-form-field appearance="standard" class="geronto_form_field">
+                  <mat-label>Vorname</mat-label>
+                  <input matInput formControlName="firstName" />
+                </mat-form-field>
+                <mat-form-field appearance="standard" class="geronto_form_field">
+                  <mat-label>Lastname</mat-label>
+                  <input matInput formControlName="lastName" />
+                </mat-form-field>
+                <mat-form-field appearance="standard" class="geronto_form_field">
+                  <mat-label>Partei</mat-label>
+                  <input matInput formControlName="party" />
+                </mat-form-field>
+              </div>
+
+              <h3>Datum</h3>
+              <div class="geronto_search_form_section">
+                <mat-form-field appearance="standard" class="geronto_form_field">
+                  <mat-label>Ältester</mat-label>
+                  <input matInput [matDatepicker]="fromDatepicker" formControlName="from">
+                  <mat-datepicker-toggle matSuffix [for]="fromDatepicker" color="accent"></mat-datepicker-toggle>
+                  <mat-datepicker #fromDatepicker color="accent"></mat-datepicker>
+                </mat-form-field>
+                <mat-form-field appearance="standard" class="geronto_form_field">
+                  <mat-label>Neuester</mat-label>
+                  <input matInput [matDatepicker]="toDatepicker" formControlName="to">
+                  <mat-datepicker-toggle matSuffix [for]="toDatepicker" color="accent"></mat-datepicker-toggle>
+                  <mat-datepicker #toDatepicker color="accent"></mat-datepicker>
+                </mat-form-field>
+              </div>
+
+              <h3>Legitimität</h3>
+              <div class="geronto_search_form_section">
+                <mat-slider min="-100" formControlName="minReputation" thumbLabel tickInterval="1" max="100" step="1">
+                </mat-slider>
+                <mat-slider min="-100" formControlName="maxReputation" thumbLabel tickInterval="1" max="100" step="1">
+                </mat-slider>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-raised-button color="primary" (click)="loadData($event)">
+            <mat-icon>search</mat-icon> Suchen
+          </button>
+          <button mat-button color="accent" (click)="searchForm.reset()">Zurücksetzen</button>
+        </mat-card-actions>
+      </mat-card>
+
+    </mat-expansion-panel>
+
+    <div *ngIf="data">
+      <table mat-table [dataSource]="data" class="geronto_table" matSort matSortActive="created" matSortDisableClear
+        matSortDirection="asc">
+
+        <!-- Id -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef>#</th>
+          <td mat-cell *matCellDef="let row">{{row.id}}</td>
+        </ng-container>
+
+        <!-- Titel -->
+        <ng-container matColumnDef="titel">
+          <th mat-header-cell *matHeaderCellDef>Titel</th>
+          <td mat-cell *matCellDef="let row">{{row.titel}}</td>
+        </ng-container>
+
+        <!-- Reputation -->
+        <ng-container matColumnDef="reputation">
+          <th mat-header-cell *matHeaderCellDef>Bewertung</th>
+          <td mat-cell *matCellDef="let row">{{row.reputation}}</td>
+        </ng-container>
+
+        <!-- Vorname -->
+        <ng-container matColumnDef="politikerName">
+          <th mat-header-cell *matHeaderCellDef>Politikername</th>
+          <td mat-cell *matCellDef="let row">{{row.politikerName}}</td>
+        </ng-container>
+
+        <!-- Parteiname -->
+        <ng-container matColumnDef="parteiName">
+          <th mat-header-cell *matHeaderCellDef>ParteiName</th>
+          <td mat-cell *matCellDef="let row">{{row.parteiName}}</td>
+        </ng-container>
+
+        <!-- Bundesland -->
+        <ng-container matColumnDef="erstelltAm">
+          <th mat-header-cell *matHeaderCellDef>ErstelltAm</th>
+          <td mat-cell *matCellDef="let row">{{row.erstelltAm | date :'dd.MM.yyyy hh:ss'}}</td>
+        </ng-container>
+
+        <!-- Advanced Data Button -->
+        <ng-container matColumnDef="detailButton" stickyEnd>
+          <th mat-header-cell *matHeaderCellDef>Detailansicht</th>
+          <td mat-cell *matCellDef="let row"><button mat-stroked-button color="accent"
+              (click)="showNav($event, row.id)">
+              <mat-icon>navigate_next</mat-icon>
+            </button></td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <mat-paginator [length]="maxResults" [pageSize]="pageSize" [pageIndex]="pageIndex"
+        (page)="paginatorChanged($event)" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+    </div>
+  </mat-sidenav-content>
+  <mat-sidenav position="end" mode="side" [ngClass]="{'geronto-sidenav-full': isFullscreen, 'geronto-sidenav-third': !isFullscreen}" #detailNav>
+    <div class="geronto-loading-shade-sidenav" *ngIf="!detailData">
+      <mat-spinner *ngIf="!detailData"></mat-spinner>
+    </div>
+    <app-detail (fullscreen)="fullscreen($event)" (close)="hideNav($event)" *ngIf="detailData" [data]="detailData"></app-detail>
+  </mat-sidenav>
+</mat-sidenav-container>
