@@ -13,7 +13,7 @@ namespace Gerontocracy.Data
         {
             var configBuilder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory() + "/../Gerontocracy.App")
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddJsonFile($"appsettings." + Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") + ".json", optional: false)
                 .AddEnvironmentVariables();
             var configurationRoot = configBuilder.Build();
