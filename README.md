@@ -1,5 +1,13 @@
 # Gerontocracy
 
+[![Snyk](https://snyk.io/test/github/monzta123/gerontocracy/badge.svg)](https://snyk.io/test/github/monzta123/gerontocracy)
+[![CodeFactor](https://www.codefactor.io/repository/github/monzta123/gerontocracy/badge)](https://www.codefactor.io/repository/github/monzta123/gerontocracy)
+[![License](https://img.shields.io/github/license/MonZta123/Gerontocracy.svg?label=license&maxAge=86400)](./LICENSE)
+[![Discord](https://discordapp.com/api/guilds/501463538020253696/widget.png)](https://discord.gg/j4JKdKn)
+[![Trello](https://img.shields.io/badge/dynamic/json.svg?label=progress&url=https://trello-badge-summary.herokuapp.com/api/HGGwQbW3?show=Ready,Working,Done&query=$.message&colorB=orange)](https://trello.com/b/HGGwQbW3/gerontocracy)
+
+---
+
 ## Zuerst herunterladen von:
 
 [NodeJS](https://nodejs.org/) Für Frontend Entwicklung  
