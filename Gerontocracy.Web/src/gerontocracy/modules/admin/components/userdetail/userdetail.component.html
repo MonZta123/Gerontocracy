@@ -1,22 +1,38 @@
-<!--
-
-    id: number;
-    userName: string;
-    registerDate: Date;
-    vorfallCount: number;
-    emailConfirmed: boolean;
-    accessFailedCount: number;
-    lockoutEnd: Date;
-    roles: string[];
-
--->
-
 <div class="ui-fluid">
-    <p-panel header="Allgemeine Infos">
-        <div class="ui-g">
-            <div class="ui-g-12">
-                <b>{{data.userName}}</b>
+    <div>
+        <p-panel header="Allgemeine Infos">
+            <div class="ui-g">
+                <div class="ui-g-12">
+                    <b>{{data.userName}}</b>
+                </div>
             </div>
-        </div>
-    </p-panel>
+        </p-panel>
+    </div>
+    <div class="mt-5">
+        <p-table title="Rollen" [value]="data.roles">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Rolle</th>
+                    <th width="12%">
+                        <button pButton class="action-button" icon="pi pi-plus" (click)="addRole()"></button>
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-row>
+                <tr>
+                    <td>{{row.name}}</td>
+                    <td>
+                        <button pButton class="action-button" icon="pi pi-trash" (click)="revokeRole(row.id)"></button>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage" let-columns>
+                <tr>
+                    <td colspan="2">
+                        Keine Rollen zugewiesen
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
 </div>

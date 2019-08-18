@@ -18,13 +18,16 @@ import { MessagesModule } from 'primeng/messages';
 import { BlockUIModule } from 'primeng/blockui';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { AddRoleDialogComponent } from './components/add-role-dialog/add-role-dialog.component';
+import { AutoCompleteModule } from 'primeng/autocomplete';
 
 
 @NgModule({
   declarations: [
     AdminComponent,
     UserviewComponent,
-    UserdetailComponent
+    UserdetailComponent,
+    AddRoleDialogComponent
   ],
   imports: [
     CommonModule,
@@ -45,10 +48,14 @@ import { MessageService } from 'primeng/api';
     MessagesModule,
     MessageModule,
     BlockUIModule,
-    ToastModule
+    ToastModule,
+    AutoCompleteModule
   ],
   providers: [
     MessageService
+  ],
+  entryComponents: [
+    AddRoleDialogComponent
   ]
 })
 export class AdminModule { }

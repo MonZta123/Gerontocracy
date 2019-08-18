@@ -1,13 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+
 using AutoMapper;
+
 using Gerontocracy.App.Models.Account;
 using Gerontocracy.App.Models.Admin;
 using Gerontocracy.App.Models.Shared;
+
 using Gerontocracy.Core.Interfaces;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
+
 using bo = Gerontocracy.Core.BusinessObjects;
 using User = Gerontocracy.App.Models.Admin.User;
 
@@ -31,8 +35,8 @@ namespace Gerontocracy.App.Controllers
         /// <param name="userService">user service</param>
         /// <param name="mapper">mapper</param>
         public AdminController(
-            IAccountService accountService, 
-            IUserService userService, 
+            IAccountService accountService,
+            IUserService userService,
             IMapper mapper)
         {
             this._accountService = accountService;
@@ -67,7 +71,7 @@ namespace Gerontocracy.App.Controllers
         [Route("roles")]
         public IActionResult GetRoles()
             => Ok(_mapper.Map<List<Role>>(_accountService.GetRolesAsync()));
-            
+
         /// <summary>
         /// Adds a Role to a User
         /// </summary>
@@ -78,7 +82,7 @@ namespace Gerontocracy.App.Controllers
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> GrantRole([FromBody] RoleData data)
         {
-            var result = await _accountService.AddToRole(data.UserId, data.Role);
+            var result = await _accountService.AddToRole(data.UserId, data.RoleId);
 
             if (result.Succeeded)
                 return Ok();
@@ -97,7 +101,7 @@ namespace Gerontocracy.App.Controllers
         public async Task<IActionResult> SetRoles([FromBody] UserRoleUpdate userRoles)
         {
             var result = await _accountService.SetRolesAsync(userRoles.UserId, userRoles.RoleIds);
-            
+
             if (result.Succeeded)
                 return Ok();
             else
@@ -114,7 +118,7 @@ namespace Gerontocracy.App.Controllers
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> RevokeRole([FromBody] RoleData data)
         {
-            var result = await _accountService.RemoveFromRole(data.UserId, data.Role);
+            var result = await _accountService.RemoveFromRole(data.UserId, data.RoleId);
 
             if (result.Succeeded)
                 return Ok();

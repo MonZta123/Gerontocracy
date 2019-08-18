@@ -53,11 +53,13 @@ namespace Gerontocracy.Core.Interfaces
 
         Task<IdentityResult> CreateRole(string roleName);
 
-        Task<IdentityResult> AddToRole(long userId, string role);
+        Task<IdentityResult> AddToRole(long userId, long roleId);
 
-        Task<IdentityResult> RemoveFromRole(long userId, string role);
+        Task<IdentityResult> RemoveFromRole(long userId, long roleId);
 
         Task<Data.Entities.Account.User> GetUserRaw(long userId);
+
+        Task<Data.Entities.Account.Role> GetRoleRaw(long roleId);
 
         IEnumerable<Role> GetRolesAsync();
 

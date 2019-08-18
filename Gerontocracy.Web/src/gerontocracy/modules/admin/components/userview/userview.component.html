@@ -28,12 +28,14 @@
                             <ng-template pTemplate="header">
                                 <tr>
                                     <th>Name</th>
+                                    <th>Rollen</th>
                                     <th width="7.3%"></th>
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="body" let-row>
                                 <tr>
                                     <td>{{row.userName}}</td>
+                                    <td>{{row.roles.join(', ')}}</td>
                                     <td>
                                         <p-button icon="pi pi-arrow-circle-right" (click)="showDetail(row.id)">
                                         </p-button>

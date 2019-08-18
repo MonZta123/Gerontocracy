@@ -1,0 +1,31 @@
+<div class="ui-fluid">
+    <div class="ui-g">
+        <p-messages [(value)]="msg"></p-messages>
+    </div>
+    <div class="ui-g">
+        <div class="ui-g-12">
+            Mögliche Rollen:
+            {{rolesJoined}}
+        </div>
+    </div>
+    <div class="ui-g ui-g-nopad">
+        <div class="ui-g-12 ui-md-8">
+            <div class="ui-inputgroup">
+                <p-autoComplete [(ngModel)]="selectedRole" field="name" [readonly]="!!selectedRole"
+                    forceSelection="true" [suggestions]="results" [disabled]="!!selectedRole"
+                    (completeMethod)="search($event)">
+                    <ng-template let-row pTemplate="item">
+                        {{row.name}}
+                    </ng-template>
+                </p-autoComplete>
+                <button pButton icon="pi pi-trash" *ngIf="!!selectedRole" (click)="unlockRole()"></button>
+            </div>
+        </div>
+        <div class="ui-g">
+            <div class="ui-g-12" align="end">
+                <p-button icon="pi pi-save" label="Rolle hinzufügen" class="mr-5" (click)="ok()"></p-button>
+                <p-button icon="pi pi-times" label="Abbrechen" (click)="close()" styleClass="ui-button-secondary">
+                </p-button>
+            </div>
+        </div>
+    </div>

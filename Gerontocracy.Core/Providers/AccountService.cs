@@ -15,6 +15,7 @@ using Gerontocracy.Core.Interfaces;
 using Gerontocracy.Data;
 
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 using db = Gerontocracy.Data.Entities;
@@ -151,19 +152,28 @@ namespace Gerontocracy.Core.Providers
         public async Task<IdentityResult> CreateRole(string roleName)
             => await _roleManager.CreateAsync(new db.Account.Role { Name = roleName });
 
-        public async Task<IdentityResult> AddToRole(long userId, string role)
-            => await _userManager.AddToRoleAsync(await GetUserRaw(userId), role);
+        public async Task<IdentityResult> AddToRole(long userId, long roleId)
+            => await _userManager.AddToRoleAsync(await GetUserRaw(userId), (await GetRoleRaw(roleId)).Name);
 
-        public async Task<IdentityResult> RemoveFromRole(long userId, string role)
-            => await _userManager.RemoveFromRoleAsync(await GetUserRaw(userId), role);
+        public async Task<IdentityResult> RemoveFromRole(long userId, long roleId)
+            => await _userManager.RemoveFromRoleAsync(await GetUserRaw(userId), (await GetRoleRaw(roleId)).Name);
 
         public async Task<db.Account.User> GetUserRaw(long userId)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString());
+            var user = await _userManager.Users.SingleOrDefaultAsync(n => n.Id == userId);
             if (user == null)
                 throw new AccountNotFoundException();
 
             return user;
+        }
+
+        public async Task<db.Account.Role> GetRoleRaw(long roleId)
+        {
+            var role = await _roleManager.Roles.SingleOrDefaultAsync(n => n.Id == roleId);
+            if (role == null)
+                throw new RoleNotFoundException();
+
+            return role;
         }
 
         public IEnumerable<Role> GetRolesAsync()

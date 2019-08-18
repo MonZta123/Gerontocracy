@@ -11,8 +11,8 @@
         public long UserId { get; set; }
 
         /// <summary>
-        /// role name
+        /// role id
         /// </summary>
-        public string Role { get; set; }
+        public long RoleId { get; set; }
     }
 }

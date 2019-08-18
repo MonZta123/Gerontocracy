@@ -4,6 +4,8 @@ import { SearchParams } from '../models/search-params';
 import { SearchResult } from '../models/search-result';
 import { Observable } from 'rxjs';
 import { UserDetail } from '../models/user-detail';
+import { UserRole } from '../models/user-role';
+import { Role } from '../models/role';
 
 @Injectable({
   providedIn: 'root'
@@ -25,5 +27,17 @@ export class AdminService {
 
   getUserDetail(id: number) {
     return this.httpClient.get<UserDetail>(`api/admin/user/${id}`);
+  }
+
+  grantRole(data: UserRole): Observable<void> {
+    return this.httpClient.post<void>(`api/admin/grant-role`, data);
+  }
+
+  revokeRole(data: UserRole): Observable<void> {
+    return this.httpClient.post<void>(`api/admin/revoke-role`, data);
+  }
+
+  getRoles(): Observable<Role[]> {
+    return this.httpClient.get<Role[]>(`api/admin/roles`);
   }
 }

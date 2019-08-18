@@ -1,3 +1,5 @@
+import { Role } from './role';
+
 export interface UserDetail {
     id: number;
     userName: string;
@@ -6,5 +8,5 @@ export interface UserDetail {
     emailConfirmed: boolean;
     accessFailedCount: number;
     lockoutEnd: Date;
-    roles: string[];
+    roles: Role[];
 }
