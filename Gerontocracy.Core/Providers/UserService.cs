@@ -28,7 +28,7 @@ namespace Gerontocracy.Core.Providers
             "                    ON users.\"Id\" = matching.\"UserId\" " +
             "       LEFT OUTER JOIN \"AspNetRoles\" AS roles " +
             "                    ON roles.\"Id\" = matching.\"RoleId\" " +
-            "WHERE  users.\"UserName\" LIKE @userName " +
+            "WHERE  users.\"UserName\" ILIKE @userName " +
             "GROUP  BY users.\"Id\", " +
             "          users.\"UserName\", " +
             "          users.\"RegisterDate\" " +

@@ -52,7 +52,7 @@ export class GerontocracyComponent implements OnInit {
       .toPromise()
       .then(n => this.accountData = n)
       .then(() => {
-        this.items = [
+        const urls: MenuItem[] = [
           {
             label: 'Gerontocracy',
             icon: 'pi pi-briefcase',
@@ -79,6 +79,12 @@ export class GerontocracyComponent implements OnInit {
             routerLink: '/board'
           }
         ];
+
+        if (this.accountData.roles.find(n => n === 'admin')) {
+          urls.push({ label: 'admin', icon: 'pi pi-cog', routerLink: '/admin' });
+        }
+
+        this.items = urls;
       })
       .then(() => this.isLoading = false)
       .catch(() => this.accountData = null)

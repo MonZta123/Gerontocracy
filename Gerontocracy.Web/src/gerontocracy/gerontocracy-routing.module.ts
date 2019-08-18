@@ -27,11 +27,11 @@ export const routes: Routes = [
     loadChildren: './modules/home/home.module#HomeModule',
     pathMatch: 'prefix'
   },
-  // {
-  //   path: 'admin',
-  //   loadChildren: './modules/admin/admin.module#AdminModule',
-  //   pathMatch: 'prefix'
-  // },
+  {
+    path: 'admin',
+    loadChildren: './modules/admin/admin.module#AdminModule',
+    pathMatch: 'prefix'
+  },
   {
     path: '',
     loadChildren: './modules/home/home.module#HomeModule',
