@@ -218,7 +218,6 @@ namespace Gerontocracy.App.Controllers
         public IActionResult CloseTask([FromBody] long id)
             => Ok(_taskService.CloseTask(id));
 
-
         /// <summary>
         /// Reopens a task and sets its state to not done
         /// </summary>
@@ -229,6 +228,5 @@ namespace Gerontocracy.App.Controllers
         [Authorize(Roles = "admin,moderator")]
         public IActionResult ReopenTask([FromBody] long id)
             => Ok(_taskService.ReopenTask(id));
-
     }
 }

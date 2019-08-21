@@ -27,7 +27,6 @@ namespace Gerontocracy.App.Models.Task
         /// </summary>
         public DateTime EingereichtAm { get; set; }
 
-
         /// <summary>
         /// Additional info required for the frontend
         /// </summary>
