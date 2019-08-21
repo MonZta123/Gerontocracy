@@ -15,6 +15,7 @@
                 <div class="ui-g-12">
                     <p *ngIf="data.bearbeiterId !== 0"> <i class="pi pi-tag"></i>{{data.bearbeiter}}</p>
                     <p *ngIf="data.bearbeiterId === 0"> <i class="pi pi-tag"></i>(Noch kein Bearbeiter)</p>
+                    <p-button label="Mir zuweisen" icon="pi pi-user" (click)="assignToMe()"></p-button>
                 </div>
             </div>
             <div class="ui-g">
@@ -25,9 +26,11 @@
                 <div class="ui-g-6">
                     <div *ngIf="data.erledigt">
                         <i class="pi pi-check"></i> Erledigt!
+                        <p-button label="Neu Öffnen" icon="pi pi-unlock" (click)="reopenTask()"></p-button>
                     </div>
                     <div *ngIf="!data.erledigt">
                         <i class="pi pi-times"></i> Nicht erledigt!
+                        <p-button label="Schließen" icon="pi pi-check" (click)="closeTask()"></p-button>
                     </div>
                 </div>
             </div>

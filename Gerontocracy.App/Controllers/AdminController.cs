@@ -195,5 +195,40 @@ namespace Gerontocracy.App.Controllers
         [Authorize(Roles = "admin,moderator")]
         public IActionResult GetTask(long id)
             => Ok(_mapper.Map<AufgabeDetail>(_taskService.GetTask(id)));
+
+        /// <summary>
+        /// Assigns a Task to the caller
+        /// </summary>
+        /// <param name="id">task identifier</param>
+        /// <returns>statuscode</returns>
+        [HttpPost]
+        [Route("task/assign")]
+        [Authorize(Roles = "admin,moderator")]
+        public async Task<IActionResult> AssignTask([FromBody] long id)
+            => Ok(_mapper.Map<User>(await _taskService.AssignTask(User, id)));
+
+        /// <summary>
+        /// Closes a task and sets its state to done
+        /// </summary>
+        /// <param name="id">task identifier</param>
+        /// <returns>statuscode</returns>
+        [HttpPost]
+        [Route("task/close")]
+        [Authorize(Roles = "admin,moderator")]
+        public IActionResult CloseTask([FromBody] long id)
+            => Ok(_taskService.CloseTask(id));
+
+
+        /// <summary>
+        /// Reopens a task and sets its state to not done
+        /// </summary>
+        /// <param name="id">task identifier</param>
+        /// <returns>statuscode</returns>
+        [HttpPost]
+        [Route("task/reopen")]
+        [Authorize(Roles = "admin,moderator")]
+        public IActionResult ReopenTask([FromBody] long id)
+            => Ok(_taskService.ReopenTask(id));
+
     }
 }

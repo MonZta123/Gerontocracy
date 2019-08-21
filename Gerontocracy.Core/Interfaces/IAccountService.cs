@@ -65,6 +65,8 @@ namespace Gerontocracy.Core.Interfaces
 
         Task<IdentityResult> SetRolesAsync(long userId, List<long> roleIds);
 
-        IQueryable<Data.Entities.Account.User> GetUserRepository();
+        IQueryable<Data.Entities.Account.User> GetUserQuery();
+
+        IQueryable<Data.Entities.Account.Role> GetRoleQuery();
     }
 }

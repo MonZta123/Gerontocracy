@@ -8,6 +8,7 @@ import { Role } from '../models/role';
 import { UserOverview } from '../models/user-overview';
 import { AufgabeOverview } from '../models/aufgabe-overview';
 import { AufgabeDetail } from '../models/aufgabe-detail';
+import { User } from '../../../models/user';
 
 @Injectable({
   providedIn: 'root'
@@ -56,5 +57,21 @@ export class AdminService {
 
   getRoles(): Observable<Role[]> {
     return this.httpClient.get<Role[]>(`api/admin/roles`);
+  }
+
+  getTask(id: number): Observable<AufgabeDetail> {
+    return this.httpClient.get<AufgabeDetail>(`api/admin/task/${id}`);
+  }
+
+  assignTask(id: number): Observable<User> {
+    return this.httpClient.post<User>(`api/admin/task/assign`, id);
+  }
+
+  closeTask(id: number): Observable<boolean> {
+    return this.httpClient.post<boolean>(`api/admin/task/close`, id);
+  }
+
+  reopenTask(id: number): Observable<boolean> {
+    return this.httpClient.post<boolean>(`api/admin/task/reopen`, id);
   }
 }

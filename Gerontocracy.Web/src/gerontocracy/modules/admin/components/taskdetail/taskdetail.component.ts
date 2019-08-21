@@ -22,12 +22,27 @@ export class TaskdetailComponent implements OnInit {
     private dialogService: DialogService,
     private adminService: AdminService,
     private accountService: AccountService) {
-     }
+  }
 
   ngOnInit() {
     this.isAdmin = false;
     this.accountService.getCurrentUser()
       .toPromise()
       .then(n => this.isAdmin = n.roles.includes('admin'));
+  }
+
+  assignToMe() {
+    this.adminService.assignTask(this.data.id).toPromise().then(n => {
+      this.data.bearbeiter = n.userName;
+      this.data.bearbeiterId = n.id;
+    });
+  }
+
+  closeTask() {
+    this.adminService.closeTask(this.data.id).toPromise().then(n => this.data.erledigt = n);
+  }
+
+  reopenTask() {
+    this.adminService.reopenTask(this.data.id).toPromise().then(n => this.data.erledigt = n);
   }
 }

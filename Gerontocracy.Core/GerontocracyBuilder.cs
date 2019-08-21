@@ -1,18 +1,23 @@
 ﻿using AutoMapper;
+
 using Gerontocracy.Core.Exceptions;
 using Gerontocracy.Core.Exceptions.Account;
 using Gerontocracy.Core.Exceptions.Affair;
 using Gerontocracy.Core.Exceptions.Party;
 using Gerontocracy.Core.Exceptions.User;
 using Gerontocracy.Data;
+
 using Morphius;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+
 using System;
 using System.IO;
 using System.Net;
+
 using Gerontocracy.Core.Config;
 using Gerontocracy.Core.Exceptions.Board;
 using Gerontocracy.Core.Exceptions.News;
@@ -65,7 +70,7 @@ namespace Gerontocracy.Core
             services.AddIdentity<Data.Entities.Account.User, Data.Entities.Account.Role>()
                 .AddEntityFrameworkStores<GerontocracyContext>()
                 .AddDefaultTokenProviders();
-
+            
             // ===== Add HttpClient =====
             services.AddHttpClient();
 
@@ -88,7 +93,7 @@ namespace Gerontocracy.Core
                 // User settings.
                 options.User.AllowedUserNameCharacters =
                 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-                options.User.RequireUniqueEmail = false;
+                options.User.RequireUniqueEmail = true;
             });
 
             // ==== Add Hosted Services =====

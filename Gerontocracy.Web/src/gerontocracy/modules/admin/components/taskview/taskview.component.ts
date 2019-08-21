@@ -79,8 +79,8 @@ export class TaskviewComponent implements OnInit {
           taskType: null,
         });
 
-        this.activatedRoute.params.subscribe(n => {
-          const id = +n.id;
+        this.activatedRoute.params.subscribe(m => {
+          const id = +m.id;
           if (id) {
             this.showDetail(id);
           }

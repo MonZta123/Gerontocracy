@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
-using System.Reflection.Metadata;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using AutoMapper;
 using Gerontocracy.Core.BusinessObjects.Account;
 using Gerontocracy.Core.BusinessObjects.Shared;
@@ -20,16 +21,18 @@ namespace Gerontocracy.Core.Providers
         #region Fields
 
         private readonly GerontocracyContext _context;
+        private readonly IAccountService _accountService;
         private readonly IMapper _mapper;
 
         #endregion Fields
 
         #region Constructors
 
-        public TaskService(GerontocracyContext context, IMapper mapper)
+        public TaskService(GerontocracyContext context, IMapper mapper, IAccountService accountService)
         {
             this._context = context;
             this._mapper = mapper;
+            this._accountService = accountService;
         }
 
         #endregion Constructors
@@ -60,15 +63,20 @@ namespace Gerontocracy.Core.Providers
                 query = query.Where(n => n.TaskType == (db.Task.TaskType)parameters.TaskType.Value);
             }
 
-            var data = query.Select(n => new AufgabeOverview
-            {
-                Id = n.Id,
-                Erledigt = n.Erledigt,
-                EingereichtAm = n.EingereichtAm,
-                Einreicher = n.Einreicher.UserName,
-                TaskType = (TaskType)n.TaskType,
-                Uebernommen = n.Bearbeiter != null
-            }).ToList();
+            var data = query
+                .Select(n => new AufgabeOverview
+                {
+                    Id = n.Id,
+                    Erledigt = n.Erledigt,
+                    EingereichtAm = n.EingereichtAm,
+                    Einreicher = n.Einreicher.UserName,
+                    TaskType = (TaskType)n.TaskType,
+                    Uebernommen = n.Bearbeiter != null
+                })
+                .OrderByDescending(n => n.EingereichtAm)
+                .Skip(pageSize * pageIndex)
+                .Take(pageSize)
+                .ToList();
 
             return new SearchResult<AufgabeOverview>
             {
@@ -84,7 +92,7 @@ namespace Gerontocracy.Core.Providers
                 .Include(n => n.Bearbeiter)
                 .Include(n => n.Einreicher)
                 .SingleOrDefault(n => n.Id == id);
-            
+
             if (task == null)
                 throw new TaskNotFoundException();
 
@@ -94,12 +102,54 @@ namespace Gerontocracy.Core.Providers
                 Id = task.Id,
                 Einreicher = task.Einreicher?.UserName ?? string.Empty,
                 EinreicherId = task.EinreicherId,
+                EingereichtAm = task.EingereichtAm,
                 Bearbeiter = task.Bearbeiter?.UserName ?? string.Empty,
                 BearbeiterId = task.BearbeiterId,
                 Erledigt = task.Erledigt,
                 Beschreibung = task.Beschreibung,
                 MetaData = task.MetaData
             };
+        }
+
+        public async Task<User> AssignTask(ClaimsPrincipal user, long id)
+        {
+            var userId = _accountService.GetIdOfUser(user);
+
+            var task = _context.Aufgabe.SingleOrDefault(n => n.Id == id);
+            if (task == null)
+                throw new TaskNotFoundException();
+
+            task.BearbeiterId = userId;
+
+            _context.SaveChanges();
+
+            return await _accountService.GetUserOrDefaultAsync(user);
+        }
+
+        public bool CloseTask(long id)
+        {
+            var task = _context.Aufgabe.SingleOrDefault(n => n.Id == id);
+            if (task == null)
+                throw new TaskNotFoundException();
+
+            task.Erledigt = true;
+
+            _context.SaveChanges();
+
+            return true;
+        }
+
+        public bool ReopenTask(long id)
+        {
+            var task = _context.Aufgabe.SingleOrDefault(n => n.Id == id);
+            if (task == null)
+                throw new TaskNotFoundException();
+
+            task.Erledigt = false;
+
+            _context.SaveChanges();
+
+            return false;
         }
 
         #endregion Methods

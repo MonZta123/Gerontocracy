@@ -123,7 +123,7 @@ namespace Gerontocracy.Core.Providers
 
         public UserData GetUserPageData(long id)
         {
-            var user = this._accountService.GetUserRepository()
+            var user = this._accountService.GetUserQuery()
                 .Include(n => n.Vorfaelle)
                 .ThenInclude(n => n.Legitimitaet)
                 .Include(n => n.Posts)
