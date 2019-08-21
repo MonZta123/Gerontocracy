@@ -2,6 +2,7 @@
 
 using AutoMapper;
 using Gerontocracy.App.Models.Account;
+using Gerontocracy.App.Models.User;
 using Gerontocracy.Core.Interfaces;
 
 using Microsoft.AspNetCore.Authorization;
@@ -19,28 +20,20 @@ namespace Hivecluster.ClipMash.App.Controllers
         /// <summary>
         /// Injected Constructor
         /// </summary>
-        /// <param name="accountService">UserService</param>
+        /// <param name="accountService">AccountService</param>
         /// <param name="mapper">Mapper</param>
-        public UserController(IAccountService accountService, IMapper mapper)
+        /// <param name="userService">UserService</param>
+        public UserController(IAccountService accountService, IMapper mapper, IUserService userService)
         {
             this._accountService = accountService;
             this._mapper = mapper;
+            this._userService = userService;
         }
 
-        private IAccountService _accountService { get; }
-        private IMapper _mapper { get; }
-
-        /// <summary>
-        /// Returns all user informations by an Id
-        /// </summary>
-        /// <param name="id">the users Id</param>
-        /// <returns>the user</returns>
-        [HttpGet]
-        [Route("{id:long}")]
-        [AllowAnonymous]
-        public async Task<IActionResult> GetUser(long id)
-            => Ok(_mapper.Map<User>(await _accountService.GetUserAsync(id)));
-
+        private readonly IAccountService _accountService;
+        private readonly IMapper _mapper;
+        private readonly IUserService _userService;
+        
         /// <summary>
         /// Returns the dashboard-information
         /// </summary>
@@ -50,5 +43,16 @@ namespace Hivecluster.ClipMash.App.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetDashboardUser()
             => Ok(_mapper.Map<User>(await _accountService.GetUserOrDefaultAsync(User)));
+
+        /// <summary>
+        /// Returns the data required for the user page
+        /// </summary>
+        /// <param name="id">identifier</param>
+        /// <returns>statuscode and user object</returns>
+        [HttpGet]
+        [Route("user/{id:long}")]
+        [AllowAnonymous]
+        public IActionResult GetUserPageData(long id)
+            => Ok(_mapper.Map<UserData>(_userService.GetUserPageData(id)));
     }
 }

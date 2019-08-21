@@ -6,7 +6,7 @@ using AutoMapper;
 using Gerontocracy.App.Models.Account;
 using Gerontocracy.App.Models.Admin;
 using Gerontocracy.App.Models.Shared;
-
+using Gerontocracy.App.Models.Task;
 using Gerontocracy.Core.Interfaces;
 
 using Microsoft.AspNetCore.Authorization;
@@ -27,20 +27,24 @@ namespace Gerontocracy.App.Controllers
         private readonly IAccountService _accountService;
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
+        private readonly ITaskService _taskService;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="accountService">account service</param>
         /// <param name="userService">user service</param>
+        /// <param name="taskService">task service</param>
         /// <param name="mapper">mapper</param>
         public AdminController(
             IAccountService accountService,
             IUserService userService,
+            ITaskService taskService,
             IMapper mapper)
         {
             this._accountService = accountService;
             this._userService = userService;
+            this._taskService = taskService;
             this._mapper = mapper;
         }
 
@@ -134,7 +138,7 @@ namespace Gerontocracy.App.Controllers
         /// <param name="pageIndex">page index</param>
         /// <returns></returns>
         [HttpGet]
-        [Route("usersearch")]
+        [Route("search-users")]
         [Authorize(Roles = "admin")]
         public IActionResult GetUsers(
             string userName = "",
@@ -155,5 +159,74 @@ namespace Gerontocracy.App.Controllers
         [Authorize(Roles = "admin")]
         public IActionResult GetUser(long id)
             => Ok(_mapper.Map<UserDetail>(_userService.GetUserDetail(id)));
+
+        /// <summary>
+        /// Returns a list of tasks
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="taskType"></param>
+        /// <param name="includeDone"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="pageIndex"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("search-tasks")]
+        [Authorize(Roles = "admin,moderator")]
+        public IActionResult GetTasks(
+            string userName,
+            TaskType? taskType,
+            bool includeDone,
+            int pageSize = 25,
+            int pageIndex = 0)
+            => Ok(_mapper.Map<SearchResult<AufgabeOverview>>(_taskService.Search(new bo.Task.SearchParameters
+            {
+                Username = userName,
+                IncludeDone = includeDone,
+                TaskType = (bo.Task.TaskType?)taskType
+            })));
+
+        /// <summary>
+        /// Returns a single task
+        /// </summary>
+        /// <param name="id">identifier</param>
+        /// <returns>task and statuscode</returns>
+        [HttpGet]
+        [Route("task/{id:long}")]
+        [Authorize(Roles = "admin,moderator")]
+        public IActionResult GetTask(long id)
+            => Ok(_mapper.Map<AufgabeDetail>(_taskService.GetTask(id)));
+
+        /// <summary>
+        /// Assigns a Task to the caller
+        /// </summary>
+        /// <param name="id">task identifier</param>
+        /// <returns>statuscode</returns>
+        [HttpPost]
+        [Route("task/assign")]
+        [Authorize(Roles = "admin,moderator")]
+        public async Task<IActionResult> AssignTask([FromBody] long id)
+            => Ok(_mapper.Map<User>(await _taskService.AssignTask(User, id)));
+
+        /// <summary>
+        /// Closes a task and sets its state to done
+        /// </summary>
+        /// <param name="id">task identifier</param>
+        /// <returns>statuscode</returns>
+        [HttpPost]
+        [Route("task/close")]
+        [Authorize(Roles = "admin,moderator")]
+        public IActionResult CloseTask([FromBody] long id)
+            => Ok(_taskService.CloseTask(id));
+
+        /// <summary>
+        /// Reopens a task and sets its state to not done
+        /// </summary>
+        /// <param name="id">task identifier</param>
+        /// <returns>statuscode</returns>
+        [HttpPost]
+        [Route("task/reopen")]
+        [Authorize(Roles = "admin,moderator")]
+        public IActionResult ReopenTask([FromBody] long id)
+            => Ok(_taskService.ReopenTask(id));
     }
 }

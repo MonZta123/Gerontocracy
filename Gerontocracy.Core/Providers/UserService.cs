@@ -9,7 +9,10 @@ using Gerontocracy.Core.BusinessObjects.User;
 using Gerontocracy.Core.Exceptions.User;
 using Gerontocracy.Core.Interfaces;
 using Gerontocracy.Data;
+using Gerontocracy.Data.Entities.Affair;
+using Gerontocracy.Data.Entities.Board;
 using Gerontocracy.Shared.Extensions;
+using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
 namespace Gerontocracy.Core.Providers
@@ -17,6 +20,7 @@ namespace Gerontocracy.Core.Providers
     public class UserService : IUserService
     {
         private readonly GerontocracyContext _context;
+        private readonly IAccountService _accountService;
 
         private const string UserQuery =
             "SELECT users.\"Id\", " +
@@ -41,10 +45,11 @@ namespace Gerontocracy.Core.Providers
             "       JOIN \"AspNetUserRoles\" userRoles " +
             "         ON roles.\"Id\" = userRoles.\"RoleId\" " +
             "WHERE  userRoles.\"UserId\" = @userId ";
-        
-        public UserService(GerontocracyContext context)
+
+        public UserService(GerontocracyContext context, IAccountService accountService)
         {
             this._context = context;
+            this._accountService = accountService;
         }
 
         public SearchResult<User> Search(SearchParameters parameters, int pageSize = 25, int pageIndex = 0)
@@ -114,6 +119,26 @@ namespace Gerontocracy.Core.Providers
                 VorfallCount = affairCount,
                 Roles = roles
             };
+        }
+
+        public UserData GetUserPageData(long id)
+        {
+            var user = this._accountService.GetUserQuery()
+                .Include(n => n.Vorfaelle)
+                .ThenInclude(n => n.Legitimitaet)
+                .Include(n => n.Posts)
+                .ThenInclude(n => n.Likes)
+                .Select(n => new UserData()
+                {
+                    Id = n.Id,
+                    RegisterDate = n.RegisterDate,
+                    Score = n.Vorfaelle.Sum(m => m.Legitimitaet.Count(o => o.VoteType == VoteType.Up) - m.Legitimitaet.Count(o => o.VoteType == VoteType.Down)) +
+                            n.Posts.Sum(m => m.Likes.Count(o => o.LikeType == LikeType.Like) - m.Likes.Count(o => o.LikeType == LikeType.Dislike))
+                }).SingleOrDefault(n => n.Id == id);
+            if (user == null)
+                throw new UserNotFoundException();
+
+            return user;
         }
     }
 }

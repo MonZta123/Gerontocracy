@@ -9,5 +9,7 @@ namespace Gerontocracy.Core.Interfaces
         SearchResult<User> Search(SearchParameters parameters, int pageSize = 25, int pageIndex = 0);
 
         UserDetail GetUserDetail(long id);
+
+        UserData GetUserPageData(long id);
     }
 }

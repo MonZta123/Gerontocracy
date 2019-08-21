@@ -3,10 +3,11 @@ import { DialogService, MessageService } from 'primeng/api';
 import { Location } from '@angular/common';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { SearchParams } from '../../../affair/models/search-params';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AdminService } from '../../services/admin.service';
 import { UserOverview } from '../../models/user-overview';
 import { UserDetail } from '../../models/user-detail';
+import { AccountService } from '../../../../services/account.service';
 
 @Component({
   selector: 'app-userview',
@@ -20,16 +21,18 @@ export class UserviewComponent implements OnInit {
 
   popupVisible: boolean;
 
+  isAdmin: boolean;
+
   pageSize = 25;
   maxResults = 0;
   pageIndex = 0;
-  searchParams: SearchParams;
 
   data: UserOverview[];
   detailData: UserDetail;
 
   constructor(
-    private location: Location,
+    private router: Router,
+    private accountService: AccountService,
     private activatedRoute: ActivatedRoute,
     private formBuilder: FormBuilder,
     private messageService: MessageService,
@@ -37,6 +40,19 @@ export class UserviewComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.isAdmin = false;
+    this.accountService
+      .getCurrentUser()
+      .toPromise()
+      .then(n => {
+        const roles: string[] = n.roles;
+        if (roles.includes('admin')) {
+          this.isAdmin = true;
+        } else {
+          this.router.navigate(['/']);
+        }
+      });
+
     this.popupVisible = false;
 
     this.searchForm = this.formBuilder.group({

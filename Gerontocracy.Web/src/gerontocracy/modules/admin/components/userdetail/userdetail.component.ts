@@ -3,6 +3,8 @@ import { UserDetail } from '../../models/user-detail';
 import { DialogService } from 'primeng/api';
 import { AddRoleDialogComponent } from '../add-role-dialog/add-role-dialog.component';
 import { AdminService } from '../../services/admin.service';
+import { SharedAccountService } from '../../../shared/services/shared-account.service';
+import { AccountService } from 'Gerontocracy.Web/src/gerontocracy/services/account.service';
 
 @Component({
   selector: 'app-userdetail',
@@ -17,11 +19,17 @@ export class UserdetailComponent implements OnInit {
   @Input() isPopup = false;
   @Output() popout: EventEmitter<void> = new EventEmitter<void>();
 
+  isAdmin: boolean;
+
   constructor(
     private dialogService: DialogService,
-    private adminService: AdminService) { }
+    private adminService: AdminService,
+    private accountService: AccountService) { }
 
   ngOnInit() {
+    this.accountService.getCurrentUser()
+      .toPromise()
+      .then(n => this.isAdmin = n.roles.includes('admin'));
   }
 
   addRole() {

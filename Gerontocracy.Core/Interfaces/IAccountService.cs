@@ -3,7 +3,7 @@
 using Microsoft.AspNetCore.Identity;
 
 using System.Collections.Generic;
-
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -64,5 +64,9 @@ namespace Gerontocracy.Core.Interfaces
         IEnumerable<Role> GetRolesAsync();
 
         Task<IdentityResult> SetRolesAsync(long userId, List<long> roleIds);
+
+        IQueryable<Data.Entities.Account.User> GetUserQuery();
+
+        IQueryable<Data.Entities.Account.Role> GetRoleQuery();
     }
 }

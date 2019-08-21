@@ -1,6 +1,4 @@
-import { UserOverview } from './user-overview';
-
-export interface SearchResult {
-    data: UserOverview[];
+export interface SearchResult<T> {
+    data: T[];
     maxResults: number;
 }

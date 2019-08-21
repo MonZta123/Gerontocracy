@@ -26,6 +26,6 @@ namespace Gerontocracy.App.Models.Party
         /// <summary>
         /// Created By
         /// </summary>
-        public User ErstelltVon { get; set; }
+        public Account.User ErstelltVon { get; set; }
     }
 }

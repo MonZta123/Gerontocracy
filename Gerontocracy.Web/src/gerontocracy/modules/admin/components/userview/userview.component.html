@@ -1,7 +1,7 @@
 <p-toast [style]="{marginTop: '80px'}"></p-toast>
 <p-blockUI [blocked]="popupVisible"></p-blockUI>
 
-<div class="ui-fluid">
+<div class="ui-fluid" *ngIf="isAdmin">
     <div class="ui-g">
         <div class="ui-g-12 ui-lg-8 ui-md-12 ui-g-nopad">
             <div class="ui-g-12">

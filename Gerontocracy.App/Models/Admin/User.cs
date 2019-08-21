@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Gerontocracy.App.Models.Admin
 {
     /// <summary>
-    /// Defines a user
+    /// Reflects a user
     /// </summary>
     public class User
     {

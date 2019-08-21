@@ -8,7 +8,7 @@
             </div>
         </p-panel>
     </div>
-    <div class="mt-5">
+    <div class="mt-5" *ngIf="isAdmin">
         <p-table title="Rollen" [value]="data.roles">
             <ng-template pTemplate="header">
                 <tr>

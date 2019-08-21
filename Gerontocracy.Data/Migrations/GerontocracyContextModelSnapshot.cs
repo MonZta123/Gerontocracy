@@ -313,6 +313,34 @@ namespace Gerontocracy.Data.Migrations
                     b.ToTable("Politiker");
                 });
 
+            modelBuilder.Entity("Gerontocracy.Data.Entities.Task.Aufgabe", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<long?>("BearbeiterId");
+
+                    b.Property<string>("Beschreibung");
+
+                    b.Property<DateTime>("EingereichtAm");
+
+                    b.Property<long>("EinreicherId");
+
+                    b.Property<bool>("Erledigt");
+
+                    b.Property<string>("MetaData");
+
+                    b.Property<int>("TaskType");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BearbeiterId");
+
+                    b.HasIndex("EinreicherId");
+
+                    b.ToTable("Aufgabe");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
                 {
                     b.Property<int>("Id")
@@ -447,7 +475,7 @@ namespace Gerontocracy.Data.Migrations
                         .HasForeignKey("ParentId");
 
                     b.HasOne("Gerontocracy.Data.Entities.Account.User", "User")
-                        .WithMany()
+                        .WithMany("Posts")
                         .HasForeignKey("UserId");
                 });
 
@@ -479,6 +507,18 @@ namespace Gerontocracy.Data.Migrations
                     b.HasOne("Gerontocracy.Data.Entities.Party.Partei", "Partei")
                         .WithMany("Politiker")
                         .HasForeignKey("ParteiId");
+                });
+
+            modelBuilder.Entity("Gerontocracy.Data.Entities.Task.Aufgabe", b =>
+                {
+                    b.HasOne("Gerontocracy.Data.Entities.Account.User", "Bearbeiter")
+                        .WithMany()
+                        .HasForeignKey("BearbeiterId");
+
+                    b.HasOne("Gerontocracy.Data.Entities.Account.User", "Einreicher")
+                        .WithMany()
+                        .HasForeignKey("EinreicherId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>

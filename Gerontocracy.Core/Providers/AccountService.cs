@@ -62,6 +62,12 @@ namespace Gerontocracy.Core.Providers
             return _mapper.Map<User>(user);
         }
 
+        public IQueryable<db.Account.User> GetUserQuery()
+            => this._userManager.Users;
+
+        public IQueryable<db.Account.Role> GetRoleQuery()
+            => this._roleManager.Roles;
+
         public async Task<User> GetUserAsync(string name)
         {
             var user = await _userManager.FindByNameAsync(name);

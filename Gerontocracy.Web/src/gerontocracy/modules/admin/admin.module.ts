@@ -17,9 +17,14 @@ import { MessageModule } from 'primeng/message';
 import { MessagesModule } from 'primeng/messages';
 import { BlockUIModule } from 'primeng/blockui';
 import { ToastModule } from 'primeng/toast';
+import { DropdownModule } from 'primeng/dropdown';
 import { MessageService } from 'primeng/api';
 import { AddRoleDialogComponent } from './components/add-role-dialog/add-role-dialog.component';
 import { AutoCompleteModule } from 'primeng/autocomplete';
+import { TaskviewComponent } from './components/taskview/taskview.component';
+import { TaskdetailComponent } from './components/taskdetail/taskdetail.component';
+import { CheckboxModule } from 'primeng/checkbox';
+import { TaskTypePipe } from './pipes/task-type.pipe';
 
 
 @NgModule({
@@ -27,7 +32,10 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
     AdminComponent,
     UserviewComponent,
     UserdetailComponent,
-    AddRoleDialogComponent
+    AddRoleDialogComponent,
+    TaskviewComponent,
+    TaskdetailComponent,
+    TaskTypePipe
   ],
   imports: [
     CommonModule,
@@ -49,7 +57,9 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
     MessageModule,
     BlockUIModule,
     ToastModule,
-    AutoCompleteModule
+    AutoCompleteModule,
+    DropdownModule,
+    CheckboxModule
   ],
   providers: [
     MessageService

@@ -9,6 +9,7 @@ using Gerontocracy.Data.Entities.News;
 using System.Data.Common;
 using System;
 using System.Collections.Generic;
+using Gerontocracy.Data.Entities.Task;
 
 namespace Gerontocracy.Data
 {
@@ -30,6 +31,8 @@ namespace Gerontocracy.Data
         public DbSet<Like> Like { get; set; }
 
         public DbSet<Artikel> Artikel { get; set; }
+
+        public DbSet<Aufgabe> Aufgabe { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) => base.OnModelCreating(modelBuilder);
         
