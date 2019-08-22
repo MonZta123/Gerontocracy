@@ -18,20 +18,23 @@ import { BlockUIModule } from 'primeng/blockui';
 import { TreeModule } from 'primeng/tree';
 
 import { SharedModule } from '../shared/shared.module';
-import { MessageService, DialogService } from 'primeng/api';
+import { MessageService, DialogService, ConfirmationService } from 'primeng/api';
 import { BoardService } from './services/board.service';
 import { DetailviewComponent } from './components/detailview/detailview.component';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
+import { ReportDialogComponent } from './components/report-dialog/report-dialog.component';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @NgModule({
   declarations: [
     BoardComponent,
     OverviewComponent,
     AddDialogComponent,
-    DetailviewComponent
+    DetailviewComponent,
+    ReportDialogComponent
   ],
   imports: [
     CommonModule,
@@ -55,15 +58,19 @@ import { MessageModule } from 'primeng/message';
     MessagesModule,
     MessageModule,
 
+    ConfirmDialogModule,
+
     SharedModule
   ],
   providers: [
     MessageService,
     BoardService,
-    DialogService
+    DialogService,
+    ConfirmationService
   ],
   entryComponents: [
-    AddDialogComponent
+    AddDialogComponent,
+    ReportDialogComponent
   ],
 })
 export class BoardModule { }

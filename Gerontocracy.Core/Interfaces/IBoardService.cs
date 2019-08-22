@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Security.Claims;
+
 using Gerontocracy.Core.BusinessObjects.Board;
 using Gerontocracy.Core.BusinessObjects.Shared;
 
@@ -16,6 +17,9 @@ namespace Gerontocracy.Core.Interfaces
         void Like(ClaimsPrincipal user, long postId, LikeType? type);
 
         Post Reply(ClaimsPrincipal user, PostData data);
+
         List<VorfallSelection> GetFilteredByName(string searchString, int take = 5);
+
+        void Report(ClaimsPrincipal user, long postId, string comment);
     }
 }

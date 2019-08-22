@@ -151,6 +151,21 @@ namespace Gerontocracy.Core.Providers
 
             return false;
         }
+        
+        public void Report(long userId, TaskType type, string description, string metaData)
+        {
+            var dbAufgabe = new Data.Entities.Task.Aufgabe
+            {
+                TaskType = _mapper.Map<Data.Entities.Task.TaskType>(type),
+                EingereichtAm = DateTime.Now,
+                Beschreibung = description,
+                MetaData = metaData,
+                EinreicherId = userId
+            };
+
+            _context.Add(dbAufgabe);
+            _context.SaveChanges();
+        }
 
         #endregion Methods
     }
