@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { ThreadDetail } from '../models/thread-detail';
 import { LikeType } from '../models/like-type';
 import { ThreadData } from '../models/thread-data';
+import { ReportData } from '../models/report-data';
 
 @Injectable({
   providedIn: 'root'
@@ -37,5 +38,9 @@ export class BoardService {
 
   addThread(obj: ThreadData): Observable<number> {
     return this.httpClient.post<number>(`api/board/thread`, obj);
+  }
+
+  report(reportData: ReportData): Observable<void> {
+    return this.httpClient.post<void>(`api/board/report`, reportData);
   }
 }

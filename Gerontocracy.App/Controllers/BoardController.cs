@@ -112,5 +112,24 @@ namespace Gerontocracy.App.Controllers
         [Route("reply")]
         public IActionResult Reply([FromBody] PostData data)
             => Ok(_mapper.Map<Post>(_boardService.Reply(User, _mapper.Map<bo.PostData>(data))));
+
+        /// <summary>
+        /// Reports a post
+        /// </summary>
+        /// <param name="data">Data required for reporting a post</param>
+        /// <returns>Statuscode</returns>
+        [HttpPost]
+        [Authorize]
+        [Route("report")]
+        public IActionResult Report([FromBody] ReportData data)
+        {
+            if (ModelState.IsValid)
+            {
+                _boardService.Report(User, data.PostId, data.Comment);
+                return Ok();
+            }
+            else
+                return BadRequest(ModelState);
+        }
     }
 }

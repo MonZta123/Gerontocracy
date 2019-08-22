@@ -1,0 +1,27 @@
+<div class="ui-fluid">
+    <div class="ui-g" [formGroup]="formGroup">
+        <div class="ui-g-12 ui-md-12">
+            <div class="ui-inputgroup">
+                <textarea pInputTextArea placeholder="Begründung" rows="10" class="max-width"
+                    formControlName="comment"></textarea>
+            </div>
+            <div class="d-flex flex-column">
+                <p-message severity="error" text="Inhalt darf maximal 4000 Zeichen lang sein!"
+                    *ngIf="formGroup.controls.comment.hasError('maxlength') && formGroup.controls.comment.touched"
+                    class="mt-5">
+                </p-message>
+            </div>
+        </div>
+    </div>
+    <div class="ui-g">
+        <div class="ui-g-12" align="end">
+            <p-button icon="pi pi-check" class="mr-5" (click)="report()" label="Melden">
+            </p-button>
+            <p-button icon="pi pi-times" styleClass="ui-button-secondary" (click)="close(false)" label="Abbrechen">
+            </p-button>
+        </div>
+    </div>
+</div>
+
+<p-confirmDialog header="Melden?" icon="pi pi-exclamation-triangle" acceptLabel="Melden" rejectLabel="Abbrechen"
+    rejectButtonStyleClass="ui-button-secondary" [appendTo]="'body'"></p-confirmDialog>

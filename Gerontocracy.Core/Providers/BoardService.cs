@@ -15,18 +15,16 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 
-using db = Gerontocracy.Data.Entities.Board;
 using Gerontocracy.Core.BusinessObjects.Shared;
+using Gerontocracy.Core.BusinessObjects.Task;
+using db = Gerontocracy.Data.Entities.Board;
+using SearchParameters = Gerontocracy.Core.BusinessObjects.Board.SearchParameters;
 
 namespace Gerontocracy.Core.Providers
 {
     public class BoardService : IBoardService
     {
         #region Fields
-
-        private readonly IAccountService _accountService;
-        private readonly GerontocracyContext _context;
-        private readonly IMapper _mapper;
 
         private const string PostQuery =
             "WITH recursive post_hierarchy(\"Id\", \"ParentId\") AS " +
@@ -121,15 +119,24 @@ namespace Gerontocracy.Core.Providers
             "LIMIT    @limit " +
             "OFFSET   @offset ";
 
+        private readonly IAccountService _accountService;
+        private readonly GerontocracyContext _context;
+        private readonly IMapper _mapper;
+        private readonly ITaskService _taskService;
         #endregion Fields
 
         #region Constructors
 
-        public BoardService(IMapper mapper, GerontocracyContext context, IAccountService accountService)
+        public BoardService(
+            IMapper mapper,
+            GerontocracyContext context,
+            IAccountService accountService,
+            ITaskService taskService)
         {
             _mapper = mapper;
             _context = context;
             _accountService = accountService;
+            _taskService = taskService;
         }
 
         #endregion Constructors
@@ -166,6 +173,24 @@ namespace Gerontocracy.Core.Providers
 
         public int CountPosts(db.Post post)
             => post.Children.Sum(CountPosts) + 1;
+
+        public List<VorfallSelection> GetFilteredByName(string searchString, int take = 5)
+        {
+            var data = _context.Vorfall
+                .Include(n => n.User)
+                .Where(n => n.Titel.Contains(searchString, StringComparison.CurrentCultureIgnoreCase))
+                .Take(take)
+                .Select(n => new VorfallSelection
+                {
+                    Id = n.Id,
+                    User = n.User.UserName,
+                    UserId = n.UserId,
+                    Titel = n.Titel
+                })
+                .ToList();
+
+            return data;
+        }
 
         public ThreadDetail GetThread(ClaimsPrincipal user, long id)
         {
@@ -273,22 +298,15 @@ namespace Gerontocracy.Core.Providers
             };
         }
 
-        public List<VorfallSelection> GetFilteredByName(string searchString, int take = 5)
+        public void Report(ClaimsPrincipal user, long postId, string comment)
         {
-            var data = _context.Vorfall
-                .Include(n => n.User)
-                .Where(n => n.Titel.Contains(searchString, StringComparison.CurrentCultureIgnoreCase))
-                .Take(take)
-                .Select(n => new VorfallSelection
-                {
-                    Id = n.Id,
-                    User = n.User.UserName,
-                    UserId = n.UserId,
-                    Titel = n.Titel
-                })
-                .ToList();
+            var userId = this._accountService.GetIdOfUser(user);
 
-            return data;
+            var post = _context.Post.SingleOrDefault(n => n.Id == postId);
+            if (post == null)
+                throw new PostNotFoundException();
+
+            this._taskService.Report(userId, TaskType.PostReport, comment, post.Id.ToString());
         }
 
         public SearchResult<ThreadOverview> Search(SearchParameters parameters, int pageSize = 25, int pageIndex = 0)

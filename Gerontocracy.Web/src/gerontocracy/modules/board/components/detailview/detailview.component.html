@@ -29,36 +29,44 @@
                             {{node.data.content}}
                         </div>
                     </div>
-                    <p-footer class="d-flex flex-column d-flex-between">
-                        <div class="d-flex d-flex-between">
+                    <p-footer>
+                        <div class="d-flex d-flex-between flex-column">
                             <div class="d-flex d-flex-between">
-                                <div class="mr-5">
-                                    <p-button icon="pi pi-user-plus" (click)="like(LikeType.like, node.data)"
-                                        [styleClass]="node.data.userLike !== 0 ? 'ui-button-secondary' : ''"
-                                        [label]="node.data.likes">
-                                    </p-button>
+                                <div class="d-flex flex-row">
+                                    <div class="mr-5">
+                                        <p-button icon="pi pi-user-plus" (click)="like(LikeType.like, node.data)"
+                                            [styleClass]="node.data.userLike !== 0 ? 'ui-button-secondary' : ''"
+                                            [label]="node.data.likes">
+                                        </p-button>
+                                    </div>
+                                    <div>
+                                        <p-button icon="pi pi-user-minus" (click)="like(LikeType.dislike, node.data)"
+                                            [styleClass]="node.data.userLike !== 1 ? 'ui-button-secondary' : ''"
+                                            [label]="node.data.dislikes">
+                                        </p-button>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p-button icon="pi pi-user-minus" (click)="like(LikeType.dislike, node.data)"
-                                        [styleClass]="node.data.userLike !== 1 ? 'ui-button-secondary' : ''"
-                                        [label]="node.data.dislikes">
+                                <div class="d-flex flex-row">
+                                    <p-button icon="pi pi-exclamation-triangle" styleClass="ui-button-danger"
+                                        (click)="report(node.data)" class="mr-5">
+                                    </p-button>
+                                    <p-button icon="pi pi-arrow-down" (click)="node.data.showReply = true">
                                     </p-button>
                                 </div>
                             </div>
-                            <div>
-                                <p-button icon="pi pi-arrow-down" (click)="node.data.showReply = true">
-                                </p-button>
+                            <div class="ui-g" *ngIf="node.data.showReply" class="mt-5">
+                                <div class="ui-inputgroup">
+                                    <input pInputText type="text" [(ngModel)]="node.data.reply">
+                                </div>
+                                <button pButton icon="pi pi-comment" (click)="reply(node, node.data.reply)"></button>
                             </div>
-                        </div>
-                        <div class="ui-inputgroup" class="mt-5" *ngIf="node.data.showReply">
-                            <input pInputText type="text" [(ngModel)]="node.data.reply">
-                            <p-button icon="pi pi-comment" (click)="reply(node, node.data.reply)"></p-button>
                         </div>
                     </p-footer>
-
                 </p-panel>
             </div>
 
         </ng-template>
     </p-tree>
 </div>
+
+<p-confirmDialog header="Fertig" icon="pi pi-check" [closable]="false" [rejectVisible]="false" acceptLabel="Gern geschehen!"></p-confirmDialog>

@@ -108,7 +108,7 @@ export class TaskviewComponent implements OnInit {
     this.maxResults = 0;
 
     const searchParameters = this.searchForm.value;
-    if (!searchParameters.taskType) {
+    if (!searchParameters.taskType && searchParameters.taskType !== 0) {
       searchParameters.taskType = '';
     }
     searchParameters.includeDone = this.includeDone;

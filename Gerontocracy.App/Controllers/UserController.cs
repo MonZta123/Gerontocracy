@@ -1,14 +1,12 @@
 ﻿using System.Threading.Tasks;
-
 using AutoMapper;
 using Gerontocracy.App.Models.Account;
 using Gerontocracy.App.Models.User;
 using Gerontocracy.Core.Interfaces;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Hivecluster.ClipMash.App.Controllers
+namespace Gerontocracy.App.Controllers
 {
     /// <summary>
     /// Controller, which manages all functions for the user
@@ -52,7 +50,7 @@ namespace Hivecluster.ClipMash.App.Controllers
         [HttpGet]
         [Route("user/{id:long}")]
         [AllowAnonymous]
-        public IActionResult GetUserPageData(long id)
+        public IActionResult GetUserData(long id)
             => Ok(_mapper.Map<UserData>(_userService.GetUserPageData(id)));
     }
 }
