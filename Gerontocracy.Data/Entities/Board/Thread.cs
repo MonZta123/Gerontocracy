@@ -16,6 +16,8 @@ namespace Gerontocracy.Data.Entities.Board
         public string Title { get; set; }
         
         public bool Generated { get; set; }
+
+        public bool Deleted { get; set; }
         
         [ForeignKey(nameof(Vorfall))]
         public long? VorfallId { get; set; }

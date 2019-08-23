@@ -136,6 +136,8 @@ namespace Gerontocracy.Core
                 .AddException<NewsNotFoundException>(HttpStatusCode.NotFound)
                 .AddException<AffairAlreadyAttachedToNewsException>(HttpStatusCode.BadRequest)
                 .AddException<UserNotFoundException>(HttpStatusCode.NotFound)
+                .AddException<AccountAlreadyBannedException>(HttpStatusCode.BadRequest)
+                .AddException<AccountNotBannedException>(HttpStatusCode.BadRequest)
                 .AddException<TaskNotFoundException>(HttpStatusCode.NotFound);
         }
     }

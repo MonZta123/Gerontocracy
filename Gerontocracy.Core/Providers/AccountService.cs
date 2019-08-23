@@ -13,12 +13,14 @@ using Gerontocracy.Core.Exceptions.Account;
 using Gerontocracy.Core.Interfaces;
 
 using Gerontocracy.Data;
-
+using Gerontocracy.Data.Entities.Account;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 using db = Gerontocracy.Data.Entities;
+using Role = Gerontocracy.Core.BusinessObjects.Account.Role;
+using User = Gerontocracy.Core.BusinessObjects.Account.User;
 
 namespace Gerontocracy.Core.Providers
 {
@@ -68,6 +70,58 @@ namespace Gerontocracy.Core.Providers
         public IQueryable<db.Account.Role> GetRoleQuery()
             => this._roleManager.Roles;
 
+        public void Ban(ClaimsPrincipal user, long userId, TimeSpan? duration, string reason)
+        {
+            var dbUser = this.GetUserRawOrDefault(userId);
+            if (dbUser == null)
+                throw new AccountNotFoundException();
+
+            var dbBan = _context.Ban.SingleOrDefault(n => (n.BanEnd == null || n.BanEnd > DateTime.Now) && n.BanLifted == null && n.BannedUserId == userId);
+            if (dbBan != null)
+                throw new AccountAlreadyBannedException();
+
+            var bannerId = this.GetIdOfUser(user);
+
+            _context.Add(new Ban()
+            {
+                BanDate = DateTime.Now,
+                BannedById = bannerId,
+                Reason = reason,
+                BanEnd = duration.HasValue ? DateTime.Now.Add(duration.Value) : (DateTime?)null,
+                BannedUserId = userId
+            });
+
+            _context.SaveChanges();
+        }
+
+        public void Unban(ClaimsPrincipal user, long userId, string reason)
+        {
+            var dbUser = this.GetUserRawOrDefault(userId);
+            if (dbUser == null)
+                throw new AccountNotFoundException();
+
+            var dbBan = _context.Ban.SingleOrDefault(n => (n.BanEnd == null || n.BanEnd > DateTime.Now) && n.BanLifted == null && n.BannedUserId == userId);
+            if (dbBan == null)
+                throw new AccountNotBannedException();
+
+            var unbannerId = GetIdOfUser(user);
+
+            dbBan.BanLifted = DateTime.Now;
+            dbBan.BanLiftReason = reason;
+            dbBan.UnbannedById = unbannerId;
+
+            _context.SaveChanges();
+        }
+
+        public bool TryFindBan(long userId, out db.Account.Ban ban)
+        {
+            ban = _context.Ban.SingleOrDefault(n => (n.BanEnd == null || n.BanEnd > DateTime.Now)
+                                       && n.BanLifted == null
+                                       && n.BannedUserId == userId);
+            return ban != null;
+        }
+
+
         public async Task<User> GetUserAsync(string name)
         {
             var user = await _userManager.FindByNameAsync(name);
@@ -83,6 +137,19 @@ namespace Gerontocracy.Core.Providers
 
             if (userObj == null)
                 throw new AccountNotFoundException();
+
+            if (TryFindBan(userObj.Id, out var ban))
+            {
+                var message = "Gesperrt";
+
+                message = ban.BanEnd.HasValue 
+                    ? $"{message} bis {ban.BanEnd.Value:dd.MM.yyyy HH:mm:ss}."
+                    : $"{message} auf unbestimmte Zeit.";
+
+                message = $"{message} Grund: \"{ban.Reason}\"";
+
+                throw new AccountIsBannedException(message);
+            }
 
             if (!await _userManager.IsEmailConfirmedAsync(userObj))
                 throw new EmailNotConfirmedException();
@@ -166,12 +233,15 @@ namespace Gerontocracy.Core.Providers
 
         public async Task<db.Account.User> GetUserRaw(long userId)
         {
-            var user = await _userManager.Users.SingleOrDefaultAsync(n => n.Id == userId);
+            var user = await GetUserRawOrDefault(userId);
             if (user == null)
                 throw new AccountNotFoundException();
 
             return user;
         }
+
+        public async Task<db.Account.User> GetUserRawOrDefault(long userId)
+            => await _userManager.Users.SingleOrDefaultAsync(n => n.Id == userId);
 
         public async Task<db.Account.Role> GetRoleRaw(long roleId)
         {

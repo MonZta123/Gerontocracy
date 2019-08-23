@@ -31,6 +31,8 @@ namespace Gerontocracy.Data.Entities.Board
         public long? UserId { get; set; }
         public User User { get; set; }
 
+        public bool Deleted { get; set; }
+
         public ICollection<Post> Children { get; set; }
         public ICollection<Like> Likes { get; set; }
     }

@@ -118,7 +118,7 @@ namespace Gerontocracy.Core.Providers
             "ORDER BY posts.\"CreatedOn\" DESC " +
             "LIMIT    @limit " +
             "OFFSET   @offset ";
-
+        
         private readonly IAccountService _accountService;
         private readonly GerontocracyContext _context;
         private readonly IMapper _mapper;
@@ -307,6 +307,28 @@ namespace Gerontocracy.Core.Providers
                 throw new PostNotFoundException();
 
             this._taskService.Report(userId, TaskType.PostReport, comment, post.Id.ToString());
+        }
+
+        public void DeletePost(long postId)
+        {
+            var post = _context.Post.SingleOrDefault(n => n.Id == postId);
+
+            if (post == null)
+                throw new PostNotFoundException();
+
+            post.Deleted = true;
+            _context.SaveChanges();
+        }
+
+        public void DeleteThread(long threadId)
+        {
+            var thread = _context.Thread.SingleOrDefault(n => n.Id == threadId);
+
+            if (thread == null)
+                throw new ThreadNotFoundException();
+
+            thread.Deleted = true;
+            _context.SaveChanges();
         }
 
         public SearchResult<ThreadOverview> Search(SearchParameters parameters, int pageSize = 25, int pageIndex = 0)

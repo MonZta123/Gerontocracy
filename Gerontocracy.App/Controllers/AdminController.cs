@@ -228,5 +228,55 @@ namespace Gerontocracy.App.Controllers
         [Authorize(Roles = "admin,moderator")]
         public IActionResult ReopenTask([FromBody] long id)
             => Ok(_taskService.ReopenTask(id));
+
+        /// <summary>
+        /// Deletes a post
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("post/{id:long}")]
+        [Authorize(Roles = "admin,moderator")]
+        public IActionResult DeletePost(long id)
+        {
+            return Ok();
+        }
+
+        /// <summary>
+        /// Deletes a thread
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("thread/{id:long}")]
+        [Authorize(Roles = "admin,moderator")]
+        public IActionResult DeleteThread(long id)
+        {
+            return Ok();
+        }
+
+        /// <summary>
+        /// Bans a user
+        /// </summary>
+        /// <returns>statuscode</returns>
+        [HttpPost]
+        [Route("ban")]
+        [Authorize(Roles = "admin,moderator")]
+        public IActionResult BanUser()
+        {
+            return Ok();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("unban")]
+        [Authorize(Roles = "admin,moderator")]
+        public IActionResult UnbanUser()
+        {
+            return Ok();
+        }
     }
 }

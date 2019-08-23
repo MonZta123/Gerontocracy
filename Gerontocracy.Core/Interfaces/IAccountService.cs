@@ -1,4 +1,5 @@
-﻿using Gerontocracy.Core.BusinessObjects.Account;
+﻿using System;
+using Gerontocracy.Core.BusinessObjects.Account;
 
 using Microsoft.AspNetCore.Identity;
 
@@ -59,6 +60,8 @@ namespace Gerontocracy.Core.Interfaces
 
         Task<Data.Entities.Account.User> GetUserRaw(long userId);
 
+        Task<Data.Entities.Account.User> GetUserRawOrDefault(long userId);
+        
         Task<Data.Entities.Account.Role> GetRoleRaw(long roleId);
 
         IEnumerable<Role> GetRolesAsync();
@@ -68,5 +71,11 @@ namespace Gerontocracy.Core.Interfaces
         IQueryable<Data.Entities.Account.User> GetUserQuery();
 
         IQueryable<Data.Entities.Account.Role> GetRoleQuery();
+
+        void Ban(ClaimsPrincipal user, long userId, TimeSpan? duration, string reason);
+
+        void Unban(ClaimsPrincipal user, long userId, string reason);
+
+        bool TryFindBan(long userId, out Data.Entities.Account.Ban ban);
     }
 }
