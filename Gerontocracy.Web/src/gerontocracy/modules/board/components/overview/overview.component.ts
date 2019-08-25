@@ -105,8 +105,6 @@ export class OverviewComponent implements OnInit {
   }
 
   loadData(): void {
-    this.pageIndex = 0;
-    this.maxResults = 0;
     this.isLoadingData = true;
     this.boardService.search(this.searchForm.value, this.pageSize, this.pageIndex)
       .toPromise()

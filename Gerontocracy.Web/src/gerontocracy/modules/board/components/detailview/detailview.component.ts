@@ -68,6 +68,28 @@ export class DetailviewComponent implements OnInit {
     });
   }
 
+  deleteThread() {
+    this.confirmationService.confirm({
+      message: 'Soll dieser Thread wirklich gelöscht werden?',
+      header: 'Löschen?',
+      acceptLabel: 'Löschen',
+      rejectLabel: 'Abbrechen',
+      accept: () => {
+        this.adminService.deleteThread(this.data.id)
+          .toPromise()
+          .then(() => this.confirmationService.confirm({
+            message: 'Der Thread wurde gelöscht!',
+            accept: () => window.location.href = '/board',
+            icon: 'pi pi-check',
+            header: 'Fertig',
+            rejectVisible: false,
+            acceptLabel: 'Schließen'
+          }));
+      },
+      reject: () => window.location.reload()
+    });
+  }
+
   like(type: LikeType, post: Post) {
     if (post.deleted) { return; }
 
@@ -121,7 +143,7 @@ export class DetailviewComponent implements OnInit {
       message: 'Soll dieser Post wirklich gelöscht werden?',
       header: 'Löschen?',
       acceptLabel: 'Löschen',
-      reject: () => window.location.reload(),
+      rejectLabel: 'Abbrechen',
       accept: () => {
         this.adminService.deletePost(post.id)
           .toPromise()
@@ -132,7 +154,7 @@ export class DetailviewComponent implements OnInit {
             icon: 'pi pi-check',
             header: 'Fertig',
             rejectVisible: false,
-            acceptLabel: 'Schließen'
+            acceptLabel: 'Schließen',
           }));
       }
     });

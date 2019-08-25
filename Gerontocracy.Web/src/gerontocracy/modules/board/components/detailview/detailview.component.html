@@ -5,6 +5,8 @@
                 <b class="mt-0">{{data.titel}}</b>
             </div>
             <div class="ui-g-12 ui-lg-4 ui-md-12" *ngIf="!isPopup" align="end">
+                <p-button icon="pi pi-trash" styleClass="ui-button-danger" class="mr-5" (click)="deleteThread()">
+                </p-button>
                 <p-button icon="pi pi-window-maximize" (click)="popout.emit()"></p-button>
             </div>
         </div>
@@ -16,6 +18,7 @@
                 Kein Verantwortlicher!
             </div>
         </div>
+
     </p-panel>
 </div>
 <div class="mt-5" [ngStyle]="{ 'width' : isPopup ? '800px' : 'unset' }">
@@ -76,4 +79,4 @@
     </p-tree>
 </div>
 
-<p-confirmDialog [closable]="false"></p-confirmDialog>
+<p-confirmDialog [closable]="false" rejectButtonStyleClass="ui-button-secondary"></p-confirmDialog>
