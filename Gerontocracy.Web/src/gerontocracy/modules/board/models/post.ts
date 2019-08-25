@@ -10,4 +10,5 @@ export interface Post {
     likes: number;
     dislikes: number;
     children: Post[];
+    deleted: boolean;
 }

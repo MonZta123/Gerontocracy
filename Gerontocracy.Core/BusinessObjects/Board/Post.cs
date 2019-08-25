@@ -15,6 +15,8 @@ namespace Gerontocracy.Core.BusinessObjects.Board
         public int Likes { get; set; }
         public int Dislikes { get; set; }
 
+        public bool Deleted { get; set; }
+
         public LikeType? UserLike { get; set; }
 
         public long? ParentId { get; set; }

@@ -70,7 +70,7 @@ namespace Gerontocracy.Core.Providers
         public IQueryable<db.Account.Role> GetRoleQuery()
             => this._roleManager.Roles;
 
-        public void Ban(ClaimsPrincipal user, long userId, TimeSpan? duration, string reason)
+        public void BanUser(ClaimsPrincipal user, long userId, TimeSpan? duration, string reason)
         {
             var dbUser = this.GetUserRawOrDefault(userId);
             if (dbUser == null)

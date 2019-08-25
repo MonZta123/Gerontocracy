@@ -33,6 +33,7 @@ export class OverviewComponent implements OnInit {
 
   data: ThreadOverview[];
   detailData: ThreadDetail;
+  isAdmin: boolean;
 
   isLoadingData: boolean;
 
@@ -41,6 +42,12 @@ export class OverviewComponent implements OnInit {
   searchForm: FormGroup;
 
   ngOnInit() {
+    this.isAdmin = false;
+    this.sharedAccountService.whoami().toPromise().then(n => {
+      if (n.roles.includes('admin') || n.roles.includes('moderator')) {
+        this.isAdmin = true;
+      }
+    })
     this.popupVisible = false;
 
     this.searchForm = this.formBuilder.group({

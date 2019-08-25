@@ -72,7 +72,7 @@ namespace Gerontocracy.Core.Interfaces
 
         IQueryable<Data.Entities.Account.Role> GetRoleQuery();
 
-        void Ban(ClaimsPrincipal user, long userId, TimeSpan? duration, string reason);
+        void BanUser(ClaimsPrincipal user, long userId, TimeSpan? duration, string reason);
 
         void Unban(ClaimsPrincipal user, long userId, string reason);
 

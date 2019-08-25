@@ -9,6 +9,8 @@ import { UserOverview } from '../models/user-overview';
 import { AufgabeOverview } from '../models/aufgabe-overview';
 import { AufgabeDetail } from '../models/aufgabe-detail';
 import { User } from '../../../models/user';
+import { BanData } from '../models/ban-data';
+import { UnbanData } from '../models/unban-data';
 
 @Injectable({
   providedIn: 'root'
@@ -73,5 +75,21 @@ export class AdminService {
 
   reopenTask(id: number): Observable<boolean> {
     return this.httpClient.post<boolean>(`api/admin/task/reopen`, id);
+  }
+
+  deletePost(id: number): Observable<void> {
+    return this.httpClient.delete<void>(`api/admin/post/${id}`);
+  }
+
+  deleteThread(id: number): Observable<void> {
+    return this.httpClient.delete<void>(`api/admin/thread/${id}`);
+  }
+
+  banUser(banData: BanData): Observable<void> {
+    return this.httpClient.post<void>(`api/admin/ban`, banData);
+  }
+
+  unbanUser(unbanData: UnbanData): Observable<void> {
+    return this.httpClient.post<void>(`api/admin/unban`, unbanData);
   }
 }

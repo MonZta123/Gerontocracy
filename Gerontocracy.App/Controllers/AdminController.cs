@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using AutoMapper;
@@ -28,6 +29,7 @@ namespace Gerontocracy.App.Controllers
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
         private readonly ITaskService _taskService;
+        private readonly IBoardService _boardService;
 
         /// <summary>
         /// Constructor
@@ -35,16 +37,19 @@ namespace Gerontocracy.App.Controllers
         /// <param name="accountService">account service</param>
         /// <param name="userService">user service</param>
         /// <param name="taskService">task service</param>
+        /// <param name="boardService">board service</param>
         /// <param name="mapper">mapper</param>
         public AdminController(
             IAccountService accountService,
             IUserService userService,
             ITaskService taskService,
+            IBoardService boardService,
             IMapper mapper)
         {
             this._accountService = accountService;
             this._userService = userService;
             this._taskService = taskService;
+            this._boardService = boardService;
             this._mapper = mapper;
         }
 
@@ -239,6 +244,7 @@ namespace Gerontocracy.App.Controllers
         [Authorize(Roles = "admin,moderator")]
         public IActionResult DeletePost(long id)
         {
+            _boardService.DeletePost(id);
             return Ok();
         }
 
@@ -252,6 +258,7 @@ namespace Gerontocracy.App.Controllers
         [Authorize(Roles = "admin,moderator")]
         public IActionResult DeleteThread(long id)
         {
+            _boardService.DeleteThread(id);
             return Ok();
         }
 
@@ -262,20 +269,22 @@ namespace Gerontocracy.App.Controllers
         [HttpPost]
         [Route("ban")]
         [Authorize(Roles = "admin,moderator")]
-        public IActionResult BanUser()
+        public IActionResult BanUser([FromBody] BanData data)
         {
+            _accountService.BanUser(User, data.UserId, data.Duration, data.Reason);
             return Ok();
         }
 
         /// <summary>
-        /// 
+        /// Unbans a user
         /// </summary>
-        /// <returns></returns>
+        /// <returns>statuscode</returns>
         [HttpPost]
         [Route("unban")]
         [Authorize(Roles = "admin,moderator")]
-        public IActionResult UnbanUser()
+        public IActionResult UnbanUser([FromBody] UnbanData data)
         {
+            _accountService.Unban(User, data.UserId, data.Reason);
             return Ok();
         }
     }
