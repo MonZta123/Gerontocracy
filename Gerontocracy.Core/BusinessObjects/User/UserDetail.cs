@@ -18,7 +18,9 @@ namespace Gerontocracy.Core.BusinessObjects.User
 
         public int AccessFailedCount { get; set; }
 
-        public DateTimeOffset? LockoutEnd { get; set; }
+        public bool Banned { get; set; }
+
+        public DateTime? LockoutEnd { get; set; }
 
         public IEnumerable<Role> Roles { get; set; }
     }

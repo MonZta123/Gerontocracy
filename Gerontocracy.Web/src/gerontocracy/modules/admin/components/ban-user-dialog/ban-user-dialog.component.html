@@ -1,0 +1,30 @@
+<div class="ui-g-fluid">
+    <div class="ui-g" [formGroup]="formGroup">
+        <div class="ui-g-12">
+            <div class="ui-inputgroup">
+                <span class="ui-inputgroup-addon"><i class="pi pi-clock"></i></span>
+                <p-dropdown [options]="times" formControlName="duration">
+                    <ng-template let-lockduration pTemplate="selectedItem">
+                        {{lockduration.label}}
+                    </ng-template>
+                    <ng-template let-lockduration pTemplate="item">
+                        {{lockduration.label}}
+                    </ng-template>
+                </p-dropdown>
+            </div>
+        </div>
+        <div class="ui-g-12">
+            <div class="ui-inputgroup">
+                <span class="ui-inputgroup-addon"><i class="pi pi-pencil"></i></span>
+                <input type="text" pInputText placeholder="Grund" class="max-width" formControlName="reason">
+            </div>
+        </div>
+    </div>
+    <div class="ui-g">
+        <div class="ui-g-12" align="end">
+            <p-button icon="pi pi-lock" label="User sperren" class="mr-5" (click)="confirmBan()"></p-button>
+            <p-button icon="pi pi-times" label="Abbrechen" (click)="cancel()" styleClass="ui-button-secondary">
+            </p-button>
+        </div>
+    </div>
+</div>

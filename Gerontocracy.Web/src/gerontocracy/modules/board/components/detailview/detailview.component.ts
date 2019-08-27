@@ -15,7 +15,7 @@ import { AdminService } from '../../../admin/services/admin.service';
   selector: 'app-detailview',
   templateUrl: './detailview.component.html',
   styleUrls: ['./detailview.component.scss'],
-  providers: [DialogService]
+  providers: [DialogService, ConfirmationService]
 })
 export class DetailviewComponent implements OnInit {
 
@@ -57,7 +57,6 @@ export class DetailviewComponent implements OnInit {
         this.boardService.report(data).toPromise().then(() => {
           this.confirmationService.confirm({
             message: 'Die Meldung wurde eingereicht. Danke für deine Mithilfe!',
-            accept: () => window.location.reload(),
             icon: 'pi pi-check',
             header: 'Fertig',
             rejectVisible: false,
@@ -85,8 +84,7 @@ export class DetailviewComponent implements OnInit {
             rejectVisible: false,
             acceptLabel: 'Schließen'
           }));
-      },
-      reject: () => window.location.reload()
+      }
     });
   }
 
@@ -150,7 +148,6 @@ export class DetailviewComponent implements OnInit {
           .then(() => post.deleted = true)
           .then(() => this.confirmationService.confirm({
             message: 'Der Post wurde gelöscht!',
-            accept: () => window.location.reload(),
             icon: 'pi pi-check',
             header: 'Fertig',
             rejectVisible: false,

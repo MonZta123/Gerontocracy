@@ -270,10 +270,7 @@ namespace Gerontocracy.App.Controllers
         [Route("ban")]
         [Authorize(Roles = "admin,moderator")]
         public IActionResult BanUser([FromBody] BanData data)
-        {
-            _accountService.BanUser(User, data.UserId, data.Duration, data.Reason);
-            return Ok();
-        }
+        => Ok(_accountService.BanUser(User, data.UserId, data.Duration, data.Reason));
 
         /// <summary>
         /// Unbans a user
@@ -284,7 +281,7 @@ namespace Gerontocracy.App.Controllers
         [Authorize(Roles = "admin,moderator")]
         public IActionResult UnbanUser([FromBody] UnbanData data)
         {
-            _accountService.Unban(User, data.UserId, data.Reason);
+            _accountService.UnbanUser(User, data.UserId, data.Reason);
             return Ok();
         }
     }

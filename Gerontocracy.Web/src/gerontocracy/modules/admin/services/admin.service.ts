@@ -85,8 +85,8 @@ export class AdminService {
     return this.httpClient.delete<void>(`api/admin/thread/${id}`);
   }
 
-  banUser(banData: BanData): Observable<void> {
-    return this.httpClient.post<void>(`api/admin/ban`, banData);
+  banUser(banData: BanData): Observable<Date> {
+    return this.httpClient.post<Date>(`api/admin/ban`, banData);
   }
 
   unbanUser(unbanData: UnbanData): Observable<void> {

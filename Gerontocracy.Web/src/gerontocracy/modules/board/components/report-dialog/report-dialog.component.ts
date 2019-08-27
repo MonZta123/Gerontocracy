@@ -5,7 +5,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 @Component({
   selector: 'app-report-dialog',
   templateUrl: './report-dialog.component.html',
-  styleUrls: ['./report-dialog.component.scss']
+  styleUrls: ['./report-dialog.component.scss'],
+  providers: [ConfirmationService]
 })
 export class ReportDialogComponent implements OnInit {
 
@@ -25,11 +26,18 @@ export class ReportDialogComponent implements OnInit {
     });
   }
 
+  /*
+  header="Melden?" icon="pi pi-exclamation-triangle" acceptLabel="Melden" rejectLabel="Abbrechen"
+  */
+
   report() {
-    console.log(this.formGroup.valid);
     if (this.formGroup.valid) {
       this.confirmationService.confirm({
         message: 'Sicher, dass du diesen Beitrag melden möchtest?',
+        header: 'Melden?',
+        icon: 'pi pi-exclamation-triangle',
+        acceptLabel: 'Melden',
+        rejectLabel: 'Abbrechen',
         accept: () => {
           this.close(this.formGroup.controls.comment.value);
         }

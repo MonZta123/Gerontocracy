@@ -70,7 +70,7 @@ namespace Gerontocracy.Core.Providers
         public IQueryable<db.Account.Role> GetRoleQuery()
             => this._roleManager.Roles;
 
-        public void BanUser(ClaimsPrincipal user, long userId, TimeSpan? duration, string reason)
+        public DateTime? BanUser(ClaimsPrincipal user, long userId, TimeSpan? duration, string reason)
         {
             var dbUser = this.GetUserRawOrDefault(userId);
             if (dbUser == null)
@@ -82,19 +82,22 @@ namespace Gerontocracy.Core.Providers
 
             var bannerId = this.GetIdOfUser(user);
 
-            _context.Add(new Ban()
+            var ban = new Ban()
             {
                 BanDate = DateTime.Now,
                 BannedById = bannerId,
                 Reason = reason,
-                BanEnd = duration.HasValue ? DateTime.Now.Add(duration.Value) : (DateTime?)null,
+                BanEnd = duration.HasValue ? DateTime.Now.Add(duration.Value) : (DateTime?) null,
                 BannedUserId = userId
-            });
+            };
 
+            _context.Add(ban);
             _context.SaveChanges();
+
+            return ban.BanEnd;
         }
 
-        public void Unban(ClaimsPrincipal user, long userId, string reason)
+        public void UnbanUser(ClaimsPrincipal user, long userId, string reason)
         {
             var dbUser = this.GetUserRawOrDefault(userId);
             if (dbUser == null)

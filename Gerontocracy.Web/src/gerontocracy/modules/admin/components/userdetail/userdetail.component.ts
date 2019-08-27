@@ -3,8 +3,12 @@ import { UserDetail } from '../../models/user-detail';
 import { DialogService } from 'primeng/api';
 import { AddRoleDialogComponent } from '../add-role-dialog/add-role-dialog.component';
 import { AdminService } from '../../services/admin.service';
-import { SharedAccountService } from '../../../shared/services/shared-account.service';
 import { AccountService } from 'Gerontocracy.Web/src/gerontocracy/services/account.service';
+import { BanUserDialogComponent } from '../ban-user-dialog/ban-user-dialog.component';
+import { BanData } from '../../models/ban-data';
+import { getLocaleDateTimeFormat } from '@angular/common';
+import { UnbanUserDialogComponent } from '../unban-user-dialog/unban-user-dialog.component';
+import { UnbanData } from '../../models/unban-data';
 
 @Component({
   selector: 'app-userdetail',
@@ -56,5 +60,35 @@ export class UserdetailComponent implements OnInit {
     this.adminService.revokeRole({ userId: this.data.id, roleId: id })
       .toPromise()
       .then(n => this.data.roles = this.data.roles.filter(m => m.id !== id));
+  }
+
+  banUser() {
+    this.dialogService.open(BanUserDialogComponent, {
+      closable: false,
+      header: 'User sperren',
+    }).onClose.subscribe(n => {
+      if (n) {
+        const data: BanData = { ...n, userId: this.data.id };
+        this.adminService.banUser(data).toPromise().then(m => {
+          this.data.banned = true;
+          this.data.lockoutEnd = m;
+        });
+      }
+    });
+  }
+
+  unbanUser() {
+    this.dialogService.open(UnbanUserDialogComponent, {
+      closable: false,
+      header: 'User entsperren',
+    }).onClose.subscribe(n => {
+      if (n) {
+        const data: UnbanData = { ...n, userId: this.data.id };
+        this.adminService.unbanUser(data).toPromise().then(m => {
+          this.data.banned = false;
+          this.data.lockoutEnd = undefined;
+        });
+      }
+    });
   }
 }

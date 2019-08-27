@@ -5,7 +5,7 @@ using Gerontocracy.App.Models.Account;
 namespace Gerontocracy.App.Models.Admin
 {
     /// <summary>
-    /// Descriptiuon of detailed user object
+    /// Description of detailed user object
     /// </summary>
     public class UserDetail
     {
@@ -40,9 +40,14 @@ namespace Gerontocracy.App.Models.Admin
         public int AccessFailedCount { get; set; }
 
         /// <summary>
+        /// User is banned
+        /// </summary>
+        public bool Banned { get; set; }
+
+        /// <summary>
         /// When is the lockout over?
         /// </summary>
-        public DateTimeOffset? LockoutEnd { get; set; }
+        public DateTime? LockoutEnd { get; set; }
 
         /// <summary>
         /// The users roles

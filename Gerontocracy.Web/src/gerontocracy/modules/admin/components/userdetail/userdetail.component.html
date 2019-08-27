@@ -1,38 +1,56 @@
 <div class="ui-fluid">
-    <div>
-        <p-panel header="Allgemeine Infos">
-            <div class="ui-g">
-                <div class="ui-g-12">
-                    <b>{{data.userName}}</b>
+    <div class="ui-g">
+        <div class="ui-g-12">
+            <p-panel header="Allgemeine Infos">
+                <div class="ui-g">
+                    <div class="ui-g-12">
+                        <b>{{data.userName}}</b>
+                    </div>
                 </div>
-            </div>
-        </p-panel>
+                <div class="ui-g" *ngIf="!data.banned">
+                    <div class="ui-g-12">
+                        <p-button label="Sperren" icon="pi pi-lock" (click)="banUser()"></p-button>
+                    </div>
+                </div>
+                <div class="ui-g" *ngIf="data.banned">
+                    <div class="ui-g-12 ui-lg-8 ui-md-12">
+                        Gesperrt bis: {{data.lockoutEnd ? (data.lockoutEnd | date: 'dd.MM.yyyy hh:mm') : 'Permanent'}}
+                    </div>
+                    <div class="ui-g-12 ui-lg-4 ui-md-12">
+                        <p-button label="Entsperren" icon="pi pi-unlock" (click)="unbanUser()"></p-button>
+                    </div>
+                </div>
+            </p-panel>
+        </div>
     </div>
-    <div class="mt-5" *ngIf="isAdmin">
-        <p-table title="Rollen" [value]="data.roles">
-            <ng-template pTemplate="header">
-                <tr>
-                    <th>Rolle</th>
-                    <th width="12%">
-                        <button pButton class="action-button" icon="pi pi-plus" (click)="addRole()"></button>
-                    </th>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-row>
-                <tr>
-                    <td>{{row.name}}</td>
-                    <td>
-                        <button pButton class="action-button" icon="pi pi-trash" (click)="revokeRole(row.id)"></button>
-                    </td>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="emptymessage" let-columns>
-                <tr>
-                    <td colspan="2">
-                        Keine Rollen zugewiesen
-                    </td>
-                </tr>
-            </ng-template>
-        </p-table>
+    <div class="ui-g" *ngIf="isAdmin">
+        <div class="ui-g-12">
+            <p-table title="Rollen" [value]="data.roles">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Rolle</th>
+                        <th width="12%">
+                            <button pButton class="action-button" icon="pi pi-plus" (click)="addRole()"></button>
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-row>
+                    <tr>
+                        <td>{{row.name}}</td>
+                        <td>
+                            <button pButton class="action-button" icon="pi pi-trash"
+                                (click)="revokeRole(row.id)"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage" let-columns>
+                    <tr>
+                        <td colspan="2">
+                            Keine Rollen zugewiesen
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
     </div>
 </div>

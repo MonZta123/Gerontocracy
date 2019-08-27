@@ -29,7 +29,7 @@ namespace Gerontocracy.Data.Entities.Account
         public User BannedBy { get; set; }
 
         [ForeignKey(nameof(UnbannedBy))]
-        public long UnbannedById { get; set; }
+        public long? UnbannedById { get; set; }
         public User UnbannedBy { get; set; }
     }
 }
