@@ -44,7 +44,7 @@ export class OverviewComponent implements OnInit {
   ngOnInit() {
     this.isAdmin = false;
     this.sharedAccountService.whoami().toPromise().then(n => {
-      if (n.roles.includes('admin') || n.roles.includes('moderator')) {
+      if (n && n.roles && (n.roles.includes('admin') || n.roles.includes('moderator'))) {
         this.isAdmin = true;
       }
     })

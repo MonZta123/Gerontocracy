@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { MenuItem } from 'primeng/components/common/menuitem';
 import { User } from '../models/user';
 import { AccountService } from '../services/account.service';
-import { FormBuilder } from '@angular/forms';
 import { DialogService } from 'primeng/api';
 import { LoginDialogComponent } from './login-dialog/login-dialog.component';
 import { RegisterDialogComponent } from './register-dialog/register-dialog.component';
@@ -10,7 +9,8 @@ import { RegisterDialogComponent } from './register-dialog/register-dialog.compo
 @Component({
   selector: 'app-root',
   templateUrl: './gerontocracy.component.html',
-  styleUrls: ['./gerontocracy.component.scss']
+  styleUrls: ['./gerontocracy.component.scss'],
+  providers: [DialogService]
 })
 export class GerontocracyComponent implements OnInit {
   @ViewChild('registrationTitle', { static: false }) registrationTitle: ElementRef;

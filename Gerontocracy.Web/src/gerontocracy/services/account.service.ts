@@ -14,9 +14,21 @@ import { User } from '../models/user';
 })
 export class AccountService {
 
+  public currentUser: User;
+
   constructor(
     private httpClient: HttpClient
-  ) { }
+  ) {
+
+  }
+
+  private refreshCurrentUser() {
+    this.getCurrentUser().toPromise().then(n => {
+      if (n) {
+        this.currentUser = n;
+      }
+    });
+  }
 
   getUserExists(user: string): Observable<boolean> {
     return this.httpClient.get<boolean>(`api/account/userexists/${user}`);

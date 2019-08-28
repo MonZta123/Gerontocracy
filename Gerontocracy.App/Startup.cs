@@ -86,11 +86,11 @@ namespace Gerontocracy.App
                 app.UseHttpsRedirection();
             }
             
+            // handle Application
+            app.UseGerontocracy();
+            
             // configure authentication
             app.UseAuthentication();
-
-            // handle Angular-Stuff
-            app.UseGerontocracy();
 
             // convert Exceptions to FaultDtos
             app.UseMorphius(opt => opt.GetGerontocracyEntries());

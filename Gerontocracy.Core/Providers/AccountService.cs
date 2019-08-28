@@ -70,9 +70,9 @@ namespace Gerontocracy.Core.Providers
         public IQueryable<db.Account.Role> GetRoleQuery()
             => this._roleManager.Roles;
 
-        public DateTime? BanUser(ClaimsPrincipal user, long userId, TimeSpan? duration, string reason)
+        public async Task<DateTime?> BanUser(ClaimsPrincipal user, long userId, TimeSpan? duration, string reason)
         {
-            var dbUser = this.GetUserRawOrDefault(userId);
+            var dbUser = await this.GetUserRawOrDefault(userId);
             if (dbUser == null)
                 throw new AccountNotFoundException();
 
@@ -87,9 +87,12 @@ namespace Gerontocracy.Core.Providers
                 BanDate = DateTime.Now,
                 BannedById = bannerId,
                 Reason = reason,
-                BanEnd = duration.HasValue ? DateTime.Now.Add(duration.Value) : (DateTime?) null,
+                BanEnd = duration.HasValue ? DateTime.Now.Add(duration.Value) : (DateTime?)null,
                 BannedUserId = userId
             };
+
+            await _userManager.SetLockoutEndDateAsync(dbUser,
+                duration.HasValue ? DateTime.Now.Add(duration.Value) : DateTime.MaxValue);
 
             _context.Add(ban);
             _context.SaveChanges();
@@ -97,9 +100,9 @@ namespace Gerontocracy.Core.Providers
             return ban.BanEnd;
         }
 
-        public void UnbanUser(ClaimsPrincipal user, long userId, string reason)
+        public async Task UnbanUser(ClaimsPrincipal user, long userId, string reason)
         {
-            var dbUser = this.GetUserRawOrDefault(userId);
+            var dbUser = await this.GetUserRawOrDefault(userId);
             if (dbUser == null)
                 throw new AccountNotFoundException();
 
@@ -113,17 +116,18 @@ namespace Gerontocracy.Core.Providers
             dbBan.BanLiftReason = reason;
             dbBan.UnbannedById = unbannerId;
 
+            await _userManager.SetLockoutEndDateAsync(dbUser, DateTime.Now);
+
             _context.SaveChanges();
         }
 
-        public bool TryFindBan(long userId, out db.Account.Ban ban)
+        public bool TryFindBan(long userId, out Ban ban)
         {
             ban = _context.Ban.SingleOrDefault(n => (n.BanEnd == null || n.BanEnd > DateTime.Now)
                                        && n.BanLifted == null
                                        && n.BannedUserId == userId);
             return ban != null;
         }
-
 
         public async Task<User> GetUserAsync(string name)
         {
@@ -141,11 +145,19 @@ namespace Gerontocracy.Core.Providers
             if (userObj == null)
                 throw new AccountNotFoundException();
 
+            if (!await _userManager.IsEmailConfirmedAsync(userObj))
+                throw new EmailNotConfirmedException();
+
+            var pwCorrect = await this._userManager.CheckPasswordAsync(userObj, user.Password);
+
+            if (!pwCorrect)
+                throw new CredentialException();
+
             if (TryFindBan(userObj.Id, out var ban))
             {
                 var message = "Gesperrt";
 
-                message = ban.BanEnd.HasValue 
+                message = ban.BanEnd.HasValue
                     ? $"{message} bis {ban.BanEnd.Value:dd.MM.yyyy HH:mm:ss}."
                     : $"{message} auf unbestimmte Zeit.";
 
@@ -154,15 +166,15 @@ namespace Gerontocracy.Core.Providers
                 throw new AccountIsBannedException(message);
             }
 
-            if (!await _userManager.IsEmailConfirmedAsync(userObj))
-                throw new EmailNotConfirmedException();
-
             var result = await this._signInManager.PasswordSignInAsync(userObj, user.Password, user.RememberMe, false);
 
             if (result.Succeeded)
+            {
+                await _userManager.ResetAccessFailedCountAsync(userObj);
                 return userObj.Id;
-            else
-                throw new CredentialException();
+            }
+
+            throw new ApplicationException();
         }
 
         public async Task RefreshSignIn(ClaimsPrincipal principal)

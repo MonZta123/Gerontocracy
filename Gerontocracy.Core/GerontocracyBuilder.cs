@@ -22,6 +22,7 @@ using Gerontocracy.Core.Config;
 using Gerontocracy.Core.Exceptions.Board;
 using Gerontocracy.Core.Exceptions.News;
 using Gerontocracy.Core.HostedServices;
+using Gerontocracy.Core.Middlewares;
 
 namespace Gerontocracy.Core
 {
@@ -118,6 +119,8 @@ namespace Gerontocracy.Core
                 }
             });
 
+            app.UseMiddleware<UserDestroyerMiddleware>();
+
             return app;
         }
 
@@ -137,6 +140,7 @@ namespace Gerontocracy.Core
                 .AddException<AffairAlreadyAttachedToNewsException>(HttpStatusCode.BadRequest)
                 .AddException<UserNotFoundException>(HttpStatusCode.NotFound)
                 .AddException<AccountAlreadyBannedException>(HttpStatusCode.BadRequest)
+                .AddException<AccountIsBannedException>(HttpStatusCode.Forbidden)
                 .AddException<AccountNotBannedException>(HttpStatusCode.BadRequest)
                 .AddException<TaskNotFoundException>(HttpStatusCode.NotFound);
         }
