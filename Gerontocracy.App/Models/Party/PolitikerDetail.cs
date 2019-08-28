@@ -48,16 +48,6 @@ namespace Gerontocracy.App.Models.Party
         public string Bundesland { get; set; }
 
         /// <summary>
-        /// Currently active in national council
-        /// </summary>
-        public bool IsNationalrat { get; set; }
-
-        /// <summary>
-        /// currently active in government
-        /// </summary>
-        public bool IsRegierung { get; set; }
-
-        /// <summary>
         /// Id of the party
         /// </summary>
         public long? ParteiId { get; set; }

@@ -31,5 +31,9 @@ namespace Gerontocracy.Data.Entities.News
         [ForeignKey(nameof(Vorfall))]
         public long? VorfallId { get; set; }
         public Vorfall Vorfall { get; set; }
+
+        [ForeignKey(nameof(RssSource))]
+        public long? RssSourceId { get; set; }
+        public RssSource RssSource { get; set; }
     }
 }

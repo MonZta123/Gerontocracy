@@ -8,24 +8,27 @@ using Gerontocracy.Core.Exceptions.News;
 using Gerontocracy.Core.Interfaces;
 using Gerontocracy.Data;
 using Gerontocracy.Data.Entities.Board;
+using Gerontocracy.Data.Entities.News;
 using Gerontocracy.Shared.Extensions;
-
+using Artikel = Gerontocracy.Core.BusinessObjects.News.Artikel;
 using db = Gerontocracy.Data.Entities;
 
 namespace Gerontocracy.Core.Providers
 {
     public class NewsService : INewsService
     {
-        public NewsService(IMapper mapper, GerontocracyContext context, IAccountService accountService)
+        public NewsService(IMapper mapper, GerontocracyContext context, IAccountService accountService, ISyncService syncService)
         {
             this._context = context;
             this._mapper = mapper;
             this._accountService = accountService;
+            this._syncService = syncService;
         }
 
         private readonly GerontocracyContext _context;
         private readonly IMapper _mapper;
         private readonly IAccountService _accountService;
+        private readonly ISyncService _syncService;
 
         public List<Artikel> GetLatestNews(int maxResults = 15)
             => _mapper.Map<List<Artikel>>(
@@ -80,6 +83,25 @@ namespace Gerontocracy.Core.Providers
             _context.SaveChanges();
 
             return news.VorfallId.GetValueOrDefault();
+        }
+
+        public long AddRssData(string url, string name)
+        {
+
+
+            var newSource = new RssSource
+            {
+                Name = name,
+                Url = url,
+                Enabled = true
+            };
+
+            _context.RssSource.Add(newSource);
+            _context.SaveChanges();
+
+            _syncService.SyncSource(newSource.Id);
+
+            return newSource.Id;
         }
     }
 }

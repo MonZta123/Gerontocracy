@@ -9,5 +9,7 @@ namespace Gerontocracy.Core.Interfaces
         List<Artikel> GetLatestNews(int maxResults = 15);
 
         long GenerateAffair(ClaimsPrincipal user, NewsData data);
+
+        long AddRssData(string url, string name);
     }
 }

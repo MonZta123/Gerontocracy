@@ -11,9 +11,6 @@
         public string AkadGradPost { get; set; }
         public string Wahlkreis { get; set; }
         public string Bundesland { get; set; }
-
-        public bool IsNationalrat { get; set; }
-        public bool IsRegierung { get; set; }
         
         public int Reputation { get; set; }
 

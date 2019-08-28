@@ -56,16 +56,6 @@
         public long? ParteiId { get; set; }
 
         /// <summary>
-        /// Is from national council
-        /// </summary>
-        public bool IsNationalrat { get; set; }
-
-        /// <summary>
-        /// Is from convernment
-        /// </summary>
-        public bool IsRegierung { get; set; }
-
-        /// <summary>
         /// Reputation of Politician
         /// </summary>
         public long Reputation { get; set; }

@@ -9,6 +9,4 @@ export interface PolitikerOverview {
     bundesland: string;
     parteiId?: number;
     reputation: number;
-    isRegierung: boolean;
-    isNationalrat: boolean;
 }

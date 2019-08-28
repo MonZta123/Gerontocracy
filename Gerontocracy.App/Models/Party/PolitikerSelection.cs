@@ -29,15 +29,5 @@
         /// Title Postfix
         /// </summary>
         public string AkadGradPost { get; set; }
-
-        /// <summary>
-        /// Is member of council
-        /// </summary>
-        public bool IsNationalrat { get; set; }
-
-        /// <summary>
-        /// Is member of government
-        /// </summary>
-        public bool IsRegierung { get; set; }
     }
 }

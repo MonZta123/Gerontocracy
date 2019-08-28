@@ -4,6 +4,4 @@ export interface PolitikerSelection {
     nachname: string;
     akadGradPre: string;
     akadGradPost: string;
-    isNationalrat: boolean;
-    isRegierung: boolean;
 }

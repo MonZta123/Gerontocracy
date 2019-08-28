@@ -12,7 +12,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Gerontocracy.Core.Config;
+using Gerontocracy.Data.Entities.Global;
 using Gerontocracy.Data.Entities.News;
+
 using en = Gerontocracy.Data.Entities;
 
 namespace Gerontocracy.Core.Providers
@@ -21,10 +23,8 @@ namespace Gerontocracy.Core.Providers
     {
         #region Fields
 
-        private readonly GerontocracySettings _gerontocracySettings;
-
         private readonly IHttpClientFactory _clientFactory;
-
+        private readonly GerontocracySettings _gerontocracySettings;
         #endregion Fields
 
         #region Constructors
@@ -44,144 +44,43 @@ namespace Gerontocracy.Core.Providers
         public async Task SyncPolitiker()
         {
             var parLoad = await LoadParteien();
-            var polLoad = await LoadNationalratPolitiker();
+            var polNationalratLoad = await LoadPolitiker(_gerontocracySettings.UrlNationalrat);
+            var polRegierungLoad = await LoadPolitiker(_gerontocracySettings.UrlRegierung);
 
             using (var context = new ContextFactory().CreateDbContext())
             {
                 context.Database.BeginTransaction();
 
-                var parDb = context.Partei.ToList();
-
-                parDb.ToList().ForEach(n =>
-                {
-                    var newObject = parLoad.SingleOrDefault(m => m.ExternalId == n.ExternalId);
-                    if (newObject != null)
-                    {
-                        n.Name = newObject.Name;
-                        n.Kurzzeichen = newObject.Kurzzeichen;
-                        n.ExternalId = newObject.ExternalId;
-                    }
-                });
-
-                var parNew = parLoad
-                    .Where(n => !parDb.Select(m => m.ExternalId).Contains(n.ExternalId))
-                    .Select(n => new en.Party.Partei()
-                    {
-                        Kurzzeichen = n.Kurzzeichen,
-                        ExternalId = n.ExternalId,
-                        Name = n.Name,
-                        Id = parDb.SingleOrDefault(m => m.ExternalId == n.ExternalId)?.Id ?? 0
-                    })
-                    .ToList();
-
-                context.AddRange(parNew.Where(n => n.Id == 0).ToList());
-                context.SaveChanges();
-
-                var polDb = context.Politiker.ToList();
-
-                polDb.ToList().ForEach(n =>
-                {
-                    var newObject = polLoad.SingleOrDefault(m => m.ExternalId == n.ExternalId);
-                    if (newObject != null)
-                    {
-                        n.Nachname = newObject.Nachname;
-                        n.Vorname = newObject.Vorname;
-                        n.Wahlkreis = newObject.Wahlkreis;
-                        n.Bundesland = newObject.Bundesland;
-                        n.AkadGradPost = newObject.AkadGradPost;
-                        n.AkadGradPre = newObject.AkadGradPre;
-                        n.ExternalId = newObject.ExternalId;
-                        n.ParteiId = parNew.Concat(parDb)
-                            .SingleOrDefault(m => m.Kurzzeichen == newObject.ParteiKurzzeichen)?.Id;
-                        n.IsNationalrat = true;
-                    }
-                    else
-                    {
-                        n.IsNationalrat = false;
-                    }
-                });
-
-                var polNew = polLoad.Where(n => !polDb.Select(m => m.ExternalId).Contains(n.ExternalId));
-                var polNewMapped = polNew.Select(n => new en.Party.Politiker
-                {
-                    Nachname = n.Nachname,
-                    Vorname = n.Vorname,
-                    Wahlkreis = n.Wahlkreis,
-                    Bundesland = n.Bundesland,
-                    AkadGradPost = n.AkadGradPost,
-                    AkadGradPre = n.AkadGradPre,
-                    ExternalId = n.ExternalId,
-                    ParteiId = parNew.Concat(parDb).SingleOrDefault(m => m.Kurzzeichen == n.ParteiKurzzeichen)?.Id,
-                    IsNationalrat = true
-                });
-
-                context.AddRange(polNewMapped.Where(n => n.Id == 0).ToList());
-                context.SaveChanges();
+                var parliament = EnsureParliamentCreated(context);
+                UpdateParteien(context, parLoad, parliament.Id);
+                UpdatePolitiker(context, polNationalratLoad, parliament.Id);
+                UpdatePolitiker(context, polRegierungLoad, parliament.Id);
 
                 context.Database.CommitTransaction();
             }
         }
 
-        public async Task SyncApa()
+        public async Task SyncSource(long id)
         {
-            var feed = await FeedReader.ReadAsync("https://www.ots.at/rss/politik");
-
-            var newItems = feed.Items.Select(n => new Artikel()
-            {
-                Author = n.Author,
-                Description = n.Description,
-                Link = n.Link,
-                Title = n.Title,
-                PubDate = n.PublishingDate,
-                Identifier = n.Id
-            })
-            .ToList();
-
-            var identifiers = newItems.Select(n => n.Identifier);
-
             using (var context = new ContextFactory().CreateDbContext())
             {
-                var availableIds = context.Artikel.Select(n => n.Identifier).Intersect(identifiers).ToList();
-
-                newItems = newItems.Where(n => !availableIds.Contains(n.Identifier)).ToList();
-
-                context.AddRange(newItems);
+                var source = context.RssSource.Single(n => n.Id == id);
+                await Sync(context, source);
                 context.SaveChanges();
             }
         }
 
-        private async Task<List<Politiker>> LoadNationalratPolitiker()
+        public async Task SyncSources()
         {
-            var result = new List<Politiker>();
-
-            var feed = await FeedReader.ReadAsync(_gerontocracySettings.UrlNationalrat);
-
-            foreach (var item in feed.Items)
+            using (var context = new ContextFactory().CreateDbContext())
             {
-                var desc = item.Description.Replace("\n", string.Empty);
-                var tokens = desc.Split("<br />", StringSplitOptions.RemoveEmptyEntries);
+                var sources = context.RssSource.ToList();
 
-                var dict = tokens
-                    .Select(n => n.Trim())
-                    .ToDictionary(
-                        n => n.Split(":")[0].Trim(),
-                        n => Regex.Replace(n.Split(":")[1].Trim(), "<.*?>", string.Empty)
-                    );
+                foreach (var source in sources)
+                    await Sync(context, source);
 
-                result.Add(new Politiker
-                {
-                    ExternalId = Convert.ToInt64(item.Link.Split("/")[4].Split("_")[1]),
-                    Vorname = dict.GetValueOrDefault("Vorname"),
-                    Nachname = dict.GetValueOrDefault("Nachname"),
-                    AkadGradPost = dict.GetValueOrDefault("Ak. Grad nachg."),
-                    AkadGradPre = dict.GetValueOrDefault("Ak. Grad"),
-                    Bundesland = dict.GetValueOrDefault("Bundesland"),
-                    ParteiKurzzeichen = dict.GetValueOrDefault("Fraktion"),
-                    Wahlkreis = dict.GetValueOrDefault("Wahlkreis")
-                });
+                context.SaveChanges();
             }
-
-            return result;
         }
 
         private async Task<List<Partei>> LoadParteien()
@@ -219,6 +118,160 @@ namespace Gerontocracy.Core.Providers
             return result;
         }
 
+        private Parlament EnsureParliamentCreated(GerontocracyContext context)
+        {
+            var dbObj = context.Parlament.SingleOrDefault(n => n.Code.Equals("AT", StringComparison.CurrentCultureIgnoreCase));
+            if (dbObj == null)
+            {
+                dbObj = new Parlament()
+                {
+                    Code = "AT",
+                    Langtext = "Österreichisches Parlament"
+                };
+
+                context.Add(dbObj);
+                context.SaveChanges();
+            }
+
+            return dbObj;
+        }
+
+        private async Task<List<Politiker>> LoadPolitiker(string url)
+        {
+            var result = new List<Politiker>();
+
+            var feed = await FeedReader.ReadAsync(url);
+
+            foreach (var item in feed.Items)
+            {
+                var desc = item.Description.Replace("\n", string.Empty);
+                var tokens = desc.Split("<br />", StringSplitOptions.RemoveEmptyEntries);
+
+                var dict = tokens
+                    .Select(n => n.Trim())
+                    .ToDictionary(
+                        n => n.Split(":")[0].Trim(),
+                        n => Regex.Replace(n.Split(":")[1].Trim(), "<.*?>", string.Empty)
+                    );
+
+                result.Add(new Politiker
+                {
+                    ExternalId = Convert.ToInt64(item.Link.Split("/")[4].Split("_")[1]),
+                    Vorname = dict.GetValueOrDefault("Vorname"),
+                    Nachname = dict.GetValueOrDefault("Nachname"),
+                    AkadGradPost = dict.GetValueOrDefault("Ak. Grad nachg."),
+                    AkadGradPre = dict.GetValueOrDefault("Ak. Grad"),
+                    Bundesland = dict.GetValueOrDefault("Bundesland"),
+                    ParteiKurzzeichen = dict.GetValueOrDefault("Fraktion"),
+                    Wahlkreis = dict.GetValueOrDefault("Wahlkreis")
+                });
+            }
+
+            return result;
+        }
+
+        private async Task Sync(GerontocracyContext context, RssSource source)
+        {
+            var feed = await FeedReader.ReadAsync(source.Url);
+
+            var newItems = feed.Items.Select(n => new Artikel()
+            {
+                Author = n.Author,
+                Description = n.Description,
+                Link = n.Link,
+                Title = n.Title,
+                PubDate = n.PublishingDate,
+                Identifier = n.Id,
+                RssSourceId = source.Id
+            }).ToList();
+
+            var identifiers = newItems.Select(n => n.Identifier);
+
+            var availableIds = context.Artikel
+                .Select(n => n.Identifier)
+                .Intersect(identifiers)
+                .ToList();
+
+            newItems = newItems.Where(n => !availableIds.Contains(n.Identifier)).ToList();
+
+            context.AddRange(newItems);
+        }
+
+        private void UpdateParteien(GerontocracyContext context, List<Partei> parteien, long parlamentId)
+        {
+            var parDb = context.Partei.ToList();
+
+            parDb.ToList().ForEach(n =>
+            {
+                var newObject = parteien.SingleOrDefault(m => m.ExternalId == n.ExternalId);
+                if (newObject != null)
+                {
+                    n.Name = newObject.Name;
+                    n.Kurzzeichen = newObject.Kurzzeichen;
+                    n.ExternalId = newObject.ExternalId;
+                    n.ParlamentId = parlamentId;
+                }
+            });
+
+            var parNew = parteien
+                .Where(n => !parDb.Select(m => m.ExternalId).Contains(n.ExternalId))
+                .Select(n => new en.Party.Partei()
+                {
+                    Kurzzeichen = n.Kurzzeichen,
+                    ExternalId = n.ExternalId,
+                    Name = n.Name,
+                    Id = parDb.SingleOrDefault(m => m.ExternalId == n.ExternalId)?.Id ?? 0,
+                    ParlamentId = parlamentId
+                })
+                .ToList();
+
+            context.AddRange(parNew.Where(n => n.Id == 0).ToList());
+            context.SaveChanges();
+        }
+
+        private void UpdatePolitiker(GerontocracyContext context, List<Politiker> politiker, long parlamentId)
+        {
+            var polDb = context.Politiker.ToList();
+            var partys = context.Partei.ToList();
+
+            polDb.ToList().ForEach(n =>
+            {
+                var newObject = politiker
+                    .SingleOrDefault(m => m.ExternalId == n.ExternalId);
+
+                if (newObject != null)
+                {
+                    n.Nachname = newObject.Nachname;
+                    n.Vorname = newObject.Vorname;
+                    n.Wahlkreis = newObject.Wahlkreis;
+                    n.Bundesland = newObject.Bundesland;
+                    n.AkadGradPost = newObject.AkadGradPost;
+                    n.AkadGradPre = newObject.AkadGradPre;
+                    n.ExternalId = newObject.ExternalId;
+                    n.ParteiId = partys.SingleOrDefault(m => m.Kurzzeichen == newObject.ParteiKurzzeichen)?.Id;
+                    n.ParlamentId = parlamentId;
+                }
+            });
+
+            var polNewMapped = politiker
+                .Where(n => !polDb.Select(m => m.ExternalId)
+                .Contains(n.ExternalId))
+                .Select(n => new en.Party.Politiker
+                {
+                    Nachname = n.Nachname,
+                    Vorname = n.Vorname,
+                    Wahlkreis = n.Wahlkreis,
+                    Bundesland = n.Bundesland,
+                    AkadGradPost = n.AkadGradPost,
+                    AkadGradPre = n.AkadGradPre,
+                    ExternalId = n.ExternalId,
+                    ParteiId = partys.SingleOrDefault(m => m.Kurzzeichen == n.ParteiKurzzeichen)?.Id,
+                    ParlamentId = parlamentId
+                });
+
+            context.AddRange(polNewMapped.Where(n => n.Id == 0).ToList());
+            context.SaveChanges();
+        }
         #endregion Methods
     }
 }

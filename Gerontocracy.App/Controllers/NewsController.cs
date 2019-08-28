@@ -1,4 +1,5 @@
-﻿using Gerontocracy.Core.Interfaces;
+﻿using Gerontocracy.App.Models.News;
+using Gerontocracy.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Gerontocracy.App.Controllers
@@ -8,13 +9,13 @@ namespace Gerontocracy.App.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class SyncController : ControllerBase
+    public class NewsController : ControllerBase
     {
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="syncService">Syncservices</param>
-        public SyncController(ISyncService syncService)
+        public NewsController(ISyncService syncService)
         {
             this._syncService = syncService;
         }
@@ -22,13 +23,13 @@ namespace Gerontocracy.App.Controllers
         private readonly ISyncService _syncService;
 
         /// <summary>
-        /// 
+        /// Adds a new RSS feed
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult SyncApa()
+        [Route("rss")]
+        public IActionResult AddRssFeed([FromBody] RssData data)
         {
-            this._syncService.SyncApa();
             return Ok();
         }
     }

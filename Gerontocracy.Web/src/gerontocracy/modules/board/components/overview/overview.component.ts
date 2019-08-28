@@ -48,7 +48,7 @@ export class OverviewComponent implements OnInit {
       if (n && n.roles && (n.roles.includes('admin') || n.roles.includes('moderator'))) {
         this.isAdmin = true;
       }
-    })
+    });
     this.popupVisible = false;
 
     this.searchForm = this.formBuilder.group({

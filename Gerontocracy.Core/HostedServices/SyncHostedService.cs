@@ -59,7 +59,7 @@ namespace Gerontocracy.Core.HostedServices
                     scope.ServiceProvider
                         .GetRequiredService<ISyncService>();
 
-                syncService.SyncApa();
+                syncService.SyncSources();
             }
         }
 

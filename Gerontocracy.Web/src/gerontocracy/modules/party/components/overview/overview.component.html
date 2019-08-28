@@ -40,8 +40,6 @@
                                 <tr>
                                     <th width="30%">Name</th>
                                     <th width="7%">Partei</th>
-                                    <th width="7%">NatRat</th>
-                                    <th width="7%">Reg</th>
                                     <!-- <th width="30%">Bundesland</th> -->
                                     <th width="10%">Score</th>
                                     <th width="7.3%"></th>
@@ -51,8 +49,6 @@
                                 <tr>
                                     <td>{{row | fullname}}</td>
                                     <td>{{row.parteiKurzzeichen}}</td>
-                                    <td><i *ngIf="row.isNationalrat" class="pi pi-check"></i></td>
-                                    <td><i *ngIf="row.isRegierung" class="pi pi-check"></i></td>
                                     <!-- <td>{{row.bundesland}}</td> -->
                                     <td>{{row.reputation}}</td>
                                     <td>

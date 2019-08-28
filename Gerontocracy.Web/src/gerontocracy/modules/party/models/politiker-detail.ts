@@ -10,8 +10,6 @@ export interface PolitikerDetail {
     akadGradPost: string;
     wahlkreis: string;
     bundesland: string;
-    isRegierung: boolean;
-    isNationalrat: boolean;
     parteiId?: number;
     partei: ParteiOverview;
     vorfaelle: VorfallData[];

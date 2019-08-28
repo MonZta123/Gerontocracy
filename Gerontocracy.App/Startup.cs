@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-
+using System.Threading.Tasks;
 using AutoMapper;
 
 using Microsoft.AspNetCore.Builder;
@@ -15,6 +15,8 @@ using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Swagger;
 
 using Gerontocracy.Core;
+using Gerontocracy.Core.Config;
+using Microsoft.AspNetCore.Identity;
 using Morphius;
 
 namespace Gerontocracy.App
@@ -94,7 +96,9 @@ namespace Gerontocracy.App
 
             // convert Exceptions to FaultDtos
             app.UseMorphius(opt => opt.GetGerontocracyEntries());
-
+            
+            app.EnsureSeed().Wait();
+            
             // configure the app to serve index.html from /wwwroot folder    
             app.UseDefaultFiles();
             app.UseStaticFiles();

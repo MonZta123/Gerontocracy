@@ -19,4 +19,8 @@
     <ProjectReference Include="..\Morphius\Morphius.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Providers\SyncStrategies\" />
+  </ItemGroup>
+
 </Project>
