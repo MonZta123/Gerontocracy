@@ -76,6 +76,10 @@ namespace Gerontocracy.Core.Providers
             if (dbUser == null)
                 throw new AccountNotFoundException();
 
+            var roles = await _userManager.GetRolesAsync(dbUser);
+            if (roles.Contains("admin") || roles.Contains("moderator"))
+                throw new AccountCannotBeBannedException();
+
             var dbBan = _context.Ban.SingleOrDefault(n => (n.BanEnd == null || n.BanEnd > DateTime.Now) && n.BanLifted == null && n.BannedUserId == userId);
             if (dbBan != null)
                 throw new AccountAlreadyBannedException();
@@ -248,10 +252,20 @@ namespace Gerontocracy.Core.Providers
             => await _roleManager.CreateAsync(new db.Account.Role { Name = roleName });
 
         public async Task<IdentityResult> AddToRole(long userId, long roleId)
-            => await _userManager.AddToRoleAsync(await GetUserRaw(userId), (await GetRoleRaw(roleId)).Name);
+        {
+            if (await IsAdminRole(roleId))
+                throw new CannotChangeAdminPermissionException();
+
+            return await _userManager.AddToRoleAsync(await GetUserRaw(userId), (await GetRoleRaw(roleId)).Name);
+        }
 
         public async Task<IdentityResult> RemoveFromRole(long userId, long roleId)
-            => await _userManager.RemoveFromRoleAsync(await GetUserRaw(userId), (await GetRoleRaw(roleId)).Name);
+        {
+            if (await IsAdminRole(roleId))
+                throw new CannotChangeAdminPermissionException();
+
+            return await _userManager.RemoveFromRoleAsync(await GetUserRaw(userId), (await GetRoleRaw(roleId)).Name);
+        }
 
         public async Task<db.Account.User> GetUserRaw(long userId)
         {
@@ -375,5 +389,8 @@ namespace Gerontocracy.Core.Providers
 
         public string GetNameOfUserOrDefault(ClaimsPrincipal principal)
             => principal.Claims.SingleOrDefault(n => n.Type == ClaimTypes.Name)?.Value;
+        
+        private async Task<bool> IsAdminRole(long id)
+            => (await _roleManager.FindByIdAsync(id.ToString())).Name.Equals("admin", StringComparison.CurrentCultureIgnoreCase);
     }
 }

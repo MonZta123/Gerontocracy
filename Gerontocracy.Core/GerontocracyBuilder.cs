@@ -151,6 +151,8 @@ namespace Gerontocracy.Core
                 .AddException<AccountAlreadyBannedException>(HttpStatusCode.BadRequest)
                 .AddException<AccountIsBannedException>(HttpStatusCode.Forbidden)
                 .AddException<AccountNotBannedException>(HttpStatusCode.BadRequest)
+                .AddException<AccountCannotBeBannedException>(HttpStatusCode.BadRequest)
+                .AddException<CannotChangeAdminPermissionException>(HttpStatusCode.BadRequest)
                 .AddException<TaskNotFoundException>(HttpStatusCode.NotFound);
         }
     }

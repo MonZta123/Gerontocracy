@@ -24,6 +24,8 @@ export class UserdetailComponent implements OnInit {
   @Output() popout: EventEmitter<void> = new EventEmitter<void>();
 
   isAdmin: boolean;
+  isModerator: boolean;
+  isLoading: boolean;
 
   constructor(
     private dialogService: DialogService,
@@ -31,9 +33,16 @@ export class UserdetailComponent implements OnInit {
     private accountService: AccountService) { }
 
   ngOnInit() {
+    this.isLoading = false;
+    this.isAdmin = false;
+    this.isModerator = false;
     this.accountService.getCurrentUser()
       .toPromise()
-      .then(n => this.isAdmin = n.roles.includes('admin'));
+      .then(n => {
+        this.isAdmin = n.roles.includes('admin');
+        this.isModerator = n.roles.includes('moderator');
+      })
+      .then(() => this.isLoading = false);
   }
 
   addRole() {

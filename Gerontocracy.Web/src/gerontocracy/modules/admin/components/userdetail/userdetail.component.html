@@ -1,22 +1,24 @@
 <div class="ui-fluid">
     <div class="ui-g">
         <div class="ui-g-12">
-            <p-panel header="Allgemeine Infos">
+            <p-panel header="Allgemeine Infos" *ngIf="!isLoading">
                 <div class="ui-g">
                     <div class="ui-g-12">
                         <b>{{data.userName}}</b>
                     </div>
                 </div>
-                <div class="ui-g" *ngIf="!data.banned">
+                <div class="ui-g" *ngIf="!data.banned && !isAdmin && !isModerator">
                     <div class="ui-g-12">
                         <p-button label="Sperren" icon="pi pi-lock" (click)="banUser()"></p-button>
                     </div>
                 </div>
                 <div class="ui-g" *ngIf="data.banned">
-                    <div class="ui-g-12 ui-lg-8 ui-md-12">
+                    <div class="ui-g-12">
                         Gesperrt bis: {{data.lockoutEnd ? (data.lockoutEnd | date: 'dd.MM.yyyy hh:mm') : 'Permanent'}}
                     </div>
-                    <div class="ui-g-12 ui-lg-4 ui-md-12">
+                </div>
+                <div class="ui-g" *ngIf="data.banned">
+                    <div class="ui-g-12">
                         <p-button label="Entsperren" icon="pi pi-unlock" (click)="unbanUser()"></p-button>
                     </div>
                 </div>
@@ -38,7 +40,7 @@
                     <tr>
                         <td>{{row.name}}</td>
                         <td>
-                            <button pButton class="action-button" icon="pi pi-trash"
+                            <button *ngIf="row.name !== 'admin'" pButton class="action-button" icon="pi pi-trash"
                                 (click)="revokeRole(row.id)"></button>
                         </td>
                     </tr>
