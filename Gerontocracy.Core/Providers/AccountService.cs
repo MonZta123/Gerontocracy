@@ -173,6 +173,13 @@ namespace Gerontocracy.Core.Providers
                 await _userManager.ResetAccessFailedCountAsync(userObj);
                 return userObj.Id;
             }
+            else
+            {
+                if (result.IsLockedOut)
+                {
+                    throw new AccountIsBannedException($"Gesperrt bis {userObj.LockoutEnd.Value:dd.MM.yyyy HH:mm:ss}. Grund: \"Zuviele Anmeldeversuche\"");
+                }
+            }
 
             throw new ApplicationException();
         }

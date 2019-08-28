@@ -15,7 +15,7 @@ export class LockedInterceptorService implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(req).pipe(catchError(err => {
       if (err.status === 401) {
-        location.reload();
+        window.location.href = '/';
       }
 
       const error = err.error.message || err.statusText;

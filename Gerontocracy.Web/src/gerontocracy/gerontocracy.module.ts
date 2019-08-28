@@ -4,7 +4,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { GerontocracyRoutingModule } from './gerontocracy-routing.module';
 import { GerontocracyComponent } from './components/gerontocracy.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 
 import { MenubarModule } from 'primeng/menubar';
 import { SidebarModule } from 'primeng/sidebar';
@@ -27,8 +27,6 @@ import { ConfirmemailComponent } from './components/confirmemail/confirmemail.co
 import { LoginDialogComponent } from './components/login-dialog/login-dialog.component';
 import { RegisterDialogComponent } from './components/register-dialog/register-dialog.component';
 import { RegistrationConfirmDialogComponent } from './components/registration-confirm-dialog/registration-confirm-dialog.component';
-import { DialogService } from 'primeng/api';
-import { LockedInterceptorService } from './services/locked-interceptor.service';
 
 @NgModule({
   declarations: [
@@ -66,7 +64,6 @@ import { LockedInterceptorService } from './services/locked-interceptor.service'
     DynamicDialogModule
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: LockedInterceptorService, multi: true },
   ],
   bootstrap: [GerontocracyComponent],
   entryComponents: [

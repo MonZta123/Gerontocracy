@@ -23,13 +23,20 @@ namespace Gerontocracy.Core.Middlewares
             {
                 var user = await userManager.FindByNameAsync(httpContext.User.Identity.Name);
 
-                if (user.LockoutEnd > DateTimeOffset.Now)
+                if (user.LockoutEnd > DateTime.Now)
                 {
                     await signInManager.SignOutAsync();
-                    httpContext.Response.Redirect("/");
+                    httpContext.Response.StatusCode = 401;
+                }
+                else
+                {
+                    await _next(httpContext);
                 }
             }
-            await _next(httpContext);
+            else
+            {
+                await _next(httpContext);
+            }
         }
     }
 }

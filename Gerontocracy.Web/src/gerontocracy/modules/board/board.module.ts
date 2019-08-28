@@ -65,7 +65,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
   providers: [
     MessageService,
     BoardService,
-    DialogService
+    DialogService,
   ],
   entryComponents: [
     AddDialogComponent,

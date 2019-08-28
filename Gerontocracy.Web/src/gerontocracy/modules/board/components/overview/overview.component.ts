@@ -13,7 +13,8 @@ import { AddDialogComponent } from '../add-dialog/add-dialog.component';
 @Component({
   selector: 'app-overview',
   templateUrl: './overview.component.html',
-  styleUrls: ['./overview.component.scss']
+  styleUrls: ['./overview.component.scss'],
+  providers: [DialogService]
 })
 export class OverviewComponent implements OnInit {
 
@@ -24,7 +25,7 @@ export class OverviewComponent implements OnInit {
     private boardService: BoardService,
     private messageService: MessageService,
     private sharedAccountService: SharedAccountService,
-    public dialogService: DialogService
+    private dialogService: DialogService
   ) { }
 
   pageSize = 25;
