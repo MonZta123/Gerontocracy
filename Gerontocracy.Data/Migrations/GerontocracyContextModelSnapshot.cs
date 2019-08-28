@@ -19,6 +19,38 @@ namespace Gerontocracy.Data.Migrations
                 .HasAnnotation("ProductVersion", "2.2.4-servicing-10062")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            modelBuilder.Entity("Gerontocracy.Data.Entities.Account.Ban", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("BanDate");
+
+                    b.Property<DateTime?>("BanEnd");
+
+                    b.Property<string>("BanLiftReason");
+
+                    b.Property<DateTime?>("BanLifted");
+
+                    b.Property<long>("BannedById");
+
+                    b.Property<long>("BannedUserId");
+
+                    b.Property<string>("Reason");
+
+                    b.Property<long?>("UnbannedById");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BannedById");
+
+                    b.HasIndex("BannedUserId");
+
+                    b.HasIndex("UnbannedById");
+
+                    b.ToTable("Ban");
+                });
+
             modelBuilder.Entity("Gerontocracy.Data.Entities.Account.Role", b =>
                 {
                     b.Property<long>("Id")
@@ -193,6 +225,8 @@ namespace Gerontocracy.Data.Migrations
 
                     b.Property<DateTime>("CreatedOn");
 
+                    b.Property<bool>("Deleted");
+
                     b.Property<long?>("ParentId");
 
                     b.Property<long?>("UserId");
@@ -210,6 +244,8 @@ namespace Gerontocracy.Data.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<bool>("Deleted");
 
                     b.Property<bool>("Generated");
 
@@ -420,6 +456,23 @@ namespace Gerontocracy.Data.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("Gerontocracy.Data.Entities.Account.Ban", b =>
+                {
+                    b.HasOne("Gerontocracy.Data.Entities.Account.User", "BannedBy")
+                        .WithMany()
+                        .HasForeignKey("BannedById")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Gerontocracy.Data.Entities.Account.User", "BannedUser")
+                        .WithMany()
+                        .HasForeignKey("BannedUserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Gerontocracy.Data.Entities.Account.User", "UnbannedBy")
+                        .WithMany()
+                        .HasForeignKey("UnbannedById");
                 });
 
             modelBuilder.Entity("Gerontocracy.Data.Entities.Affair.Quelle", b =>

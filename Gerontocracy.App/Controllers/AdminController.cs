@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using AutoMapper;
@@ -28,6 +29,7 @@ namespace Gerontocracy.App.Controllers
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
         private readonly ITaskService _taskService;
+        private readonly IBoardService _boardService;
 
         /// <summary>
         /// Constructor
@@ -35,16 +37,19 @@ namespace Gerontocracy.App.Controllers
         /// <param name="accountService">account service</param>
         /// <param name="userService">user service</param>
         /// <param name="taskService">task service</param>
+        /// <param name="boardService">board service</param>
         /// <param name="mapper">mapper</param>
         public AdminController(
             IAccountService accountService,
             IUserService userService,
             ITaskService taskService,
+            IBoardService boardService,
             IMapper mapper)
         {
             this._accountService = accountService;
             this._userService = userService;
             this._taskService = taskService;
+            this._boardService = boardService;
             this._mapper = mapper;
         }
 
@@ -228,5 +233,56 @@ namespace Gerontocracy.App.Controllers
         [Authorize(Roles = "admin,moderator")]
         public IActionResult ReopenTask([FromBody] long id)
             => Ok(_taskService.ReopenTask(id));
+
+        /// <summary>
+        /// Deletes a post
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("post/{id:long}")]
+        [Authorize(Roles = "admin,moderator")]
+        public IActionResult DeletePost(long id)
+        {
+            _boardService.DeletePost(id);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Deletes a thread
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("thread/{id:long}")]
+        [Authorize(Roles = "admin,moderator")]
+        public IActionResult DeleteThread(long id)
+        {
+            _boardService.DeleteThread(id);
+            return Ok();
+        }
+
+        /// <summary>
+        /// Bans a user
+        /// </summary>
+        /// <returns>statuscode</returns>
+        [HttpPost]
+        [Route("ban")]
+        [Authorize(Roles = "admin,moderator")]
+        public async Task<IActionResult> BanUser([FromBody] BanData data)
+        => Ok(await _accountService.BanUser(User, data.UserId, data.Duration, data.Reason));
+
+        /// <summary>
+        /// Unbans a user
+        /// </summary>
+        /// <returns>statuscode</returns>
+        [HttpPost]
+        [Route("unban")]
+        [Authorize(Roles = "admin,moderator")]
+        public async Task<IActionResult> UnbanUser([FromBody] UnbanData data)
+        {
+            await _accountService.UnbanUser(User, data.UserId, data.Reason);
+            return Ok();
+        }
     }
 }

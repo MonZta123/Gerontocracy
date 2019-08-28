@@ -76,7 +76,7 @@ namespace Gerontocracy.App
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                
+
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Gerontocracy Api v1"));
             }
@@ -85,11 +85,11 @@ namespace Gerontocracy.App
                 app.UseHsts();
                 app.UseHttpsRedirection();
             }
-            
-            // configure authentication
-            app.UseAuthentication();
 
-            // handle Angular-Stuff
+            // Handle Authentication
+            app.UseAuthentication();
+            
+            // handle Application
             app.UseGerontocracy();
 
             // convert Exceptions to FaultDtos

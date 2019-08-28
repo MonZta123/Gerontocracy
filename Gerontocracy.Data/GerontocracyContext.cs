@@ -33,6 +33,7 @@ namespace Gerontocracy.Data
         public DbSet<Artikel> Artikel { get; set; }
 
         public DbSet<Aufgabe> Aufgabe { get; set; }
+        public DbSet<Ban> Ban { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) => base.OnModelCreating(modelBuilder);
         

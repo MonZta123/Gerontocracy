@@ -25,6 +25,8 @@ import { TaskviewComponent } from './components/taskview/taskview.component';
 import { TaskdetailComponent } from './components/taskdetail/taskdetail.component';
 import { CheckboxModule } from 'primeng/checkbox';
 import { TaskTypePipe } from './pipes/task-type.pipe';
+import { BanUserDialogComponent } from './components/ban-user-dialog/ban-user-dialog.component';
+import { UnbanUserDialogComponent } from './components/unban-user-dialog/unban-user-dialog.component';
 
 
 @NgModule({
@@ -35,7 +37,9 @@ import { TaskTypePipe } from './pipes/task-type.pipe';
     AddRoleDialogComponent,
     TaskviewComponent,
     TaskdetailComponent,
-    TaskTypePipe
+    TaskTypePipe,
+    BanUserDialogComponent,
+    UnbanUserDialogComponent
   ],
   imports: [
     CommonModule,
@@ -65,6 +69,8 @@ import { TaskTypePipe } from './pipes/task-type.pipe';
     MessageService
   ],
   entryComponents: [
+    BanUserDialogComponent,
+    UnbanUserDialogComponent,
     AddRoleDialogComponent
   ]
 })

@@ -21,5 +21,9 @@ namespace Gerontocracy.Core.Interfaces
         List<VorfallSelection> GetFilteredByName(string searchString, int take = 5);
 
         void Report(ClaimsPrincipal user, long postId, string comment);
+
+        void DeletePost(long postId);
+
+        void DeleteThread(long threadId);
     }
 }

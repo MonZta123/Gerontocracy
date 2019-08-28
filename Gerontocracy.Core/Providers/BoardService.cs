@@ -55,7 +55,8 @@ namespace Gerontocracy.Core.Providers
             "                       FROM   \"Like\" " +
             "                       WHERE  \"LikeType\" = 1 " +
             "                       AND    \"PostId\" = po.\"Id\") AS \"Dislikes\", " +
-            "                li.\"LikeType\" " +
+            "                li.\"LikeType\", " +
+            "                po.\"Deleted\" " +
             "FROM            \"Post\" po " +
             "JOIN            post_hierarchy hi " +
             "ON              po.\"Id\" = hi.\"Id\" " +
@@ -115,10 +116,11 @@ namespace Gerontocracy.Core.Providers
             "     GROUP BY hi.\"ThreadId\") num " +
             "       ON       num.\"ThreadId\" = threads.\"Id\" " +
             "WHERE    threads.\"Title\" ILIKE @title " +
+            "AND      threads.\"Deleted\" = false " +
             "ORDER BY posts.\"CreatedOn\" DESC " +
             "LIMIT    @limit " +
             "OFFSET   @offset ";
-
+        
         private readonly IAccountService _accountService;
         private readonly GerontocracyContext _context;
         private readonly IMapper _mapper;
@@ -211,14 +213,15 @@ namespace Gerontocracy.Core.Providers
                 new Post
                 {
                     Id = n.GetInt64(0),
-                    Content = n.GetString(1),
+                    Content = n.GetBoolean(9) ? null : n.GetString(1),
                     CreatedOn = n.GetDateTime(2),
                     ParentId = !n.IsDBNull(3) ? n.GetInt64(3) : (long?)null,
                     UserId = n.GetInt64(4),
                     UserName = n.GetString(5),
                     Likes = n.GetInt32(6),
                     Dislikes = n.GetInt32(7),
-                    UserLike = !n.IsDBNull(8) ? (LikeType)n.GetInt32(8) : (LikeType?)null
+                    UserLike = !n.IsDBNull(8) ? (LikeType)n.GetInt32(8) : (LikeType?)null,
+                    Deleted = n.GetBoolean(9)
                 };
 
             var posts = this._context.GetData(PostQuery, ConverterFunction, dbParams.ToArray());
@@ -241,7 +244,7 @@ namespace Gerontocracy.Core.Providers
         {
             var userId = _accountService.GetIdOfUser(user);
 
-            if (!_context.Post.Any(n => n.Id == postId))
+            if (!_context.Post.Any(n => n.Id == postId && !n.Deleted))
                 throw new PostNotFoundException();
 
             if (type.HasValue)
@@ -270,7 +273,7 @@ namespace Gerontocracy.Core.Providers
         {
             var userId = _accountService.GetIdOfUser(user);
 
-            if (!_context.Post.Any(n => n.Id == data.ParentId))
+            if (!_context.Post.Any(n => n.Id == data.ParentId && !n.Deleted))
                 throw new PostNotFoundException();
 
             var post = new db.Post()
@@ -294,7 +297,8 @@ namespace Gerontocracy.Core.Providers
                 ParentId = data.ParentId,
                 Id = post.Id,
                 UserLike = LikeType.Like,
-                UserName = _accountService.GetNameOfUser(user)
+                UserName = _accountService.GetNameOfUser(user),
+                Deleted = post.Deleted
             };
         }
 
@@ -307,6 +311,28 @@ namespace Gerontocracy.Core.Providers
                 throw new PostNotFoundException();
 
             this._taskService.Report(userId, TaskType.PostReport, comment, post.Id.ToString());
+        }
+
+        public void DeletePost(long postId)
+        {
+            var post = _context.Post.SingleOrDefault(n => n.Id == postId);
+
+            if (post == null)
+                throw new PostNotFoundException();
+
+            post.Deleted = true;
+            _context.SaveChanges();
+        }
+
+        public void DeleteThread(long threadId)
+        {
+            var thread = _context.Thread.SingleOrDefault(n => n.Id == threadId);
+
+            if (thread == null)
+                throw new ThreadNotFoundException();
+
+            thread.Deleted = true;
+            _context.SaveChanges();
         }
 
         public SearchResult<ThreadOverview> Search(SearchParameters parameters, int pageSize = 25, int pageIndex = 0)
@@ -325,7 +351,7 @@ namespace Gerontocracy.Core.Providers
 
             if (!string.IsNullOrEmpty(parameters.Titel))
             {
-                countQuery = countQuery.Where(n => n.Title.Contains(parameters.Titel, StringComparison.CurrentCultureIgnoreCase));
+                countQuery = countQuery.Where(n => !n.Deleted && n.Title.Contains(parameters.Titel, StringComparison.CurrentCultureIgnoreCase));
             }
 
             var count = countQuery.Count();
@@ -356,7 +382,7 @@ namespace Gerontocracy.Core.Providers
                     UserName = n.GetString(7),
                     PolitikerName = politikerName.Trim(),
                     VorfallTitel = n.GetString(12),
-                    NumPosts = n.GetInt64(13)
+                    NumPosts = n.GetInt64(13),
                 };
 
                 if (thread.VorfallId == 0)

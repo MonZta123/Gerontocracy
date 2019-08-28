@@ -13,12 +13,14 @@ using Gerontocracy.Core.Exceptions.Account;
 using Gerontocracy.Core.Interfaces;
 
 using Gerontocracy.Data;
-
+using Gerontocracy.Data.Entities.Account;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 using db = Gerontocracy.Data.Entities;
+using Role = Gerontocracy.Core.BusinessObjects.Account.Role;
+using User = Gerontocracy.Core.BusinessObjects.Account.User;
 
 namespace Gerontocracy.Core.Providers
 {
@@ -68,6 +70,69 @@ namespace Gerontocracy.Core.Providers
         public IQueryable<db.Account.Role> GetRoleQuery()
             => this._roleManager.Roles;
 
+        public async Task<DateTime?> BanUser(ClaimsPrincipal user, long userId, TimeSpan? duration, string reason)
+        {
+            var dbUser = await this.GetUserRawOrDefault(userId);
+            if (dbUser == null)
+                throw new AccountNotFoundException();
+
+            var roles = await _userManager.GetRolesAsync(dbUser);
+            if (roles.Contains("admin") || roles.Contains("moderator"))
+                throw new AccountCannotBeBannedException();
+
+            var dbBan = _context.Ban.SingleOrDefault(n => (n.BanEnd == null || n.BanEnd > DateTime.Now) && n.BanLifted == null && n.BannedUserId == userId);
+            if (dbBan != null)
+                throw new AccountAlreadyBannedException();
+
+            var bannerId = this.GetIdOfUser(user);
+
+            var ban = new Ban()
+            {
+                BanDate = DateTime.Now,
+                BannedById = bannerId,
+                Reason = reason,
+                BanEnd = duration.HasValue ? DateTime.Now.Add(duration.Value) : (DateTime?)null,
+                BannedUserId = userId
+            };
+
+            await _userManager.SetLockoutEndDateAsync(dbUser,
+                duration.HasValue ? DateTime.Now.Add(duration.Value) : DateTime.MaxValue);
+
+            _context.Add(ban);
+            _context.SaveChanges();
+
+            return ban.BanEnd;
+        }
+
+        public async Task UnbanUser(ClaimsPrincipal user, long userId, string reason)
+        {
+            var dbUser = await this.GetUserRawOrDefault(userId);
+            if (dbUser == null)
+                throw new AccountNotFoundException();
+
+            var dbBan = _context.Ban.SingleOrDefault(n => (n.BanEnd == null || n.BanEnd > DateTime.Now) && n.BanLifted == null && n.BannedUserId == userId);
+            if (dbBan == null)
+                throw new AccountNotBannedException();
+
+            var unbannerId = GetIdOfUser(user);
+
+            dbBan.BanLifted = DateTime.Now;
+            dbBan.BanLiftReason = reason;
+            dbBan.UnbannedById = unbannerId;
+
+            await _userManager.SetLockoutEndDateAsync(dbUser, DateTime.Now);
+
+            _context.SaveChanges();
+        }
+
+        public bool TryFindBan(long userId, out Ban ban)
+        {
+            ban = _context.Ban.SingleOrDefault(n => (n.BanEnd == null || n.BanEnd > DateTime.Now)
+                                       && n.BanLifted == null
+                                       && n.BannedUserId == userId);
+            return ban != null;
+        }
+
         public async Task<User> GetUserAsync(string name)
         {
             var user = await _userManager.FindByNameAsync(name);
@@ -87,12 +152,40 @@ namespace Gerontocracy.Core.Providers
             if (!await _userManager.IsEmailConfirmedAsync(userObj))
                 throw new EmailNotConfirmedException();
 
+            var pwCorrect = await this._userManager.CheckPasswordAsync(userObj, user.Password);
+
+            if (!pwCorrect)
+                throw new CredentialException();
+
+            if (TryFindBan(userObj.Id, out var ban))
+            {
+                var message = "Gesperrt";
+
+                message = ban.BanEnd.HasValue
+                    ? $"{message} bis {ban.BanEnd.Value:dd.MM.yyyy HH:mm:ss}."
+                    : $"{message} auf unbestimmte Zeit.";
+
+                message = $"{message} Grund: \"{ban.Reason}\"";
+
+                throw new AccountIsBannedException(message);
+            }
+
             var result = await this._signInManager.PasswordSignInAsync(userObj, user.Password, user.RememberMe, false);
 
             if (result.Succeeded)
+            {
+                await _userManager.ResetAccessFailedCountAsync(userObj);
                 return userObj.Id;
+            }
             else
-                throw new CredentialException();
+            {
+                if (result.IsLockedOut)
+                {
+                    throw new AccountIsBannedException($"Gesperrt bis {userObj.LockoutEnd.Value:dd.MM.yyyy HH:mm:ss}. Grund: \"Zuviele Anmeldeversuche\"");
+                }
+            }
+
+            throw new ApplicationException();
         }
 
         public async Task RefreshSignIn(ClaimsPrincipal principal)
@@ -159,19 +252,32 @@ namespace Gerontocracy.Core.Providers
             => await _roleManager.CreateAsync(new db.Account.Role { Name = roleName });
 
         public async Task<IdentityResult> AddToRole(long userId, long roleId)
-            => await _userManager.AddToRoleAsync(await GetUserRaw(userId), (await GetRoleRaw(roleId)).Name);
+        {
+            if (await IsAdminRole(roleId))
+                throw new CannotChangeAdminPermissionException();
+
+            return await _userManager.AddToRoleAsync(await GetUserRaw(userId), (await GetRoleRaw(roleId)).Name);
+        }
 
         public async Task<IdentityResult> RemoveFromRole(long userId, long roleId)
-            => await _userManager.RemoveFromRoleAsync(await GetUserRaw(userId), (await GetRoleRaw(roleId)).Name);
+        {
+            if (await IsAdminRole(roleId))
+                throw new CannotChangeAdminPermissionException();
+
+            return await _userManager.RemoveFromRoleAsync(await GetUserRaw(userId), (await GetRoleRaw(roleId)).Name);
+        }
 
         public async Task<db.Account.User> GetUserRaw(long userId)
         {
-            var user = await _userManager.Users.SingleOrDefaultAsync(n => n.Id == userId);
+            var user = await GetUserRawOrDefault(userId);
             if (user == null)
                 throw new AccountNotFoundException();
 
             return user;
         }
+
+        public async Task<db.Account.User> GetUserRawOrDefault(long userId)
+            => await _userManager.Users.SingleOrDefaultAsync(n => n.Id == userId);
 
         public async Task<db.Account.Role> GetRoleRaw(long roleId)
         {
@@ -283,5 +389,8 @@ namespace Gerontocracy.Core.Providers
 
         public string GetNameOfUserOrDefault(ClaimsPrincipal principal)
             => principal.Claims.SingleOrDefault(n => n.Type == ClaimTypes.Name)?.Value;
+        
+        private async Task<bool> IsAdminRole(long id)
+            => (await _roleManager.FindByIdAsync(id.ToString())).Name.Equals("admin", StringComparison.CurrentCultureIgnoreCase);
     }
 }

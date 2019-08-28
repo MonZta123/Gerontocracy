@@ -13,7 +13,8 @@ import { AddDialogComponent } from '../add-dialog/add-dialog.component';
 @Component({
   selector: 'app-overview',
   templateUrl: './overview.component.html',
-  styleUrls: ['./overview.component.scss']
+  styleUrls: ['./overview.component.scss'],
+  providers: [DialogService]
 })
 export class OverviewComponent implements OnInit {
 
@@ -24,7 +25,7 @@ export class OverviewComponent implements OnInit {
     private boardService: BoardService,
     private messageService: MessageService,
     private sharedAccountService: SharedAccountService,
-    public dialogService: DialogService
+    private dialogService: DialogService
   ) { }
 
   pageSize = 25;
@@ -33,6 +34,7 @@ export class OverviewComponent implements OnInit {
 
   data: ThreadOverview[];
   detailData: ThreadDetail;
+  isAdmin: boolean;
 
   isLoadingData: boolean;
 
@@ -41,6 +43,12 @@ export class OverviewComponent implements OnInit {
   searchForm: FormGroup;
 
   ngOnInit() {
+    this.isAdmin = false;
+    this.sharedAccountService.whoami().toPromise().then(n => {
+      if (n && n.roles && (n.roles.includes('admin') || n.roles.includes('moderator'))) {
+        this.isAdmin = true;
+      }
+    })
     this.popupVisible = false;
 
     this.searchForm = this.formBuilder.group({
@@ -98,8 +106,6 @@ export class OverviewComponent implements OnInit {
   }
 
   loadData(): void {
-    this.pageIndex = 0;
-    this.maxResults = 0;
     this.isLoadingData = true;
     this.boardService.search(this.searchForm.value, this.pageSize, this.pageIndex)
       .toPromise()

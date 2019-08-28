@@ -22,6 +22,8 @@ using Gerontocracy.Core.Config;
 using Gerontocracy.Core.Exceptions.Board;
 using Gerontocracy.Core.Exceptions.News;
 using Gerontocracy.Core.HostedServices;
+using Gerontocracy.Core.Middlewares;
+using System.Threading.Tasks;
 
 namespace Gerontocracy.Core
 {
@@ -70,7 +72,7 @@ namespace Gerontocracy.Core
             services.AddIdentity<Data.Entities.Account.User, Data.Entities.Account.Role>()
                 .AddEntityFrameworkStores<GerontocracyContext>()
                 .AddDefaultTokenProviders();
-            
+
             // ===== Add HttpClient =====
             services.AddHttpClient();
 
@@ -96,6 +98,14 @@ namespace Gerontocracy.Core
                 options.User.RequireUniqueEmail = true;
             });
 
+            services.ConfigureApplicationCookie(options =>
+                options.Events.OnRedirectToLogin = context =>
+                {
+                    context.Response.StatusCode = 401;
+                    return Task.CompletedTask;
+                }
+            );
+
             // ==== Add Hosted Services =====
             if (config.GerontocracyConfig.SyncActive)
                 services.AddHostedService<SyncHostedService>();
@@ -108,7 +118,7 @@ namespace Gerontocracy.Core
             app.Use(async (httpContext, next) =>
             {
                 await next();
-                if (httpContext.Response.StatusCode == 404 &&
+                if ((httpContext.Response.StatusCode == 404) &&
                     !Path.HasExtension(httpContext.Request.Path.Value) &&
                     !httpContext.Request.Path.Value.StartsWith("/api/") &&
                     !httpContext.Request.Path.Value.StartsWith("/swagger/"))
@@ -117,6 +127,8 @@ namespace Gerontocracy.Core
                     await next();
                 }
             });
+
+            app.UseMiddleware<UserDestroyerMiddleware>();
 
             return app;
         }
@@ -136,6 +148,11 @@ namespace Gerontocracy.Core
                 .AddException<NewsNotFoundException>(HttpStatusCode.NotFound)
                 .AddException<AffairAlreadyAttachedToNewsException>(HttpStatusCode.BadRequest)
                 .AddException<UserNotFoundException>(HttpStatusCode.NotFound)
+                .AddException<AccountAlreadyBannedException>(HttpStatusCode.BadRequest)
+                .AddException<AccountIsBannedException>(HttpStatusCode.Forbidden)
+                .AddException<AccountNotBannedException>(HttpStatusCode.BadRequest)
+                .AddException<AccountCannotBeBannedException>(HttpStatusCode.BadRequest)
+                .AddException<CannotChangeAdminPermissionException>(HttpStatusCode.BadRequest)
                 .AddException<TaskNotFoundException>(HttpStatusCode.NotFound);
         }
     }

@@ -18,7 +18,7 @@ import { BlockUIModule } from 'primeng/blockui';
 import { TreeModule } from 'primeng/tree';
 
 import { SharedModule } from '../shared/shared.module';
-import { MessageService, DialogService, ConfirmationService } from 'primeng/api';
+import { MessageService, DialogService } from 'primeng/api';
 import { BoardService } from './services/board.service';
 import { DetailviewComponent } from './components/detailview/detailview.component';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
@@ -66,7 +66,6 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
     MessageService,
     BoardService,
     DialogService,
-    ConfirmationService
   ],
   entryComponents: [
     AddDialogComponent,

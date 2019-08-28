@@ -60,12 +60,13 @@
         </div>
         <div class="ui-g-12 ui-lg-6 ui-md-12">
             <p-panel header="Übersicht" *ngIf="detailData">
-                <app-detailview [data]="detailData" [isPopup]="false" (popout)="showPopup()"></app-detailview>
+                <app-detailview [data]="detailData" [isPopup]="false" [isAdmin]="isAdmin" (popout)="showPopup()">
+                </app-detailview>
             </p-panel>
         </div>
     </div>
 </div>
 
 <p-dialog *ngIf="detailData" header="Detailansicht" [style]="{width: '512'}" [(visible)]="popupVisible">
-    <app-detailview [data]="detailData" [isPopup]="true"></app-detailview>
+    <app-detailview [data]="detailData" [isAdmin]="isAdmin" [isPopup]="true"></app-detailview>
 </p-dialog>

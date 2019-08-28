@@ -27,7 +27,6 @@ import { ConfirmemailComponent } from './components/confirmemail/confirmemail.co
 import { LoginDialogComponent } from './components/login-dialog/login-dialog.component';
 import { RegisterDialogComponent } from './components/register-dialog/register-dialog.component';
 import { RegistrationConfirmDialogComponent } from './components/registration-confirm-dialog/registration-confirm-dialog.component';
-import { DialogService } from 'primeng/api';
 
 @NgModule({
   declarations: [
@@ -64,7 +63,8 @@ import { DialogService } from 'primeng/api';
     PanelModule,
     DynamicDialogModule
   ],
-  providers: [DialogService],
+  providers: [
+  ],
   bootstrap: [GerontocracyComponent],
   entryComponents: [
     RegisterDialogComponent,

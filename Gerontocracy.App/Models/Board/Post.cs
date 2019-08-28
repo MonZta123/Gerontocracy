@@ -49,6 +49,11 @@ namespace Gerontocracy.App.Models.Board
         public int Dislikes { get; set; }
 
         /// <summary>
+        /// Post was deleted
+        /// </summary>
+        public bool Deleted { get; set; }
+
+        /// <summary>
         /// Childposts
         /// </summary>
         public ICollection<Post> Children { get; set; }

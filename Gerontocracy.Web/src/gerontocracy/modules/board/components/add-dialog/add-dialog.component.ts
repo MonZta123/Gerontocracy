@@ -11,7 +11,7 @@ import { ThreadData } from '../../models/thread-data';
 @Component({
   selector: 'app-add-dialog',
   templateUrl: './add-dialog.component.html',
-  styleUrls: ['./add-dialog.component.scss']
+  styleUrls: ['./add-dialog.component.scss'],
 })
 export class AddDialogComponent implements OnInit {
 
@@ -22,15 +22,10 @@ export class AddDialogComponent implements OnInit {
   selectedSelection: any;
 
   constructor(
-    private router: Router,
     private formBuilder: FormBuilder,
     private boardService: BoardService,
     private sharedBoardService: SharedBoardService,
-    private sharedAccountService: SharedAccountService,
-    private messageService: MessageService,
-    private dialogReference: DynamicDialogRef,
-    private config: DynamicDialogConfig
-  ) { }
+    private dialogReference: DynamicDialogRef) { }
 
   getSuggestions(evt: any) {
     this.sharedBoardService

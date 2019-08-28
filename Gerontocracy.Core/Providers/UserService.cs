@@ -98,6 +98,9 @@ namespace Gerontocracy.Core.Providers
 
             var affairCount = _context.Vorfall.Count(n => n.UserId == id);
 
+            var banned = _accountService.TryFindBan(id, out var ban);
+            var lockoutEnd = banned ? ban.BanEnd : null;
+
             var roles = _context.GetData(
                 UserDetailQuery,
                 reader => new Role
@@ -107,14 +110,15 @@ namespace Gerontocracy.Core.Providers
                 },
                 new NpgsqlParameter<long>("userId", id).AsList().ToArray())
                 .ToList();
-
+            
             return new UserDetail
             {
                 Id = dbUser.Id,
                 UserName = dbUser.UserName,
                 AccessFailedCount = dbUser.AccessFailedCount,
                 EmailConfirmed = dbUser.EmailConfirmed,
-                LockoutEnd = dbUser.LockoutEnd,
+                Banned = banned,
+                LockoutEnd = lockoutEnd,
                 RegisterDate = dbUser.RegisterDate,
                 VorfallCount = affairCount,
                 Roles = roles

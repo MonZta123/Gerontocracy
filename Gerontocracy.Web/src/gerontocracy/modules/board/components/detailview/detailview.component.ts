@@ -9,16 +9,18 @@ import { SharedAccountService } from '../../../shared/services/shared-account.se
 import { LoginDialogComponent } from '../../../../components/login-dialog/login-dialog.component';
 import { ReportDialogComponent } from '../report-dialog/report-dialog.component';
 import { ReportData } from '../../models/report-data';
+import { AdminService } from '../../../admin/services/admin.service';
 
 @Component({
   selector: 'app-detailview',
   templateUrl: './detailview.component.html',
   styleUrls: ['./detailview.component.scss'],
-  providers: [DialogService]
+  providers: [DialogService, ConfirmationService]
 })
 export class DetailviewComponent implements OnInit {
 
   @Input() data: ThreadDetail;
+  @Input() isAdmin = false;
 
   @Input() isPopup = false;
   @Output() popout: EventEmitter<void> = new EventEmitter<void>();
@@ -28,6 +30,7 @@ export class DetailviewComponent implements OnInit {
   constructor(
     @Inject(LOCALE_ID) private locale: string,
     private boardService: BoardService,
+    private adminService: AdminService,
     private sharedAccountService: SharedAccountService,
     private confirmationService: ConfirmationService,
     private dialogService: DialogService) { }
@@ -52,20 +55,42 @@ export class DetailviewComponent implements OnInit {
         };
 
         this.boardService.report(data).toPromise().then(() => {
-
           this.confirmationService.confirm({
             message: 'Die Meldung wurde eingereicht. Danke für deine Mithilfe!',
-            accept: () => window.location.reload(),
-
+            icon: 'pi pi-check',
+            header: 'Fertig',
+            rejectVisible: false,
+            acceptLabel: 'Gern geschehen!'
           });
-
         });
+      }
+    });
+  }
 
+  deleteThread() {
+    this.confirmationService.confirm({
+      message: 'Soll dieser Thread wirklich gelöscht werden?',
+      header: 'Löschen?',
+      acceptLabel: 'Löschen',
+      rejectLabel: 'Abbrechen',
+      accept: () => {
+        this.adminService.deleteThread(this.data.id)
+          .toPromise()
+          .then(() => this.confirmationService.confirm({
+            message: 'Der Thread wurde gelöscht!',
+            accept: () => window.location.href = '/board',
+            icon: 'pi pi-check',
+            header: 'Fertig',
+            rejectVisible: false,
+            acceptLabel: 'Schließen'
+          }));
       }
     });
   }
 
   like(type: LikeType, post: Post) {
+    if (post.deleted) { return; }
+
     this.sharedAccountService.isLoggedIn().toPromise().then(n => {
       if (n) {
         let newLikeType: LikeType;
@@ -107,6 +132,27 @@ export class DetailviewComponent implements OnInit {
           .then(() => post.userLike = newLikeType);
       } else {
         this.showLoginDialog();
+      }
+    });
+  }
+
+  deletePost(post: Post) {
+    this.confirmationService.confirm({
+      message: 'Soll dieser Post wirklich gelöscht werden?',
+      header: 'Löschen?',
+      acceptLabel: 'Löschen',
+      rejectLabel: 'Abbrechen',
+      accept: () => {
+        this.adminService.deletePost(post.id)
+          .toPromise()
+          .then(() => post.deleted = true)
+          .then(() => this.confirmationService.confirm({
+            message: 'Der Post wurde gelöscht!',
+            icon: 'pi pi-check',
+            header: 'Fertig',
+            rejectVisible: false,
+            acceptLabel: 'Schließen',
+          }));
       }
     });
   }
