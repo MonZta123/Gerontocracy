@@ -35,15 +35,15 @@ namespace Gerontocracy.App.Models.Admin
         public bool EmailConfirmed { get; set; }
 
         /// <summary>
-        /// Shows how often the access failed
-        /// </summary>
-        public int AccessFailedCount { get; set; }
-
-        /// <summary>
         /// User is banned
         /// </summary>
         public bool Banned { get; set; }
 
+        /// <summary>
+        /// Shows how often the access failed
+        /// </summary>
+        public int AccessFailedCount { get; set; }
+        
         /// <summary>
         /// When is the lockout over?
         /// </summary>
