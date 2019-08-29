@@ -230,7 +230,7 @@ namespace Gerontocracy.Core.Providers
             {
                 Id = thread.Id,
                 PolitikerId = thread.Vorfall?.PolitikerId,
-                PolitikerName = thread.Vorfall?.Politiker?.TitelName,
+                PolitikerName = thread.Vorfall?.Politiker?.Name,
                 Titel = thread.Title,
                 VorfallId = thread.VorfallId,
                 VorfallTitel = thread.Vorfall?.Titel,

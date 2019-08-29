@@ -33,31 +33,25 @@ namespace Gerontocracy.App.Controllers
         private readonly IAffairService _affairService;
 
         /// <summary>
-        /// 
+        /// Returns a list of all affairs
         /// </summary>
-        /// <param name="title"></param>
-        /// <param name="firstName"></param>
-        /// <param name="lastName"></param>
-        /// <param name="party"></param>
-        /// <param name="pageSize"></param>
-        /// <param name="pageIndex"></param>
-        /// <returns></returns>
+        /// <param name="name">Name of politician</param>
+        /// <param name="party">Party of politician</param>
+        /// <param name="pageSize">Number of resultsets</param>
+        /// <param name="pageIndex">Page of result</param>
+        /// <returns>list of resultsets</returns>
         [HttpGet]
         [Route("affairsearch")]
         public IActionResult Search(
-            string title,
-            string firstName,
-            string lastName,
+            string name,
             string party,
             int pageSize = 25,
             int pageIndex = 0
             )
         => Ok(_mapper.Map<SearchResult<VorfallOverview>>(_affairService.Search(new bo.SearchParameters()
         {
-            Nachname = lastName,
-            Vorname = firstName,
             ParteiName = party,
-            Titel = title
+            Name = name
         }, pageSize, pageIndex)));
 
         /// <summary>

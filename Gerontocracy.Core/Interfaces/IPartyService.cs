@@ -22,5 +22,6 @@ namespace Gerontocracy.Core.Interfaces
         SearchResult<PolitikerOverview> Search(SearchParameters parameters, int pageSize = 25, int pageIndex = 0);
 
         List<PolitikerSelection> GetFilteredByName(string filterParam, int maxResults = 5);
+        List<Parlament> GetParliaments();
     }
 }

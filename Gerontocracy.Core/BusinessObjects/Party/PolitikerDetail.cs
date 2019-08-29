@@ -8,10 +8,7 @@ namespace Gerontocracy.Core.BusinessObjects.Party
         public long Id { get; set; }
         public long ExternalId { get; set; }
 
-        public string Vorname { get; set; }
-        public string Nachname { get; set; }
-        public string AkadGradPre { get; set; }
-        public string AkadGradPost { get; set; }
+        public string Name { get; set; }
         public string Wahlkreis { get; set; }
         public string Bundesland { get; set; }
 

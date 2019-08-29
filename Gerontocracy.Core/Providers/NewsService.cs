@@ -7,10 +7,9 @@ using Gerontocracy.Core.BusinessObjects.News;
 using Gerontocracy.Core.Exceptions.News;
 using Gerontocracy.Core.Interfaces;
 using Gerontocracy.Data;
-using Gerontocracy.Data.Entities.Board;
-using Gerontocracy.Data.Entities.News;
+
 using Gerontocracy.Shared.Extensions;
-using Artikel = Gerontocracy.Core.BusinessObjects.News.Artikel;
+
 using db = Gerontocracy.Data.Entities;
 
 namespace Gerontocracy.Core.Providers
@@ -71,11 +70,11 @@ namespace Gerontocracy.Core.Providers
                     Generated = true,
                     Title = news.Title,
                     UserId = userId,
-                    InitialPost = new Post()
+                    InitialPost = new db.Board.Post()
                     {
                         UserId = userId,
                         Content = data.Beschreibung,
-                        Likes = new Like() { UserId = userId, LikeType = LikeType.Like }.AsList()
+                        Likes = new db.Board.Like() { UserId = userId, LikeType = db.Board.LikeType.Like }.AsList()
                     }
                 }.AsList()
             };
@@ -85,11 +84,13 @@ namespace Gerontocracy.Core.Providers
             return news.VorfallId.GetValueOrDefault();
         }
 
-        public long AddRssData(string url, string name)
+        public long AddRssSource(string url, string name)
         {
+            var source = _context.RssSource.SingleOrDefault(n => n.Url.Equals(url, StringComparison.CurrentCultureIgnoreCase));
+            if (source != null)
+                throw new SourceAlreadyAddedException();
 
-
-            var newSource = new RssSource
+            var newSource = new db.News.RssSource
             {
                 Name = name,
                 Url = url,
@@ -102,6 +103,16 @@ namespace Gerontocracy.Core.Providers
             _syncService.SyncSource(newSource.Id);
 
             return newSource.Id;
+        }
+
+        public void RemoveRssSource(long id)
+        {
+            var source = _context.RssSource.SingleOrDefault(n => n.Id == id);
+            if (source == null)
+                throw new RssSourceNotFoundException();
+
+            source.Enabled = false;
+            _context.SaveChanges();
         }
     }
 }

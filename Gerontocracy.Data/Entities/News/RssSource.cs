@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
-using Gerontocracy.Data.Entities.Global;
+using Gerontocracy.Data.Entities.Party;
 
 namespace Gerontocracy.Data.Entities.News
 {

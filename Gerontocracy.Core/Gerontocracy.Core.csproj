@@ -5,6 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Providers\SyncStrategies\**" />
+    <EmbeddedResource Remove="Providers\SyncStrategies\**" />
+    <None Remove="Providers\SyncStrategies\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CodeHollow.FeedReader" Version="1.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.All" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="5.0.1" />
@@ -17,10 +23,6 @@
     <ProjectReference Include="..\Gerontocracy.Data\Gerontocracy.Data.csproj" />
     <ProjectReference Include="..\Gerontocracy.Shared\Gerontocracy.Shared.csproj" />
     <ProjectReference Include="..\Morphius\Morphius.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Providers\SyncStrategies\" />
   </ItemGroup>
 
 </Project>

@@ -12,7 +12,7 @@ namespace Gerontocracy.Core.Config
     {
         #region Methods
 
-        public static async Task<IApplicationBuilder> EnsureSeed(this IApplicationBuilder app)
+        public static IApplicationBuilder EnsureSeed(this IApplicationBuilder app)
         {
             using (var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
             {
@@ -20,8 +20,8 @@ namespace Gerontocracy.Core.Config
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
                 var settings = scope.ServiceProvider.GetRequiredService<GerontocracySettings>();
 
-                await EnsureSeedRoles(roleManager);
-                await EnsureSeedUser(userManager, settings);
+                EnsureSeedRoles(roleManager).Wait();
+                EnsureSeedUser(userManager, settings).Wait();
                 return app;
             }
         }

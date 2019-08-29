@@ -44,22 +44,25 @@ namespace Gerontocracy.Core.Providers
         public List<PolitikerSelection> GetFilteredByName(string filterParam, int maxResults = 5)
         {
             var result = _context.Politiker
-                .Where(n =>
-                    n.Vorname.Contains(filterParam, StringComparison.CurrentCultureIgnoreCase) ||
-                    n.Nachname.Contains(filterParam, StringComparison.CurrentCultureIgnoreCase))
+                .Where(n => n.Name.Contains(filterParam, StringComparison.CurrentCultureIgnoreCase))
                 .Take(maxResults)
                 .Select(n => new PolitikerSelection()
                 {
-                    AkadGradPost = n.AkadGradPost,
-                    AkadGradPre = n.AkadGradPre,
-                    Nachname = n.Nachname,
-                    Vorname = n.Vorname,
+                    Name = n.Name,
                     Id = n.Id
                 })
                 .ToList();
 
             return result;
         }
+
+        public List<Parlament> GetParliaments()
+            => _context.Parlament.Select(n => new Parlament()
+            {
+                Code = n.Code,
+                Id = n.Id,
+                Langtext = n.Langtext
+            }).ToList();
 
         public ParteiDetail GetParteiDetail(long id) =>
                     id.Equals(0) ?
@@ -117,7 +120,7 @@ namespace Gerontocracy.Core.Providers
 
         public List<PolitikerOverview> GetPolitikerList()
             => GetPolitikerQuery().ToList();
-        
+
         public List<ParteiSelection> GetSelection()
             => GetPolitikerSelection(m => true);
 
@@ -130,11 +133,8 @@ namespace Gerontocracy.Core.Providers
                 .ThenInclude(n => n.Legitimitaet)
                 .AsQueryable();
 
-            if (!string.IsNullOrEmpty(parameters.Vorname))
-                query = query.Where(n => n.Vorname.Contains(parameters.Vorname, StringComparison.CurrentCultureIgnoreCase));
-
-            if (!string.IsNullOrEmpty(parameters.Nachname))
-                query = query.Where(n => n.Nachname.Contains(parameters.Nachname, StringComparison.CurrentCultureIgnoreCase));
+            if (!string.IsNullOrEmpty(parameters.Name))
+                query = query.Where(n => n.Name.Contains(parameters.Name, StringComparison.CurrentCultureIgnoreCase));
 
             if (!string.IsNullOrEmpty(parameters.ParteiKurzzeichen))
             {
@@ -152,13 +152,10 @@ namespace Gerontocracy.Core.Providers
             var data = query.Select(n => new PolitikerOverview()
             {
                 Id = n.Id,
-                AkadGradPost = n.AkadGradPost,
-                AkadGradPre = n.AkadGradPre,
                 Bundesland = n.Bundesland,
                 ExternalId = n.ExternalId,
                 Wahlkreis = n.Wahlkreis,
-                Nachname = n.Nachname,
-                Vorname = n.Vorname,
+                Name = n.Name,
                 ParteiId = n.ParteiId,
                 ParteiKurzzeichen = n.Partei.Kurzzeichen,
                 Reputation = n.Vorfaelle.Sum(o =>
@@ -210,10 +207,7 @@ namespace Gerontocracy.Core.Providers
                     .Select(m => new PolitikerSelection
                     {
                         Id = m.Id,
-                        AkadGradPost = m.AkadGradPost,
-                        AkadGradPre = m.AkadGradPre,
-                        Nachname = m.Nachname,
-                        Vorname = m.Vorname
+                        Name = m.Name
                     }).ToList()
             };
 
@@ -256,10 +250,7 @@ namespace Gerontocracy.Core.Providers
                 .Select(n => new PolitikerDetail()
                 {
                     Id = n.Id,
-                    AkadGradPost = n.AkadGradPost,
-                    AkadGradPre = n.AkadGradPre,
-                    Vorname = n.Vorname,
-                    Nachname = n.Nachname,
+                    Name = n.Name,
                     Wahlkreis = n.Wahlkreis,
                     ParteiId = n.ParteiId,
                     Partei = GetParteiOverviewQuery().SingleOrDefault(m => m.Id == n.ParteiId) ?? GetOkParteiOverview(),
@@ -298,11 +289,8 @@ namespace Gerontocracy.Core.Providers
                    {
                        Id = n.Id,
                        ExternalId = n.ExternalId,
-                       AkadGradPost = n.AkadGradPost,
-                       AkadGradPre = n.AkadGradPre,
+                       Name = n.Name,
                        Bundesland = n.Bundesland,
-                       Vorname = n.Vorname,
-                       Nachname = n.Nachname,
                        ParteiKurzzeichen = n.Partei.Kurzzeichen,
                        ParteiId = n.ParteiId,
                        Wahlkreis = n.Wahlkreis,
@@ -324,10 +312,7 @@ namespace Gerontocracy.Core.Providers
                     .Select(m => new PolitikerSelection()
                     {
                         Id = m.Id,
-                        AkadGradPost = m.AkadGradPost,
-                        AkadGradPre = m.AkadGradPre,
-                        Nachname = m.Nachname,
-                        Vorname = m.Vorname
+                        Name = m.Name,
                     })
                     .ToList()
             })

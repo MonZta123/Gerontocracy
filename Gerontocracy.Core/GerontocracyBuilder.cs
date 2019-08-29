@@ -23,8 +23,6 @@ using System;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
-using Gerontocracy.Data.Entities.Account;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Gerontocracy.Core
 {
@@ -67,7 +65,8 @@ namespace Gerontocracy.Core
             services.AddSingleton<SendGrid.ISendGridClient>(n =>
                 new SendGrid.SendGridClient(new SendGrid.SendGridClientOptions() { ApiKey = config.GerontocracyConfig.SendGridApiKey }));
             services.AddSingleton<ContextFactory>();
-            services.AddSingleton<GerontocracySettings>(config.GerontocracyConfig);
+            services.AddSingleton<ImporterRepository>();
+            services.AddSingleton(config.GerontocracyConfig);
 
             // ===== Add Entity Framework =====
             services.AddEntityFrameworkNpgsql()
@@ -114,7 +113,7 @@ namespace Gerontocracy.Core
             // ==== Add Hosted Services =====
             if (config.GerontocracyConfig.SyncActive)
                 services.AddHostedService<SyncHostedService>();
-
+            
             return services;
         }
 
@@ -155,6 +154,8 @@ namespace Gerontocracy.Core
                     await next();
                 }
             });
+            
+            app.EnsureSeed();
 
             app.UseMiddleware<UserDestroyerMiddleware>();
 

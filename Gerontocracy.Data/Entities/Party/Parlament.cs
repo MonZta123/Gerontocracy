@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Gerontocracy.Data.Entities.News;
 using Gerontocracy.Data.Entities.Party;
 
-namespace Gerontocracy.Data.Entities.Global
+namespace Gerontocracy.Data.Entities.Party
 {
     public class Parlament
     {

@@ -4,7 +4,7 @@ namespace Gerontocracy.Core.Interfaces
 {
     public interface ISyncService
     {
-        Task SyncPolitiker();
+        void SyncPolitiker();
         
         Task SyncSource(long id);
 

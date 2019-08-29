@@ -138,14 +138,8 @@ namespace Gerontocracy.Core.Providers
                 .Include(n => n.Legitimitaet)
                 .AsQueryable();
             
-            if (!string.IsNullOrEmpty(param.Titel))
-                query = query.Where(n => n.Titel.Contains(param.Titel, StringComparison.CurrentCultureIgnoreCase));
-
-            if (!string.IsNullOrEmpty(param.Vorname))
-                query = query.Where(n => n.Politiker.Vorname.Contains(param.Vorname, StringComparison.CurrentCultureIgnoreCase));
-
-            if (!string.IsNullOrEmpty(param.Nachname))
-                query = query.Where(n => n.Politiker.Nachname.Contains(param.Nachname, StringComparison.CurrentCultureIgnoreCase));
+            if (!string.IsNullOrEmpty(param.Name))
+                query = query.Where(n => n.Titel.Contains(param.Name, StringComparison.CurrentCultureIgnoreCase));
 
             if (!string.IsNullOrEmpty(param.ParteiName))
                 query = query.Where(n => n.Politiker.Partei.Kurzzeichen.Contains(param.ParteiName, StringComparison.CurrentCultureIgnoreCase));
@@ -165,8 +159,8 @@ namespace Gerontocracy.Core.Providers
                 PolitikerName = n.Politiker.Name,
                 Titel = n.Titel,
                 Reputation =
-                    (n.Legitimitaet.Count(m => m.VoteType == Data.Entities.Affair.VoteType.Up)
-                    - n.Legitimitaet.Count(m => m.VoteType == Data.Entities.Affair.VoteType.Down))
+                    (n.Legitimitaet.Count(m => m.VoteType == db.Affair.VoteType.Up)
+                    - n.Legitimitaet.Count(m => m.VoteType == db.Affair.VoteType.Down))
                     * (n.ReputationType == db.Affair.ReputationType.Negative ? -1 : 1)
             });
 

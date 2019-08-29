@@ -9,7 +9,6 @@ using Gerontocracy.Data.Entities.News;
 using System.Data.Common;
 using System;
 using System.Collections.Generic;
-using Gerontocracy.Data.Entities.Global;
 using Gerontocracy.Data.Entities.Task;
 
 namespace Gerontocracy.Data

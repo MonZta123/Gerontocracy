@@ -193,34 +193,26 @@ namespace Gerontocracy.Core.Providers
 
         public async Task<IdentityResult> RegisterAsync(Register user)
         {
-            IdentityResult result = null;
-
             var dbUser = new db.Account.User()
             {
                 UserName = user.Name,
                 Email = user.Email,
+                EmailConfirmed = this._settings.AutoConfirmEmails
             };
 
-            result = await this._userManager.CreateAsync(dbUser, user.Password);
+            var result = await this._userManager.CreateAsync(dbUser, user.Password);
 
-            if (result.Succeeded)
+            if (result.Succeeded && !this._settings.AutoConfirmEmails)
             {
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(dbUser);
 
-                if (this._settings.AutoConfirmEmails)
+                await _mailService.SendConfirmationTokenAsync(new MailConfirmationData
                 {
-                    await ConfirmEmailAsync(dbUser.Id, token);
-                }
-                else
-                {
-                    await _mailService.SendConfirmationTokenAsync(new MailConfirmationData
-                    {
-                        Id = dbUser.Id,
-                        EmailAddress = user.Email,
-                        Name = user.Name,
-                        Token = token
-                    });
-                }
+                    Id = dbUser.Id,
+                    EmailAddress = user.Email,
+                    Name = user.Name,
+                    Token = token
+                });
             }
 
             return result;
@@ -389,7 +381,7 @@ namespace Gerontocracy.Core.Providers
 
         public string GetNameOfUserOrDefault(ClaimsPrincipal principal)
             => principal.Claims.SingleOrDefault(n => n.Type == ClaimTypes.Name)?.Value;
-        
+
         private async Task<bool> IsAdminRole(long id)
             => (await _roleManager.FindByIdAsync(id.ToString())).Name.Equals("admin", StringComparison.CurrentCultureIgnoreCase);
     }
