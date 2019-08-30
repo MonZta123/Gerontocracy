@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Morphius
 {
-    public class MorphiusControllerBase : ControllerBase
+    public class MorphiusController : ControllerBase
     {
+        [NonAction]
         public OkObjectResult PostOk(object obj) => Ok(new PostResult()
         {
             Success = true,
             Data = obj,
         });
 
+        [NonAction]
         public OkObjectResult PostOk() => PostOk(null);
     }
 }

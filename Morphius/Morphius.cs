@@ -31,7 +31,7 @@ namespace Morphius
 
                 var fault = CreateErrorResult(e, _options.DebugMode);
                 ;
-                if (statusCode == HttpStatusCode.OK)
+                if (statusCode != HttpStatusCode.OK)
                 {
                     await SetResponse(context, statusCode, fault);
                 }

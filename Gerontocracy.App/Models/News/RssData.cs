@@ -14,5 +14,10 @@
         /// Name of RSS Feed
         /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// Parliament Id
+        /// </summary>
+        public long ParlamentId { get; set; }
     }
 }

@@ -148,7 +148,7 @@ namespace Gerontocracy.Core.Providers
             _context.SaveChanges();
         }
         
-        public void Report(long userId, TaskType type, string description, string metaData)
+        public long Report(long userId, TaskType type, string description, string metaData)
         {
             var dbAufgabe = new Data.Entities.Task.Aufgabe
             {
@@ -161,6 +161,8 @@ namespace Gerontocracy.Core.Providers
 
             _context.Add(dbAufgabe);
             _context.SaveChanges();
+
+            return dbAufgabe.Id;
         }
 
         #endregion Methods

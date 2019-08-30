@@ -177,16 +177,18 @@ namespace Gerontocracy.Core.Providers
             return result;
         }
 
-        public void Vote(ClaimsPrincipal user, long vorfallId, VoteType? type)
+        public long? Vote(ClaimsPrincipal user, long vorfallId, VoteType? type)
         {
             var userId = _accountService.GetIdOfUser(user);
 
             if (!_context.Vorfall.Any(n => n.Id == vorfallId))
                 throw new AffairNotFoundException();
 
+            db.Affair.Vote dbObj = null;
+
             if (type.HasValue)
             {
-                var dbObj = _context.Vote.SingleOrDefault(n => n.UserId == userId && n.VorfallId == vorfallId);
+                dbObj = _context.Vote.SingleOrDefault(n => n.UserId == userId && n.VorfallId == vorfallId);
 
                 if (dbObj == null)
                 {
@@ -204,6 +206,8 @@ namespace Gerontocracy.Core.Providers
                 _context.Remove(_context.Vote.Single(n => n.UserId == userId && n.VorfallId == vorfallId));
 
             _context.SaveChanges();
+
+            return dbObj?.Id;
         }
 
         private db.Affair.Vorfall GetVorfallRaw(long id)

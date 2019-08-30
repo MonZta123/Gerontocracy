@@ -2,6 +2,8 @@
 using Gerontocracy.Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Morphius;
 
 namespace Gerontocracy.App.Controllers
 {
@@ -9,9 +11,18 @@ namespace Gerontocracy.App.Controllers
     /// Testzwecke
     /// </summary>
     [Route("api/[controller]")]
-    [ApiController]
-    public class NewsController : ControllerBase
+    public class NewsController : MorphiusController
     {
+        #region Fields
+
+        private readonly INewsService _newsService;
+
+        private readonly ISyncService _syncService;
+
+        #endregion Fields
+
+        #region Constructors
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -23,8 +34,9 @@ namespace Gerontocracy.App.Controllers
             this._newsService = newsService;
         }
 
-        private readonly ISyncService _syncService;
-        private readonly INewsService _newsService;
+        #endregion Constructors
+
+        #region Methods
 
         /// <summary>
         /// Adds a new RSS feed
@@ -34,10 +46,8 @@ namespace Gerontocracy.App.Controllers
         [HttpPost]
         [Route("rss")]
         public IActionResult AddRssFeed([FromBody] RssData data)
-        {
-            return Ok();
-        }
-
+            => ModelState.IsValid ? PostOk(_newsService.AddRssSource(data.Url, data.Name, data.ParlamentId)) : Ok(ModelState);
+        
         /// <summary>
         /// Removes an RSS feed source
         /// </summary>
@@ -48,7 +58,10 @@ namespace Gerontocracy.App.Controllers
         [Route("rss/{id:long}")]
         public IActionResult RemoveRssFeed(long id)
         {
-            return Ok();
+            _newsService.RemoveRssSource(id);
+            return PostOk();
         }
+
+        #endregion Methods
     }
 }

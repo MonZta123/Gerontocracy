@@ -10,7 +10,7 @@ namespace Gerontocracy.Core.Interfaces
 
         long GenerateAffair(ClaimsPrincipal user, NewsData data);
 
-        long AddRssSource(string url, string name);
+        long AddRssSource(string url, string name, long parlamentId);
 
         void RemoveRssSource(long id);
     }

@@ -95,7 +95,9 @@ namespace Gerontocracy.App
             app.UseGerontocracy();
 
             // convert Exceptions to FaultDtos
-            app.UseMorphius(opt => opt.GetGerontocracyEntries());
+            app.UseMorphius(opt => opt
+                .GetGerontocracyEntries()
+                .SetDebugMode(env.IsDevelopment()));
 
             // configure the app to serve index.html from /wwwroot folder    
             app.UseDefaultFiles();

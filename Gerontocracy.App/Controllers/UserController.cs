@@ -5,16 +5,28 @@ using Gerontocracy.App.Models.User;
 using Gerontocracy.Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Morphius;
 
 namespace Gerontocracy.App.Controllers
 {
     /// <summary>
     /// Controller, which manages all functions for the user
     /// </summary>
-    [Produces("application/json")]
     [Route("api/user")]
-    public class UserController : Controller
+    public class UserController : MorphiusController
     {
+        #region Fields
+
+        private readonly IAccountService _accountService;
+
+        private readonly IMapper _mapper;
+
+        private readonly IUserService _userService;
+
+        #endregion Fields
+
+        #region Constructors
+
         /// <summary>
         /// Injected Constructor
         /// </summary>
@@ -28,10 +40,10 @@ namespace Gerontocracy.App.Controllers
             this._userService = userService;
         }
 
-        private readonly IAccountService _accountService;
-        private readonly IMapper _mapper;
-        private readonly IUserService _userService;
-        
+        #endregion Constructors
+
+        #region Methods
+
         /// <summary>
         /// Returns the dashboard-information
         /// </summary>
@@ -52,5 +64,7 @@ namespace Gerontocracy.App.Controllers
         [AllowAnonymous]
         public IActionResult GetUserData(long id)
             => Ok(_mapper.Map<UserData>(_userService.GetUserPageData(id)));
+
+        #endregion Methods
     }
 }

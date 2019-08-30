@@ -120,7 +120,7 @@ namespace Gerontocracy.Core.Providers
             "ORDER BY posts.\"CreatedOn\" DESC " +
             "LIMIT    @limit " +
             "OFFSET   @offset ";
-        
+
         private readonly IAccountService _accountService;
         private readonly GerontocracyContext _context;
         private readonly IMapper _mapper;
@@ -240,16 +240,18 @@ namespace Gerontocracy.Core.Providers
             return mappedThread;
         }
 
-        public void Like(ClaimsPrincipal user, long postId, LikeType? type)
+        public long? Like(ClaimsPrincipal user, long postId, LikeType? type)
         {
             var userId = _accountService.GetIdOfUser(user);
 
             if (!_context.Post.Any(n => n.Id == postId && !n.Deleted))
                 throw new PostNotFoundException();
 
+            db.Like dbObj = null;
+
             if (type.HasValue)
             {
-                var dbObj = _context.Like.SingleOrDefault(n => n.UserId == userId && n.PostId == postId);
+                dbObj = _context.Like.SingleOrDefault(n => n.UserId == userId && n.PostId == postId);
 
                 if (dbObj == null)
                 {
@@ -267,6 +269,8 @@ namespace Gerontocracy.Core.Providers
                 _context.Remove(_context.Like.Single(n => n.UserId == userId && n.PostId == postId));
 
             _context.SaveChanges();
+
+            return dbObj?.Id;
         }
 
         public Post Reply(ClaimsPrincipal user, PostData data)
@@ -302,15 +306,15 @@ namespace Gerontocracy.Core.Providers
             };
         }
 
-        public void Report(ClaimsPrincipal user, long postId, string comment)
+        public long Report(ClaimsPrincipal user, long postId, string comment)
         {
             var userId = this._accountService.GetIdOfUser(user);
 
             var post = _context.Post.SingleOrDefault(n => n.Id == postId);
             if (post == null)
                 throw new PostNotFoundException();
-
-            this._taskService.Report(userId, TaskType.PostReport, comment, post.Id.ToString());
+            
+            return this._taskService.Report(userId, TaskType.PostReport, comment, post.Id.ToString());
         }
 
         public void DeletePost(long postId)

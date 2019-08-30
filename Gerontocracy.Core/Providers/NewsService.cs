@@ -84,7 +84,7 @@ namespace Gerontocracy.Core.Providers
             return news.VorfallId.GetValueOrDefault();
         }
 
-        public long AddRssSource(string url, string name)
+        public long AddRssSource(string url, string name, long parlamentId)
         {
             var source = _context.RssSource.SingleOrDefault(n => n.Url.Equals(url, StringComparison.CurrentCultureIgnoreCase));
             if (source != null)
@@ -94,6 +94,7 @@ namespace Gerontocracy.Core.Providers
             {
                 Name = name,
                 Url = url,
+                ParlamentId = parlamentId,
                 Enabled = true
             };
 

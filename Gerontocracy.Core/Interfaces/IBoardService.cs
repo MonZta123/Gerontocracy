@@ -14,13 +14,13 @@ namespace Gerontocracy.Core.Interfaces
 
         long AddThread(ClaimsPrincipal user, ThreadData data);
 
-        void Like(ClaimsPrincipal user, long postId, LikeType? type);
+        long? Like(ClaimsPrincipal user, long postId, LikeType? type);
 
         Post Reply(ClaimsPrincipal user, PostData data);
 
         List<VorfallSelection> GetFilteredByName(string searchString, int take = 5);
 
-        void Report(ClaimsPrincipal user, long postId, string comment);
+        long Report(ClaimsPrincipal user, long postId, string comment);
 
         void DeletePost(long postId);
 

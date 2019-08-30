@@ -22,8 +22,7 @@ namespace Gerontocracy.App.Controllers
     /// Admincontroller
     /// </summary>
     [Route("api/[controller]")]
-    [ApiController]
-    public class AdminControllerBase : MorphiusControllerBase
+    public class AdminController : MorphiusController
     {
         private readonly IAccountService _accountService;
         private readonly IUserService _userService;
@@ -39,7 +38,7 @@ namespace Gerontocracy.App.Controllers
         /// <param name="taskService">task service</param>
         /// <param name="boardService">board service</param>
         /// <param name="mapper">mapper</param>
-        public AdminControllerBase(
+        public AdminController(
             IAccountService accountService,
             IUserService userService,
             ITaskService taskService,
@@ -262,7 +261,7 @@ namespace Gerontocracy.App.Controllers
         public async Task<IActionResult> UnbanUser([FromBody] UnbanData data)
         {
             await _accountService.UnbanUser(User, data.UserId, data.Reason);
-            return Ok();
+            return PostOk();
         }
     }
 }

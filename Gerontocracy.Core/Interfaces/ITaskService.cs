@@ -19,6 +19,6 @@ namespace Gerontocracy.Core.Interfaces
         
         void ReopenTask(long id);
 
-        void Report(long userId, TaskType type, string description, string metaData);
+        long Report(long userId, TaskType type, string description, string metaData);
     }
 }

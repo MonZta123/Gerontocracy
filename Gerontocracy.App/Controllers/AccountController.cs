@@ -16,9 +16,8 @@ namespace Gerontocracy.App.Controllers
     /// <summary>
     /// This controller is responsible for the account and session management
     /// </summary>
-    [Produces("application/json")]
     [Route("api/account")]
-    public class AccountController : MorphiusControllerBase
+    public class AccountController : MorphiusController
     {
         #region Fields
 

@@ -5,6 +5,7 @@ using Gerontocracy.App.Models.Shared;
 using Gerontocracy.Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Morphius;
 
 using bo = Gerontocracy.Core.BusinessObjects.Board;
 
@@ -14,8 +15,18 @@ namespace Gerontocracy.App.Controllers
     /// Controller for discussion board
     /// </summary>
     [Route("api/[controller]")]
-    public class BoardController : Controller
+    public class BoardController : MorphiusController
     {
+        #region Fields
+
+        private readonly IBoardService _boardService;
+
+        private readonly IMapper _mapper;
+
+        #endregion Fields
+
+        #region Constructors
+
         /// <summary>
         /// constructor
         /// </summary>
@@ -27,27 +38,34 @@ namespace Gerontocracy.App.Controllers
             _boardService = boardService;
         }
 
-        private readonly IMapper _mapper;
-        private readonly IBoardService _boardService;
+        #endregion Constructors
+
+        #region Methods
 
         /// <summary>
-        /// 
+        /// Creates a new thread
         /// </summary>
-        /// <param name="title"></param>
-        /// <param name="pageSize"></param>
-        /// <param name="pageIndex"></param>
-        /// <returns></returns>
+        /// <param name="data">transfered data</param>
+        /// <returns>resultcode</returns>
+        [HttpPost]
+        [Authorize]
+        [Route("thread")]
+        public IActionResult AddThread([FromBody] ThreadData data)
+            => ModelState.IsValid
+                ? PostOk(_boardService.AddThread(User, _mapper.Map<bo.ThreadData>(data)))
+                : Ok(ModelState);
+
+
+        /// <summary>
+        /// Autocomplete
+        /// </summary>
+        /// <param name="search">search-string</param>
+        /// <returns>result</returns>
         [HttpGet]
-        [Route("threadsearch")]
-        public IActionResult Search(
-            string title,
-            int pageSize = 25,
-            int pageIndex = 0
-            )
-        => Ok(_mapper.Map<SearchResult<ThreadOverview>>(_boardService.Search(new bo.SearchParameters()
-        {
-            Titel = title
-        }, pageSize, pageIndex)));
+        [AllowAnonymous]
+        [Route("affair-selection")]
+        public IActionResult FilteredPolitikerSelection(string search = "")
+            => Ok(_mapper.Map<List<VorfallSelection>>(_boardService.GetFilteredByName(search ?? string.Empty, 5)));
 
         /// <summary>
         /// Returns a thread
@@ -60,24 +78,6 @@ namespace Gerontocracy.App.Controllers
             => Ok(_mapper.Map<ThreadDetail>(_boardService.GetThread(User, id)));
 
         /// <summary>
-        /// Creates a new thread
-        /// </summary>
-        /// <param name="data">transfered data</param>
-        /// <returns>resultcode</returns>
-        [HttpPost]
-        [Authorize]
-        [Route("thread")]
-        public IActionResult AddThread([FromBody] ThreadData data)
-        {
-            if (ModelState.IsValid)
-            {
-                return Ok(_boardService.AddThread(User, _mapper.Map<bo.ThreadData>(data)));
-            }
-            else
-                return BadRequest(ModelState);
-        }
-
-        /// <summary>
         /// Likes or dislikes a post
         /// </summary>
         /// <param name="data">Data required for a like</param>
@@ -86,21 +86,7 @@ namespace Gerontocracy.App.Controllers
         [Authorize]
         [Route("like")]
         public IActionResult Like([FromBody] LikeData data)
-        {
-            _boardService.Like(User, data.PostId, _mapper.Map<bo.LikeType?>(data.LikeType));
-            return Ok();
-        }
-
-        /// <summary>
-        /// Autocomplete
-        /// </summary>
-        /// <param name="search">search-string</param>
-        /// <returns>result</returns>
-        [HttpGet]
-        [AllowAnonymous]
-        [Route("affair-selection")]
-        public IActionResult FilteredPolitikerSelection(string search = "")
-            => Ok(_mapper.Map<List<VorfallSelection>>(_boardService.GetFilteredByName(search ?? string.Empty, 5)));
+            => PostOk(_boardService.Like(User, data.PostId, _mapper.Map<bo.LikeType?>(data.LikeType)));
 
         /// <summary>
         /// reply to a post
@@ -122,14 +108,28 @@ namespace Gerontocracy.App.Controllers
         [Authorize]
         [Route("report")]
         public IActionResult Report([FromBody] ReportData data)
+            => ModelState.IsValid ? PostOk(_boardService.Report(User, data.PostId, data.Comment)) : Ok(ModelState);
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="pageIndex"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("threadsearch")]
+        public IActionResult Search(
+            string title,
+            int pageSize = 25,
+            int pageIndex = 0
+            )
+        => Ok(_mapper.Map<SearchResult<ThreadOverview>>(_boardService.Search(new bo.SearchParameters()
         {
-            if (ModelState.IsValid)
-            {
-                _boardService.Report(User, data.PostId, data.Comment);
-                return Ok();
-            }
-            else
-                return BadRequest(ModelState);
-        }
+            Titel = title
+        }, pageSize, pageIndex)));
+
+        #endregion Methods
     }
 }

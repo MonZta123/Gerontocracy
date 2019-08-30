@@ -9,7 +9,7 @@ using Gerontocracy.Core.Interfaces;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using Morphius;
 using bo = Gerontocracy.Core.BusinessObjects.Party;
 
 namespace Gerontocracy.App.Controllers
@@ -17,9 +17,8 @@ namespace Gerontocracy.App.Controllers
     /// <summary>
     /// PartyController
     /// </summary>
-    [Produces("application/json")]
     [Route("api/[controller]")]
-    public class PartyController : Controller
+    public class PartyController : MorphiusController
     {
         #region Constructors
 
