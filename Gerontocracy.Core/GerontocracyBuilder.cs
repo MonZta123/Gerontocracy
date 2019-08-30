@@ -120,23 +120,23 @@ namespace Gerontocracy.Core
         public static MorphiusOptions GetGerontocracyEntries(this MorphiusOptions cfg)
         {
             return cfg
-                .AddException<EmailAlreadyConfirmedException>(HttpStatusCode.BadRequest)
-                .AddException<AccountNotFoundException>(HttpStatusCode.BadRequest)
-                .AddException<CredentialException>(HttpStatusCode.BadRequest)
-                .AddException<EmailNotConfirmedException>(HttpStatusCode.BadRequest)
+                .AddException<EmailAlreadyConfirmedException>(HttpStatusCode.OK)
+                .AddException<AccountAlreadyBannedException>(HttpStatusCode.OK)
+                .AddException<AccountIsBannedException>(HttpStatusCode.OK)
+                .AddException<AccountNotBannedException>(HttpStatusCode.OK)
+                .AddException<AccountCannotBeBannedException>(HttpStatusCode.OK)
+                .AddException<CannotChangeAdminPermissionException>(HttpStatusCode.OK)
+                .AddException<CredentialException>(HttpStatusCode.OK)
+                .AddException<AffairAlreadyAttachedToNewsException>(HttpStatusCode.OK)
+                .AddException<EmailNotConfirmedException>(HttpStatusCode.OK)
+                .AddException<AccountNotFoundException>(HttpStatusCode.NotFound)
                 .AddException<PoliticianNotFoundException>(HttpStatusCode.NotFound)
                 .AddException<AffairNotFoundException>(HttpStatusCode.NotFound)
                 .AddException<PartyNotFoundException>(HttpStatusCode.NotFound)
                 .AddException<ThreadNotFoundException>(HttpStatusCode.NotFound)
                 .AddException<PostNotFoundException>(HttpStatusCode.NotFound)
                 .AddException<NewsNotFoundException>(HttpStatusCode.NotFound)
-                .AddException<AffairAlreadyAttachedToNewsException>(HttpStatusCode.BadRequest)
                 .AddException<UserNotFoundException>(HttpStatusCode.NotFound)
-                .AddException<AccountAlreadyBannedException>(HttpStatusCode.BadRequest)
-                .AddException<AccountIsBannedException>(HttpStatusCode.Forbidden)
-                .AddException<AccountNotBannedException>(HttpStatusCode.BadRequest)
-                .AddException<AccountCannotBeBannedException>(HttpStatusCode.BadRequest)
-                .AddException<CannotChangeAdminPermissionException>(HttpStatusCode.BadRequest)
                 .AddException<TaskNotFoundException>(HttpStatusCode.NotFound);
         }
 

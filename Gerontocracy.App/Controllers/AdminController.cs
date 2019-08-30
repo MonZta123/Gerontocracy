@@ -12,7 +12,7 @@ using Gerontocracy.Core.Interfaces;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using Morphius;
 using bo = Gerontocracy.Core.BusinessObjects;
 using User = Gerontocracy.App.Models.Admin.User;
 
@@ -23,7 +23,7 @@ namespace Gerontocracy.App.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class AdminController : ControllerBase
+    public class AdminControllerBase : MorphiusControllerBase
     {
         private readonly IAccountService _accountService;
         private readonly IUserService _userService;
@@ -39,7 +39,7 @@ namespace Gerontocracy.App.Controllers
         /// <param name="taskService">task service</param>
         /// <param name="boardService">board service</param>
         /// <param name="mapper">mapper</param>
-        public AdminController(
+        public AdminControllerBase(
             IAccountService accountService,
             IUserService userService,
             ITaskService taskService,
@@ -62,14 +62,8 @@ namespace Gerontocracy.App.Controllers
         [Authorize(Roles = "admin")]
         [Route("create-role")]
         public async Task<IActionResult> CreateRole([FromBody]string roleName)
-        {
-            var result = await _accountService.CreateRole(roleName);
+            => Ok(await _accountService.CreateRole(roleName));
 
-            if (result.Succeeded)
-                return Ok();
-            else
-                return BadRequest(result.Errors);
-        }
 
         /// <summary>
         /// Returns a list of all available roles
@@ -90,14 +84,8 @@ namespace Gerontocracy.App.Controllers
         [Route("grant-role")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> GrantRole([FromBody] RoleData data)
-        {
-            var result = await _accountService.AddToRole(data.UserId, data.RoleId);
+        => Ok(await _accountService.AddToRole(data.UserId, data.RoleId));
 
-            if (result.Succeeded)
-                return Ok();
-            else
-                return BadRequest(result.Errors);
-        }
 
         /// <summary>
         /// Updates the user permission roles
@@ -108,14 +96,7 @@ namespace Gerontocracy.App.Controllers
         [Route("set-roles")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> SetRoles([FromBody] UserRoleUpdate userRoles)
-        {
-            var result = await _accountService.SetRolesAsync(userRoles.UserId, userRoles.RoleIds);
-
-            if (result.Succeeded)
-                return Ok();
-            else
-                return BadRequest(result.Errors);
-        }
+            => Ok(await _accountService.SetRolesAsync(userRoles.UserId, userRoles.RoleIds));
 
         /// <summary>
         /// Revokes a Role from a User
@@ -126,14 +107,7 @@ namespace Gerontocracy.App.Controllers
         [Route("revoke-role")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> RevokeRole([FromBody] RoleData data)
-        {
-            var result = await _accountService.RemoveFromRole(data.UserId, data.RoleId);
-
-            if (result.Succeeded)
-                return Ok();
-            else
-                return BadRequest(result.Errors);
-        }
+            => Ok(await _accountService.RemoveFromRole(data.UserId, data.RoleId));
 
         /// <summary>
         /// Returns a list of all users
@@ -210,7 +184,7 @@ namespace Gerontocracy.App.Controllers
         [Route("task/assign")]
         [Authorize(Roles = "admin,moderator")]
         public async Task<IActionResult> AssignTask([FromBody] long id)
-            => Ok(_mapper.Map<User>(await _taskService.AssignTask(User, id)));
+            => PostOk(_mapper.Map<User>(await _taskService.AssignTask(User, id)));
 
         /// <summary>
         /// Closes a task and sets its state to done
@@ -221,7 +195,10 @@ namespace Gerontocracy.App.Controllers
         [Route("task/close")]
         [Authorize(Roles = "admin,moderator")]
         public IActionResult CloseTask([FromBody] long id)
-            => Ok(_taskService.CloseTask(id));
+        {
+            _taskService.CloseTask(id);
+            return PostOk();
+        }
 
         /// <summary>
         /// Reopens a task and sets its state to not done
@@ -232,7 +209,10 @@ namespace Gerontocracy.App.Controllers
         [Route("task/reopen")]
         [Authorize(Roles = "admin,moderator")]
         public IActionResult ReopenTask([FromBody] long id)
-            => Ok(_taskService.ReopenTask(id));
+        {
+            _taskService.ReopenTask(id);
+            return PostOk();
+        }
 
         /// <summary>
         /// Deletes a post
@@ -245,7 +225,7 @@ namespace Gerontocracy.App.Controllers
         public IActionResult DeletePost(long id)
         {
             _boardService.DeletePost(id);
-            return Ok();
+            return PostOk();
         }
 
         /// <summary>
@@ -259,7 +239,7 @@ namespace Gerontocracy.App.Controllers
         public IActionResult DeleteThread(long id)
         {
             _boardService.DeleteThread(id);
-            return Ok();
+            return PostOk();
         }
 
         /// <summary>
@@ -270,7 +250,7 @@ namespace Gerontocracy.App.Controllers
         [Route("ban")]
         [Authorize(Roles = "admin,moderator")]
         public async Task<IActionResult> BanUser([FromBody] BanData data)
-        => Ok(await _accountService.BanUser(User, data.UserId, data.Duration, data.Reason));
+        => PostOk(await _accountService.BanUser(User, data.UserId, data.Duration, data.Reason));
 
         /// <summary>
         /// Unbans a user

@@ -8,6 +8,14 @@ namespace Morphius
     {
         private readonly Dictionary<Type, HttpStatusCode> _errors = new Dictionary<Type, HttpStatusCode>();
 
+        internal bool DebugMode { get; private set; }
+
+        public MorphiusOptions SetDebugMode(bool value)
+        {
+            DebugMode = value;
+            return this;
+        }
+
         public MorphiusOptions AddException<TException>(HttpStatusCode code)
             where TException : Exception
         {

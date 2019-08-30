@@ -126,7 +126,7 @@ namespace Gerontocracy.Core.Providers
             return await _accountService.GetUserOrDefaultAsync(user);
         }
 
-        public bool CloseTask(long id)
+        public void CloseTask(long id)
         {
             var task = _context.Aufgabe.SingleOrDefault(n => n.Id == id);
             if (task == null)
@@ -135,11 +135,9 @@ namespace Gerontocracy.Core.Providers
             task.Erledigt = true;
 
             _context.SaveChanges();
-
-            return true;
         }
 
-        public bool ReopenTask(long id)
+        public void ReopenTask(long id)
         {
             var task = _context.Aufgabe.SingleOrDefault(n => n.Id == id);
             if (task == null)
@@ -148,8 +146,6 @@ namespace Gerontocracy.Core.Providers
             task.Erledigt = false;
 
             _context.SaveChanges();
-
-            return false;
         }
         
         public void Report(long userId, TaskType type, string description, string metaData)
