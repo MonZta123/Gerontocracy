@@ -7,19 +7,16 @@ import { SharedBoardService } from './services/shared-board.service';
 import { LockedInterceptorService } from './services/locked-interceptor.service';
 
 import { StringTrimPipe } from './pipes/string-trim.pipe';
-import { FullnamePipe } from './pipes/fullname.pipe';
 import { UrlPipe } from './pipes/url.pipe';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 @NgModule({
   declarations: [
     StringTrimPipe,
-    FullnamePipe,
     UrlPipe,
   ],
   exports: [
     StringTrimPipe,
-    FullnamePipe,
     UrlPipe,
   ],
   imports: [

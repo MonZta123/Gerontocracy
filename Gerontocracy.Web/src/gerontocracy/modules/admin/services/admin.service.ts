@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { SearchResult } from '../models/search-result';
+import { SearchResult } from '../../shared/models/search-result';
 import { Observable } from 'rxjs';
 import { UserDetail } from '../models/user-detail';
 import { UserRole } from '../models/user-role';
@@ -11,6 +11,7 @@ import { AufgabeDetail } from '../models/aufgabe-detail';
 import { User } from '../../../models/user';
 import { BanData } from '../models/ban-data';
 import { UnbanData } from '../models/unban-data';
+import { PostResult } from '../../shared/models/post-result';
 
 @Injectable({
   providedIn: 'root'
@@ -49,12 +50,12 @@ export class AdminService {
     return this.httpClient.get<UserDetail>(`api/admin/user/${id}`);
   }
 
-  grantRole(data: UserRole): Observable<void> {
-    return this.httpClient.post<void>(`api/admin/grant-role`, data);
+  grantRole(data: UserRole): Observable<PostResult<void>> {
+    return this.httpClient.post<PostResult<void>>(`api/admin/grant-role`, data);
   }
 
-  revokeRole(data: UserRole): Observable<void> {
-    return this.httpClient.post<void>(`api/admin/revoke-role`, data);
+  revokeRole(data: UserRole): Observable<PostResult<void>> {
+    return this.httpClient.post<PostResult<void>>(`api/admin/revoke-role`, data);
   }
 
   getRoles(): Observable<Role[]> {
@@ -65,31 +66,31 @@ export class AdminService {
     return this.httpClient.get<AufgabeDetail>(`api/admin/task/${id}`);
   }
 
-  assignTask(id: number): Observable<User> {
-    return this.httpClient.post<User>(`api/admin/task/assign`, id);
+  assignTask(id: number): Observable<PostResult<User>> {
+    return this.httpClient.post<PostResult<User>>(`api/admin/task/assign`, id);
   }
 
-  closeTask(id: number): Observable<boolean> {
-    return this.httpClient.post<boolean>(`api/admin/task/close`, id);
+  closeTask(id: number): Observable<PostResult<void>> {
+    return this.httpClient.post<PostResult<void>>(`api/admin/task/close`, id);
   }
 
-  reopenTask(id: number): Observable<boolean> {
-    return this.httpClient.post<boolean>(`api/admin/task/reopen`, id);
+  reopenTask(id: number): Observable<PostResult<void>> {
+    return this.httpClient.post<PostResult<void>>(`api/admin/task/reopen`, id);
   }
 
-  deletePost(id: number): Observable<void> {
-    return this.httpClient.delete<void>(`api/admin/post/${id}`);
+  deletePost(id: number): Observable<PostResult<void>> {
+    return this.httpClient.delete<PostResult<void>>(`api/admin/post/${id}`);
   }
 
-  deleteThread(id: number): Observable<void> {
-    return this.httpClient.delete<void>(`api/admin/thread/${id}`);
+  deleteThread(id: number): Observable<PostResult<void>> {
+    return this.httpClient.delete<PostResult<void>>(`api/admin/thread/${id}`);
   }
 
-  banUser(banData: BanData): Observable<Date> {
-    return this.httpClient.post<Date>(`api/admin/ban`, banData);
+  banUser(banData: BanData): Observable<PostResult<Date>> {
+    return this.httpClient.post<PostResult<Date>>(`api/admin/ban`, banData);
   }
 
-  unbanUser(unbanData: UnbanData): Observable<void> {
-    return this.httpClient.post<void>(`api/admin/unban`, unbanData);
+  unbanUser(unbanData: UnbanData): Observable<PostResult<void>> {
+    return this.httpClient.post<PostResult<void>>(`api/admin/unban`, unbanData);
   }
 }

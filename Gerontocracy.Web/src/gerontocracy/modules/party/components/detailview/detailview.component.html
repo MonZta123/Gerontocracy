@@ -2,7 +2,7 @@
     <p-panel header="Allgemeine Infos">
         <div class="ui-g">
             <div class="ui-g-12 ui-lg-8 ui-md-12">
-                <b class="mt-0">{{data|fullname}}</b>
+                <b class="mt-0">{{data.name}}</b>
             </div>
             <div class="ui-g-12 ui-lg-4 ui-md-12" *ngIf="!isPopup" align="end">
                 <p-button icon="pi pi-window-maximize" (click)="popout.emit()"></p-button>

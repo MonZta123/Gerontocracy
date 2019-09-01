@@ -27,7 +27,9 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { TaskTypePipe } from './pipes/task-type.pipe';
 import { BanUserDialogComponent } from './components/ban-user-dialog/ban-user-dialog.component';
 import { UnbanUserDialogComponent } from './components/unban-user-dialog/unban-user-dialog.component';
-
+import { SettingsComponent } from './components/settings/settings.component';
+import { TreeTableModule } from 'primeng/treetable';
+import { AccordionModule } from 'primeng/accordion';
 
 @NgModule({
   declarations: [
@@ -39,7 +41,8 @@ import { UnbanUserDialogComponent } from './components/unban-user-dialog/unban-u
     TaskdetailComponent,
     TaskTypePipe,
     BanUserDialogComponent,
-    UnbanUserDialogComponent
+    UnbanUserDialogComponent,
+    SettingsComponent
   ],
   imports: [
     CommonModule,
@@ -63,7 +66,9 @@ import { UnbanUserDialogComponent } from './components/unban-user-dialog/unban-u
     ToastModule,
     AutoCompleteModule,
     DropdownModule,
-    CheckboxModule
+    CheckboxModule,
+    TreeTableModule,
+    AccordionModule
   ],
   providers: [
     MessageService

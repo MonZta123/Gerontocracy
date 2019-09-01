@@ -4,12 +4,13 @@ using System.Linq;
 using System.Security.Claims;
 using AutoMapper;
 using Gerontocracy.Core.BusinessObjects.News;
+using Gerontocracy.Core.BusinessObjects.Shared;
 using Gerontocracy.Core.Exceptions.News;
 using Gerontocracy.Core.Interfaces;
 using Gerontocracy.Data;
 
 using Gerontocracy.Shared.Extensions;
-
+using Microsoft.EntityFrameworkCore;
 using db = Gerontocracy.Data.Entities;
 
 namespace Gerontocracy.Core.Providers
@@ -114,6 +115,42 @@ namespace Gerontocracy.Core.Providers
 
             source.Enabled = false;
             _context.SaveChanges();
+        }
+
+        public SearchResult<Parlament> GetRssSources(string search, int pageSize, int pageIndex)
+        {
+            var query = _context.RssSource.Include(n => n.Parlament).AsQueryable();
+
+            query = query.OrderBy(n => n.Parlament.Code);
+
+            var count = query.Count();
+
+            query = query.Skip(pageSize * pageIndex)
+                .Take(pageSize);
+
+            var data = query
+                .GroupBy(n => n.Parlament, n => n, (key, group) => key)
+                .ToList();
+
+            return new SearchResult<Parlament>()
+            {
+                Data = _mapper.Map<List<Parlament>>(data),
+                MaxResults = count
+            };
+        }
+
+        public SearchResult<ParlamentOverview> GetParlaments(string search, int pageSize = 25, int pageIndex = 0)
+        {
+            var query = _context.Parlament.AsQueryable();
+            
+            var data = query.Skip(pageSize * pageIndex)
+                .Take(pageSize);
+
+            return new SearchResult<ParlamentOverview>()
+            {
+                Data = _mapper.Map<List<ParlamentOverview>>(data),
+                MaxResults = query.Count()
+            };
         }
     }
 }

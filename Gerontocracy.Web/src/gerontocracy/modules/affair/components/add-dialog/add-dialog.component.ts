@@ -9,7 +9,6 @@ import { QuelleAdd } from '../../models/quelle-add';
 import { SourceDialogComponent } from '../source-dialog/source-dialog.component';
 import { SourceDialogData } from '../source-dialog/source-dialog-data';
 import { QuelleData } from './quelle-data';
-import { FullnamePipe } from '../../../shared/pipes/fullname.pipe';
 import { ReputationType } from '../../../shared/models/reputation-type';
 
 @Component({
@@ -57,9 +56,7 @@ export class AddDialogComponent implements OnInit {
     this.sharedPartyService
       .getPoliticianSelection(evt.query)
       .toPromise()
-      .then(n => {
-        this.options = n.map(m => ({ ...m, fullname: new FullnamePipe().transform(m) }));
-      });
+      .then(n => this.options = n);
   }
 
   unlockPolitiker() {

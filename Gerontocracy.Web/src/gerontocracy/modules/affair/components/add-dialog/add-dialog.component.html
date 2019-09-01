@@ -38,10 +38,10 @@
             <div class="ui-inputgroup">
                 <span class="ui-inputgroup-addon"><i class="pi pi-user"></i></span>
                 <p-autoComplete [suggestions]="options" (completeMethod)="getSuggestions($event)"
-                    [(ngModel)]="politiker" field="fullname" [forceSelection]="true" [disabled]="!!politiker"
+                    [(ngModel)]="politiker" field="name" [forceSelection]="true" [disabled]="!!politiker"
                     [readonly]="!!politiker" placeholder="Politiker auswählen">
                     <ng-template let-item pTemplate="item">
-                        {{item | fullname}}
+                        {{item}}
                     </ng-template>
                 </p-autoComplete>
                 <button pButton icon="pi pi-trash" *ngIf="politiker" (click)="unlockPolitiker()"></button>
