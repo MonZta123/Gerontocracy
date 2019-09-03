@@ -18,25 +18,10 @@ namespace Gerontocracy.App.Models.Party
         public long ExternalId { get; set; }
 
         /// <summary>
-        /// Firstname
+        /// Name
         /// </summary>
-        public string Vorname { get; set; }
-
-        /// <summary>
-        /// Lastname
-        /// </summary>
-        public string Nachname { get; set; }
-
-        /// <summary>
-        /// Title before name
-        /// </summary>
-        public string AkadGradPre { get; set; }
-
-        /// <summary>
-        /// Title after name
-        /// </summary>
-        public string AkadGradPost { get; set; }
-
+        public string Name { get; set; }
+        
         /// <summary>
         /// Election circle
         /// </summary>

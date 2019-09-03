@@ -45,12 +45,14 @@ export class BaseComponent implements OnInit {
   }
 
   protected handlePostResult(data: PostResult<any>) {
-    this.messageService.addAll(data.errors.map(n =>
-      ({
-        severity: data.success ? 'warning' : 'error',
-        closable: true,
-        detail: n.message,
-        summary: data.success ? 'Warnung' : 'Fehler'
-      })));
+    if (data.errors) {
+      this.messageService.addAll(data.errors.map(n =>
+        ({
+          severity: data.success ? 'warning' : 'error',
+          closable: true,
+          detail: n.message,
+          summary: data.success ? 'Warnung' : 'Fehler'
+        })));
+    }
   }
 }
