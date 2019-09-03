@@ -4,10 +4,7 @@ import { VorfallData } from './vorfall-data';
 export interface PolitikerDetail {
     id: number;
     externalId: number;
-    vorname: string;
-    nachname: string;
-    akadGradPre: string;
-    akadGradPost: string;
+    name: string;
     wahlkreis: string;
     bundesland: string;
     parteiId?: number;

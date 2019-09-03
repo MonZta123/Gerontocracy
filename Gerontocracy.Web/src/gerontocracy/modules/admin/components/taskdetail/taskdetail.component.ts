@@ -1,15 +1,17 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { DialogService } from 'primeng/api';
+import { DialogService, MessageService } from 'primeng/api';
 import { AdminService } from '../../services/admin.service';
 import { AccountService } from '../../../../services/account.service';
 import { AufgabeDetail } from '../../models/aufgabe-detail';
+import { BaseComponent } from '../../../shared/components/base/base.component';
 
 @Component({
   selector: 'app-taskdetail',
   templateUrl: './taskdetail.component.html',
-  styleUrls: ['./taskdetail.component.scss']
+  styleUrls: ['./taskdetail.component.scss'],
+  providers: [MessageService]
 })
-export class TaskdetailComponent implements OnInit {
+export class TaskdetailComponent extends BaseComponent implements OnInit {
 
   @Input() data: AufgabeDetail;
 
@@ -19,9 +21,10 @@ export class TaskdetailComponent implements OnInit {
   isAdmin: boolean;
 
   constructor(
-    private dialogService: DialogService,
     private adminService: AdminService,
-    private accountService: AccountService) {
+    private accountService: AccountService,
+    messageService: MessageService) {
+    super(messageService);
   }
 
   ngOnInit() {
@@ -32,17 +35,36 @@ export class TaskdetailComponent implements OnInit {
   }
 
   assignToMe() {
-    this.adminService.assignTask(this.data.id).toPromise().then(n => {
-      this.data.bearbeiter = n.userName;
-      this.data.bearbeiterId = n.id;
-    });
+    this.adminService.assignTask(this.data.id)
+      .pipe(super.start(), super.end())
+      .toPromise()
+      .then(n => {
+        super.handlePostResult(n);
+        this.data.bearbeiter = n.data.userName;
+        this.data.bearbeiterId = n.data.id;
+      })
+      .catch(super.handleError);
   }
 
   closeTask() {
-    this.adminService.closeTask(this.data.id).toPromise().then(n => this.data.erledigt = n);
+    this.adminService.closeTask(this.data.id)
+      .pipe(super.start(), super.end())
+      .toPromise()
+      .then(n => {
+        super.handlePostResult(n);
+        this.data.erledigt = true;
+      })
+      .catch(super.handleError);
   }
 
   reopenTask() {
-    this.adminService.reopenTask(this.data.id).toPromise().then(n => this.data.erledigt = n);
+    this.adminService.reopenTask(this.data.id)
+      .pipe(super.start(), super.end())
+      .toPromise()
+      .then(n => {
+        super.handlePostResult(n);
+        this.data.erledigt = false;
+      })
+      .catch(super.handleError);
   }
 }

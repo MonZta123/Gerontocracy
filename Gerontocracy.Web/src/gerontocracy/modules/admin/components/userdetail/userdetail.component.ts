@@ -1,14 +1,14 @@
 import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
 import { UserDetail } from '../../models/user-detail';
-import { DialogService } from 'primeng/api';
+import { DialogService, MessageService } from 'primeng/api';
 import { AddRoleDialogComponent } from '../add-role-dialog/add-role-dialog.component';
 import { AdminService } from '../../services/admin.service';
 import { AccountService } from 'Gerontocracy.Web/src/gerontocracy/services/account.service';
 import { BanUserDialogComponent } from '../ban-user-dialog/ban-user-dialog.component';
 import { BanData } from '../../models/ban-data';
-import { getLocaleDateTimeFormat } from '@angular/common';
 import { UnbanUserDialogComponent } from '../unban-user-dialog/unban-user-dialog.component';
 import { UnbanData } from '../../models/unban-data';
+import { BaseComponent } from '../../../shared/components/base/base.component';
 
 @Component({
   selector: 'app-userdetail',
@@ -16,7 +16,7 @@ import { UnbanData } from '../../models/unban-data';
   styleUrls: ['./userdetail.component.scss'],
   providers: [DialogService]
 })
-export class UserdetailComponent implements OnInit {
+export class UserdetailComponent extends BaseComponent implements OnInit {
 
   @Input() data: UserDetail;
 
@@ -30,7 +30,10 @@ export class UserdetailComponent implements OnInit {
   constructor(
     private dialogService: DialogService,
     private adminService: AdminService,
-    private accountService: AccountService) { }
+    private accountService: AccountService,
+    messageService: MessageService) {
+    super(messageService);
+  }
 
   ngOnInit() {
     this.isLoading = false;
@@ -78,10 +81,15 @@ export class UserdetailComponent implements OnInit {
     }).onClose.subscribe(n => {
       if (n) {
         const data: BanData = { ...n, userId: this.data.id };
-        this.adminService.banUser(data).toPromise().then(m => {
-          this.data.banned = true;
-          this.data.lockoutEnd = m;
-        });
+        this.adminService.banUser(data)
+          .pipe(super.start(), super.end())
+          .toPromise()
+          .then(m => {
+            super.handlePostResult(n);
+            this.data.banned = true;
+            this.data.lockoutEnd = m.data;
+          })
+          .catch(super.handleError);
       }
     });
   }
@@ -93,10 +101,15 @@ export class UserdetailComponent implements OnInit {
     }).onClose.subscribe(n => {
       if (n) {
         const data: UnbanData = { ...n, userId: this.data.id };
-        this.adminService.unbanUser(data).toPromise().then(m => {
-          this.data.banned = false;
-          this.data.lockoutEnd = undefined;
-        });
+        this.adminService.unbanUser(data)
+          .pipe(super.start(), super.end())
+          .toPromise()
+          .then(m => {
+            super.handlePostResult(m);
+            this.data.banned = false;
+            this.data.lockoutEnd = undefined;
+          })
+          .catch(super.handleError);
       }
     });
   }

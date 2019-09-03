@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { DashboardData } from '../models/dashboard-data';
 import { NewsData } from '../models/news-data';
+import { PostResult } from '../../shared/models/post-result';
 
 @Injectable({
   providedIn: 'root'

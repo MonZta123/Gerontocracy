@@ -7,21 +7,25 @@ import { LoginDialogComponent } from 'Gerontocracy.Web/src/gerontocracy/componen
 import { DashboardService } from '../../services/dashboard.service';
 import { PoliticianSelectionDialogComponent } from '../politician-selection-dialog/politician-selection-dialog.component';
 import { NewsData } from '../../models/news-data';
+import { BaseComponent } from '../../../shared/components/base/base.component';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss']
+  styleUrls: ['./dashboard.component.scss'],
+  providers: [MessageService]
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent extends BaseComponent implements OnInit {
 
   constructor(
     private dashboardService: DashboardService,
     private sharedAccountService: SharedAccountService,
     private dialogService: DialogService,
-    private messageService: MessageService,
-    private router: Router
-  ) { }
+    private router: Router,
+    messageService: MessageService,
+  ) {
+    super(messageService);
+  }
 
   dashboard: DashboardData;
 
@@ -51,9 +55,13 @@ export class DashboardComponent implements OnInit {
 
               this.dashboardService
                 .generateNews(data)
+                .pipe(super.start(), super.end())
                 .toPromise()
-                .then(o => this.showAffair(o))
-                .catch(o => this.messageService.add({ severity: 'error', detail: o.message, summary: 'Fehler' }));
+                .then(o => {
+                  super.handlePostResult(o);
+                  this.showAffair(o.data);
+                })
+                .catch(super.handleError);
             }
           });
       } else {

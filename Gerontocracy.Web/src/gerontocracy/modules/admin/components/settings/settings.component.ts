@@ -10,6 +10,8 @@ export class SettingsComponent implements OnInit {
 
   constructor(private newsService: NewsService) { }
 
+  isAdmin: boolean;
+
   ngOnInit() {
   }
 

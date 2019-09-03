@@ -10,7 +10,7 @@
         </div>
         <div class="ui-g">
             <div class="ui-g-12 ui-md-8" *ngIf="data.politikerOverview">
-                {{data.politikerOverview | fullname}}
+                {{data.politikerOverview.name}}
             </div>
             <div class="ui-g-12 ui-md-8" *ngIf="!data.politikerOverview">
                 Kein Verantwortlicher!

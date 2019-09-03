@@ -1,6 +1,3 @@
-<p-toast [style]="{marginTop: '80px'}"></p-toast>
-<p-blockUI [blocked]="popupVisible"></p-blockUI>
-
 <div class="ui-fluid" *ngIf="isAdmin">
     <div class="ui-g">
         <div class="ui-g-12 ui-lg-6 ui-md-12 ui-g-nopad">
@@ -22,7 +19,7 @@
             <div class="ui-g-12">
                 <p-panel header="Übersicht">
                     <p-accordion multiple="true">
-                        <p-accordionTab *ngIf="let parliament of data"
+                        <p-accordionTab *ngFor="let parliament of data"
                             [header]="parliament.code + ' - ' + parliament.longtext">
                             <p-table [value]="parliament.rssSources">
                                 <ng-template pTemplate="header">
