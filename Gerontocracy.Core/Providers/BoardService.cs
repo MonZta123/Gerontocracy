@@ -75,10 +75,7 @@ namespace Gerontocracy.Core.Providers
             "                COALESCE(vorfalls.\"PolitikerId\",0) AS politikerid, " +
             "                threads.\"Title\", " +
             "                users.\"UserName\", " +
-            "                COALESCE(politikers.\"AkadGradPre\",'')  AS akadgradpre, " +
-            "                COALESCE(politikers.\"Vorname\",'')      AS vorname, " +
-            "                COALESCE(politikers.\"Nachname\",'')     AS nachname, " +
-            "                COALESCE(politikers.\"AkadGradPost\",'') AS akadgradpost, " +
+            "                COALESCE(politikers.\"Name\",'')      AS name, " +
             "                COALESCE(vorfalls.\"Titel\",'')          AS titel, " +
             "                num.\"NumPosts\" " +
             "FROM            \"Thread\" threads " +
@@ -362,18 +359,6 @@ namespace Gerontocracy.Core.Providers
 
             var data = this._context.GetData(builder.ToString(), n =>
             {
-                var politikerName = string.Empty;
-
-                var akadGradPre = n.GetString(8);
-                if (!string.IsNullOrEmpty(akadGradPre))
-                    politikerName = $"{akadGradPre} ";
-
-                politikerName = $"{politikerName} {n.GetString(9)} {n.GetString(10)}";
-
-                var akadGradPost = n.GetString(11);
-                if (!string.IsNullOrEmpty(akadGradPost))
-                    politikerName = $"{politikerName}, {akadGradPost}";
-
                 var thread = new ThreadOverview()
                 {
                     Id = n.GetInt64(0),
@@ -384,9 +369,9 @@ namespace Gerontocracy.Core.Providers
                     PolitikerId = n.GetInt64(5),
                     Titel = n.GetString(6),
                     UserName = n.GetString(7),
-                    PolitikerName = politikerName.Trim(),
-                    VorfallTitel = n.GetString(12),
-                    NumPosts = n.GetInt64(13),
+                    PolitikerName = n.GetString(8),
+                    VorfallTitel = n.GetString(9),
+                    NumPosts = n.GetInt64(10),
                 };
 
                 if (thread.VorfallId == 0)
