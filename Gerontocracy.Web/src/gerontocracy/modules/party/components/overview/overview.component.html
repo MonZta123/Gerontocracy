@@ -1,76 +1,74 @@
-<p-toast [style]="{marginTop: '80px'}"></p-toast>
-
-<p-blockUI [blocked]="popupVisible"></p-blockUI>
-
-<div class="ui-fluid">
-    <div class="ui-g">
-        <div class="ui-g-12 ui-lg-8 ui-md-12 ui-g-nopad">
-            <div class="ui-g-12">
-                <p-panel header="Suchparameter" toggleable="true" [collapsed]="false">
-                    <div class="ui-fluid ui-g" [formGroup]="searchForm">
-                        <div class="ui-g-12 ui-md-8">
-                            <div class="ui-inputgroup">
-                                <span class="ui-inputgroup-addon"><i class="pi pi-user"></i></span>
-                                <input class="mr-5" type="text" pInputText formControlName="firstName"
-                                    placeholder="Vorname">
-                                <input class="mr-5" type="text" pInputText formControlName="lastName"
-                                    placeholder="Nachname">
+<app-base [uiBlocked]="popupVisible">
+    <div class="ui-fluid">
+        <div class="ui-g">
+            <div class="ui-g-12 ui-lg-8 ui-md-12 ui-g-nopad">
+                <div class="ui-g-12">
+                    <p-panel header="Suchparameter" toggleable="true" [collapsed]="false">
+                        <div class="ui-fluid ui-g" [formGroup]="searchForm">
+                            <div class="ui-g-12 ui-md-8">
+                                <div class="ui-inputgroup">
+                                    <span class="ui-inputgroup-addon"><i class="pi pi-user"></i></span>
+                                    <input class="mr-5" type="text" pInputText formControlName="firstName"
+                                        placeholder="Vorname">
+                                    <input class="mr-5" type="text" pInputText formControlName="lastName"
+                                        placeholder="Nachname">
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-4">
+                                <div class="ui-inputgroup">
+                                    <span class="ui-inputgroup-addon"><i class="pi pi-users"></i></span>
+                                    <input type="text" pInputText formControlName="party" placeholder="Partei">
+                                </div>
+                            </div>
+                            <div class="ui-g-12" align="end">
+                                <p-button label="Suchen" icon="pi pi-search" (click)="loadData()">
+                                </p-button>
                             </div>
                         </div>
-                        <div class="ui-g-12 ui-md-4">
-                            <div class="ui-inputgroup">
-                                <span class="ui-inputgroup-addon"><i class="pi pi-users"></i></span>
-                                <input type="text" pInputText formControlName="party" placeholder="Partei">
-                            </div>
+                    </p-panel>
+                </div>
+                <div class="ui-g-12">
+                    <p-panel header="Übersicht">
+                        <p-paginator [rows]="pageSize" [showCurrentPageReport]="true" [totalRecords]="maxResults"
+                            [rowsPerPageOptions]="[10,25,50]" (onPageChange)="paginate($event)"></p-paginator>
+                        <div class="mt-5">
+                            <p-table [value]="data">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th width="30%">Name</th>
+                                        <th width="7%">Partei</th>
+                                        <!-- <th width="30%">Bundesland</th> -->
+                                        <th width="10%">Score</th>
+                                        <th width="7.3%"></th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-row>
+                                    <tr>
+                                        <td>{{row.name}}</td>
+                                        <td>{{row.parteiKurzzeichen}}</td>
+                                        <!-- <td>{{row.bundesland}}</td> -->
+                                        <td>{{row.reputation}}</td>
+                                        <td>
+                                            <p-button icon="pi pi-arrow-circle-right" (click)="showDetail(row.id)">
+                                            </p-button>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
                         </div>
-                        <div class="ui-g-12" align="end">
-                            <p-button label="Suchen" icon="pi pi-search" (click)="loadData()">
-                            </p-button>
-                        </div>
-                    </div>
+                    </p-panel>
+                </div>
+            </div>
+            <div class="ui-g-12 ui-lg-4 ui-md-12">
+                <p-panel header="Übersicht" *ngIf="detailData">
+                    <app-detailview [data]="detailData" [isPopup]="false" (vorfallClicked)="showVorfall($event)"
+                        (popout)="showPopup()"></app-detailview>
                 </p-panel>
             </div>
-            <div class="ui-g-12">
-                <p-panel header="Übersicht">
-                    <p-paginator [rows]="pageSize" [showCurrentPageReport]="true" [totalRecords]="maxResults"
-                        [rowsPerPageOptions]="[10,25,50]" (onPageChange)="paginate($event)"></p-paginator>
-                    <div class="mt-5">
-                        <p-table [value]="data">
-                            <ng-template pTemplate="header">
-                                <tr>
-                                    <th width="30%">Name</th>
-                                    <th width="7%">Partei</th>
-                                    <!-- <th width="30%">Bundesland</th> -->
-                                    <th width="10%">Score</th>
-                                    <th width="7.3%"></th>
-                                </tr>
-                            </ng-template>
-                            <ng-template pTemplate="body" let-row>
-                                <tr>
-                                    <td>{{row.name}}</td>
-                                    <td>{{row.parteiKurzzeichen}}</td>
-                                    <!-- <td>{{row.bundesland}}</td> -->
-                                    <td>{{row.reputation}}</td>
-                                    <td>
-                                        <p-button icon="pi pi-arrow-circle-right" (click)="showDetail(row.id)">
-                                        </p-button>
-                                    </td>
-                                </tr>
-                            </ng-template>
-                        </p-table>
-                    </div>
-                </p-panel>
-            </div>
-        </div>
-        <div class="ui-g-12 ui-lg-4 ui-md-12">
-            <p-panel header="Übersicht" *ngIf="detailData">
-                <app-detailview [data]="detailData" [isPopup]="false" (vorfallClicked)="showVorfall($event)"
-                    (popout)="showPopup()"></app-detailview>
-            </p-panel>
         </div>
     </div>
-</div>
 
-<p-dialog *ngIf="detailData" header="Detailansicht" [style]="{width: '512'}" [(visible)]="popupVisible">
-    <app-detailview [data]="detailData" (vorfallClicked)="showVorfall($event)" [isPopup]="true"></app-detailview>
-</p-dialog>
+    <p-dialog *ngIf="detailData" header="Detailansicht" [style]="{width: '512'}" [(visible)]="popupVisible">
+        <app-detailview [data]="detailData" (vorfallClicked)="showVorfall($event)" [isPopup]="true"></app-detailview>
+    </p-dialog>
+</app-base>

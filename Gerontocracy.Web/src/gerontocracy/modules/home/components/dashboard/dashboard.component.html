@@ -1,27 +1,30 @@
-<div class="ui-fluid">
-    <div class="ui-g">
-        <div class="ui-g-12 ui-g-nopad">
-            <div class="ui-g" *ngIf="dashboard">
-                <div class="ui-g-12 ui-md-4" *ngFor="let artikel of dashboard.news">
-                    <p-panel>
-                        <p-header>
-                            <a target="_blank" [href]="artikel.link">{{artikel.title}}</a>
-                        </p-header>
-                        {{artikel.description | stringTrim: 150}}
-                        <p-footer>
-                            <div class="d-flex flex-column">
-                                <p>{{artikel.author}} - {{artikel.pubDate | date: 'dd.MM.yyyy hh:mm'}}</p>
-                            </div>
-                            <div  class="mt-5">
-                                <p-button icon="pi pi-plus" iconPos="right" *ngIf="!artikel.vorfallId" label="Neuer Vorfall"
-                                    styleClass="ui-button-secondary" (click)="addAffair(artikel.id)"></p-button>
-                                <p-button icon="pi pi-external-link" iconPos="right" *ngIf="artikel.vorfallId" label="Zum Vorfall"
-                                    (click)="showAffair(artikel.vorfallId)"></p-button>
-                            </div>
-                        </p-footer>
-                    </p-panel>
+<app-base>
+    <div class="ui-fluid">
+        <div class="ui-g">
+            <div class="ui-g-12 ui-g-nopad">
+                <div class="ui-g" *ngIf="dashboard">
+                    <div class="ui-g-12 ui-md-4" *ngFor="let artikel of dashboard.news">
+                        <p-panel>
+                            <p-header>
+                                <a target="_blank" [href]="artikel.link">{{artikel.title}}</a>
+                            </p-header>
+                            {{artikel.description | stringTrim: 150}}
+                            <p-footer>
+                                <div class="d-flex flex-column">
+                                    <p>{{artikel.author}} - {{artikel.pubDate | date: 'dd.MM.yyyy hh:mm'}}</p>
+                                </div>
+                                <div class="mt-5">
+                                    <p-button icon="pi pi-plus" iconPos="right" *ngIf="!artikel.vorfallId"
+                                        label="Neuer Vorfall" styleClass="ui-button-secondary"
+                                        (click)="addAffair(artikel.id)"></p-button>
+                                    <p-button icon="pi pi-external-link" iconPos="right" *ngIf="artikel.vorfallId"
+                                        label="Zum Vorfall" (click)="showAffair(artikel.vorfallId)"></p-button>
+                                </div>
+                            </p-footer>
+                        </p-panel>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</app-base>

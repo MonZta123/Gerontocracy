@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DialogService, MessageService } from 'primeng/api';
-import { Location } from '@angular/common';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { SearchParams } from '../../../affair/models/search-params';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AdminService } from '../../services/admin.service';
 import { UserOverview } from '../../models/user-overview';

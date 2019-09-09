@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { MessageService, Message } from 'primeng/api';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Component, OnInit, Input } from '@angular/core';
+import { MessageService } from 'primeng/api';
 import { finalize } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { PostResult } from '../../models/post-result';
@@ -17,7 +16,7 @@ export class BaseComponent implements OnInit {
   constructor(private messageService: MessageService) { }
 
   public loading: boolean;
-  public uiBlocked: boolean;
+  @Input() public uiBlocked: boolean;
 
   ngOnInit() {
     this.uiBlocked = false;

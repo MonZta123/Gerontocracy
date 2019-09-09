@@ -1,82 +1,86 @@
-<div class="ui-fluid">
-    <p-panel header="Allgemeine Infos">
-        <div class="ui-g">
-            <div class="ui-g-12 ui-lg-8 ui-md-12">
-                <b class="mt-0">{{data.titel}}</b>
+<app-base [uiBlocked]="popupVisible">
+    <div class="ui-fluid">
+        <p-panel header="Allgemeine Infos">
+            <div class="ui-g">
+                <div class="ui-g-12 ui-lg-8 ui-md-12">
+                    <b class="mt-0">{{data.titel}}</b>
+                </div>
+                <div class="ui-g-12 ui-lg-4 ui-md-12" *ngIf="!isPopup" align="end">
+                    <p-button icon="pi pi-trash" styleClass="ui-button-danger" *ngIf="isAdmin" class="mr-5"
+                        (click)="deleteThread()">
+                    </p-button>
+                    <p-button icon="pi pi-window-maximize" (click)="popout.emit()"></p-button>
+                </div>
             </div>
-            <div class="ui-g-12 ui-lg-4 ui-md-12" *ngIf="!isPopup" align="end">
-                <p-button icon="pi pi-trash" styleClass="ui-button-danger" *ngIf="isAdmin" class="mr-5" (click)="deleteThread()">
-                </p-button>
-                <p-button icon="pi pi-window-maximize" (click)="popout.emit()"></p-button>
+            <div class="ui-g">
+                <div class="ui-g-12 ui-md-8" *ngIf="data.politikerName">
+                    {{data.politikerName}}
+                </div>
+                <div class="ui-g-12 ui-md-8" *ngIf="!data.politikerName">
+                    Kein Verantwortlicher!
+                </div>
             </div>
-        </div>
-        <div class="ui-g">
-            <div class="ui-g-12 ui-md-8" *ngIf="data.politikerName">
-                {{data.politikerName}}
-            </div>
-            <div class="ui-g-12 ui-md-8" *ngIf="!data.politikerName">
-                Kein Verantwortlicher!
-            </div>
-        </div>
-
-    </p-panel>
-</div>
-<div class="mt-5" [ngStyle]="{ 'width' : isPopup ? '800px' : 'unset' }">
-    <p-tree [value]="items" [style]="{ 'width' : isPopup ? '800px' : 'unset' }">
-        <ng-template let-node pTemplate="default">
-            <div>
-                <p-panel [header]="node.data.userName + ': ' + convertDate(node.data.createdOn)"
-                    [style]="{'white-space': 'pre-wrap'}">
-                    <div class="ui-g">
-                        <div class="ui-lg-12">
-                            <p *ngIf="!node.data.deleted">{{node.data.content}}</p>
-                            <p *ngIf="node.data.deleted"><i>(Dieser Beitrag wurde gelöscht.)</i></p>
-                        </div>
-                    </div>
-                    <p-footer>
-                        <div class="d-flex d-flex-between flex-column">
-                            <div class="d-flex d-flex-between">
-                                <div class="d-flex flex-row">
-                                    <div class="mr-5">
-                                        <p-button [disabled]="node.data.deleted" icon="pi pi-user-plus"
-                                            (click)="like(LikeType.like, node.data)"
-                                            [styleClass]="node.data.userLike !== 0 ? 'ui-button-secondary' : ''"
-                                            [label]="node.data.likes === 0 ? '0' : node.data.likes">
-                                        </p-button>
-                                    </div>
-                                    <div>
-                                        <p-button [disabled]="node.data.deleted" icon="pi pi-user-minus"
-                                            (click)="like(LikeType.dislike, node.data)"
-                                            [styleClass]="node.data.userLike !== 1 ? 'ui-button-secondary' : ''"
-                                            [label]="node.data.dislikes === 0 ? '0' : node.data.dislikes">
-                                        </p-button>
-                                    </div>
-                                </div>
-                                <div class="d-flex flex-row">
-                                    <p-button *ngIf="isAdmin && !node.data.deleted" icon="pi pi-trash"
-                                        styleClass="ui-button-danger" (click)="deletePost(node.data)" class="mr-5">
-                                    </p-button>
-                                    <p-button icon="pi pi-exclamation-triangle" styleClass="ui-button-danger"
-                                        (click)="report(node.data)" *ngIf="!node.data.deleted" class="mr-5">
-                                    </p-button>
-                                    <p-button icon="pi pi-arrow-down" *ngIf="!node.data.deleted"
-                                        (click)="node.data.showReply = true">
-                                    </p-button>
-                                </div>
-                            </div>
-                            <div class="ui-g" *ngIf="node.data.showReply" class="mt-5">
-                                <div class="ui-inputgroup">
-                                    <input pInputText type="text" [(ngModel)]="node.data.reply">
-                                </div>
-                                <button pButton icon="pi pi-comment" (click)="reply(node, node.data.reply)"></button>
+        </p-panel>
+    </div>
+    <div class="mt-5" [ngStyle]="{ 'width' : isPopup ? '800px' : 'unset' }">
+        <p-tree [value]="items" [style]="{ 'width' : isPopup ? '800px' : 'unset' }">
+            <ng-template let-node pTemplate="default">
+                <div>
+                    <p-panel [header]="node.data.userName + ': ' + convertDate(node.data.createdOn)"
+                        [style]="{'white-space': 'pre-wrap'}">
+                        <div class="ui-g">
+                            <div class="ui-lg-12">
+                                <p *ngIf="!node.data.deleted">{{node.data.content}}</p>
+                                <p *ngIf="node.data.deleted"><i>(Dieser Beitrag wurde gelöscht.)</i></p>
                             </div>
                         </div>
-                    </p-footer>
-                </p-panel>
-            </div>
+                        <p-footer>
+                            <div class="d-flex d-flex-between flex-column">
+                                <div class="d-flex d-flex-between">
+                                    <div class="d-flex flex-row">
+                                        <div class="mr-5">
+                                            <p-button [disabled]="node.data.deleted" icon="pi pi-user-plus"
+                                                (click)="like(LikeType.like, node.data)"
+                                                [styleClass]="node.data.userLike !== 0 ? 'ui-button-secondary' : ''"
+                                                [label]="node.data.likes === 0 ? '0' : node.data.likes">
+                                            </p-button>
+                                        </div>
+                                        <div>
+                                            <p-button [disabled]="node.data.deleted" icon="pi pi-user-minus"
+                                                (click)="like(LikeType.dislike, node.data)"
+                                                [styleClass]="node.data.userLike !== 1 ? 'ui-button-secondary' : ''"
+                                                [label]="node.data.dislikes === 0 ? '0' : node.data.dislikes">
+                                            </p-button>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex flex-row">
+                                        <p-button *ngIf="isAdmin && !node.data.deleted" icon="pi pi-trash"
+                                            styleClass="ui-button-danger" (click)="deletePost(node.data)" class="mr-5">
+                                        </p-button>
+                                        <p-button icon="pi pi-exclamation-triangle" styleClass="ui-button-danger"
+                                            (click)="report(node.data)" *ngIf="!node.data.deleted" class="mr-5">
+                                        </p-button>
+                                        <p-button icon="pi pi-arrow-down" *ngIf="!node.data.deleted"
+                                            (click)="node.data.showReply = true">
+                                        </p-button>
+                                    </div>
+                                </div>
+                                <div class="ui-g" *ngIf="node.data.showReply" class="mt-5">
+                                    <div class="ui-inputgroup">
+                                        <input pInputText type="text" [(ngModel)]="node.data.reply">
+                                    </div>
+                                    <button pButton icon="pi pi-comment"
+                                        (click)="reply(node, node.data.reply)"></button>
+                                </div>
+                            </div>
+                        </p-footer>
+                    </p-panel>
+                </div>
 
-        </ng-template>
-    </p-tree>
-</div>
+            </ng-template>
+        </p-tree>
+    </div>
 
-<p-confirmDialog [closable]="false" rejectButtonStyleClass="ui-button-secondary" [appendTo]="'body'"></p-confirmDialog>
+    <p-confirmDialog [closable]="false" rejectButtonStyleClass="ui-button-secondary" [appendTo]="'body'">
+    </p-confirmDialog>
+</app-base>
