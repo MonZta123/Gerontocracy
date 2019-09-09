@@ -6,13 +6,14 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { AdminService } from '../../services/admin.service';
 import { AufgabeOverview } from '../../models/aufgabe-overview';
 import { AufgabeDetail } from '../../models/aufgabe-detail';
+import { BaseComponent } from '../../../shared/components/base/base.component';
 
 @Component({
   selector: 'app-taskview',
   templateUrl: './taskview.component.html',
   styleUrls: ['./taskview.component.scss']
 })
-export class TaskviewComponent implements OnInit {
+export class TaskviewComponent extends BaseComponent implements OnInit {
 
   isAdmin: boolean;
 
@@ -35,9 +36,10 @@ export class TaskviewComponent implements OnInit {
     private accountService: AccountService,
     private activatedRoute: ActivatedRoute,
     private formBuilder: FormBuilder,
-    private messageService: MessageService,
-    private adminService: AdminService
-  ) { }
+    private adminService: AdminService,
+    messageService: MessageService) {
+    super(messageService);
+  }
 
   ngOnInit() {
     this.isAdmin = false;
@@ -70,7 +72,7 @@ export class TaskviewComponent implements OnInit {
         if (roles.includes('admin') || roles.includes('moderator')) {
           this.isAdmin = true;
         } else {
-          this.router.navigate(['/']);
+          this.router.navigate(['~/']);
         }
         this.popupVisible = false;
 
@@ -98,9 +100,10 @@ export class TaskviewComponent implements OnInit {
     this.detailData = null;
 
     this.adminService.getTaskDetail(id)
+      .pipe(super.start(), super.end())
       .toPromise()
       .then(n => this.detailData = n)
-      .catch(n => this.messageService.add({ severity: 'error', detail: n.Message, summary: 'Fehler' }));
+      .catch(super.handleError);
   }
 
   loadData(): void {
@@ -114,11 +117,12 @@ export class TaskviewComponent implements OnInit {
     searchParameters.includeDone = this.includeDone;
 
     this.adminService.getTasks(searchParameters, this.pageSize, this.pageIndex)
+      .pipe(super.start(), super.end())
       .toPromise()
       .then(n => {
         this.data = n.data;
         this.maxResults = n.maxResults;
       })
-      .catch(n => this.messageService.add({ severity: 'error', detail: n.Message, summary: 'Fehler' }));
+      .catch(super.handleError);
   }
 }

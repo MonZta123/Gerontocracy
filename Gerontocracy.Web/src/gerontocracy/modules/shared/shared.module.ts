@@ -23,6 +23,7 @@ import { BlockUIModule } from 'primeng/blockui';
   exports: [
     StringTrimPipe,
     UrlPipe,
+    BaseComponent
   ],
   imports: [
     CommonModule,

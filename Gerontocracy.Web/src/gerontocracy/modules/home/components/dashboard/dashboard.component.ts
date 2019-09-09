@@ -53,8 +53,7 @@ export class DashboardComponent extends BaseComponent implements OnInit {
                 politikerId: n.politikerId
               };
 
-              this.dashboardService
-                .generateNews(data)
+              this.dashboardService.generateNews(data)
                 .pipe(super.start(), super.end())
                 .toPromise()
                 .then(o => {

@@ -9,14 +9,15 @@ import { MessageService, DialogService } from 'primeng/api';
 import { AddDialogComponent } from '../add-dialog/add-dialog.component';
 import { SharedAccountService } from '../../../shared/services/shared-account.service';
 import { LoginDialogComponent } from '../../../../components/login-dialog/login-dialog.component';
+import { BaseComponent } from '../../../shared/components/base/base.component';
 
 @Component({
   selector: 'app-overview',
   templateUrl: './overview.component.html',
   styleUrls: ['./overview.component.scss'],
-  providers: [DialogService]
+  providers: [DialogService, MessageService]
 })
-export class OverviewComponent implements OnInit {
+export class OverviewComponent extends BaseComponent implements OnInit {
 
   popupVisible: boolean;
   pageSize = 25;
@@ -33,8 +34,11 @@ export class OverviewComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private affairService: AffairService,
     private sharedAccountService: SharedAccountService,
-    private messageService: MessageService,
-    private dialogService: DialogService) { }
+    private dialogService: DialogService,
+    messageService: MessageService
+  ) {
+    super(messageService);
+  }
 
   ngOnInit() {
     this.popupVisible = false;
@@ -59,13 +63,14 @@ export class OverviewComponent implements OnInit {
   loadData(): void {
     this.isLoadingData = true;
     this.affairService.search(this.searchForm.value, this.pageSize, this.pageIndex)
+      .pipe(super.start(), super.end())
       .toPromise()
       .then(n => {
         this.data = n.data;
         this.maxResults = n.maxResults;
         this.isLoadingData = false;
       })
-      .catch(n => this.messageService.add({ severity: 'error', summary: n.name, detail: n.Message }));
+      .catch(super.handleError);
   }
 
   showPopup(): void {
@@ -80,9 +85,10 @@ export class OverviewComponent implements OnInit {
     this.detailData = null;
     this.location.replaceState(`/affair/new/${id}`);
     this.affairService.getAffairDetail(id)
+      .pipe(super.start(), super.end())
       .toPromise()
       .then(n => this.detailData = n)
-      .catch(n => this.messageService.add({ severity: 'error', summary: n.name, detail: n.Message }));
+      .catch(super.handleError);
   }
 
   addAffair() {

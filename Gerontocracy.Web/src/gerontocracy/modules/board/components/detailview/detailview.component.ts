@@ -1,5 +1,5 @@
 import { Component, OnInit, EventEmitter, Input, Output, Inject, LOCALE_ID } from '@angular/core';
-import { TreeNode, DialogService, ConfirmationService } from 'primeng/api';
+import { TreeNode, DialogService, ConfirmationService, MessageService } from 'primeng/api';
 import { ThreadDetail } from '../../models/thread-detail';
 import { Post } from '../../models/post';
 import { DatePipe } from '@angular/common';
@@ -10,14 +10,15 @@ import { LoginDialogComponent } from '../../../../components/login-dialog/login-
 import { ReportDialogComponent } from '../report-dialog/report-dialog.component';
 import { ReportData } from '../../models/report-data';
 import { AdminService } from '../../../admin/services/admin.service';
+import { BaseComponent } from '../../../shared/components/base/base.component';
 
 @Component({
   selector: 'app-detailview',
   templateUrl: './detailview.component.html',
   styleUrls: ['./detailview.component.scss'],
-  providers: [DialogService, ConfirmationService]
+  providers: [DialogService, ConfirmationService, MessageService]
 })
-export class DetailviewComponent implements OnInit {
+export class DetailviewComponent extends BaseComponent implements OnInit {
 
   @Input() data: ThreadDetail;
   @Input() isAdmin = false;
@@ -33,7 +34,10 @@ export class DetailviewComponent implements OnInit {
     private adminService: AdminService,
     private sharedAccountService: SharedAccountService,
     private confirmationService: ConfirmationService,
-    private dialogService: DialogService) { }
+    private dialogService: DialogService,
+    messageService: MessageService) {
+    super(messageService);
+  }
 
   items: TreeNode[];
 
@@ -54,7 +58,8 @@ export class DetailviewComponent implements OnInit {
           postId: post.id
         };
 
-        this.boardService.report(data).toPromise().then(() => {
+        this.boardService.report(data).toPromise().then(o => {
+          this.handlePostResult(o);
           this.confirmationService.confirm({
             message: 'Die Meldung wurde eingereicht. Danke für deine Mithilfe!',
             icon: 'pi pi-check',
@@ -128,8 +133,10 @@ export class DetailviewComponent implements OnInit {
 
         this.boardService
           .like(post.id, newLikeType)
+          .pipe(super.start(), super.end())
           .toPromise()
-          .then(() => post.userLike = newLikeType);
+          .then(() => post.userLike = newLikeType)
+          .catch(super.handleError);
       } else {
         this.showLoginDialog();
       }
@@ -162,8 +169,10 @@ export class DetailviewComponent implements OnInit {
       if (r) {
         if (value != null && value.length < 255) {
           this.boardService.reply(node.data.id, value)
+            .pipe(super.start(), super.end())
             .toPromise()
-            .then(() => window.location.reload());
+            .then(() => window.location.reload())
+            .catch(super.handleError);
         }
       } else {
         this.showLoginDialog();

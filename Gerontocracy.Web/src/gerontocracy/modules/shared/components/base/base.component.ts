@@ -20,7 +20,8 @@ export class BaseComponent implements OnInit {
   public uiBlocked: boolean;
 
   ngOnInit() {
-
+    this.uiBlocked = false;
+    this.loading = false;
   }
 
   protected blockUI() {
@@ -44,7 +45,7 @@ export class BaseComponent implements OnInit {
     this.messageService.add({ severity: 'error', summary: 'Fehler', detail: handleError.message });
   }
 
-  protected handlePostResult(data: PostResult<any>) {
+  protected handlePostResult(data: PostResult<any>): boolean {
     if (data.errors) {
       this.messageService.addAll(data.errors.map(n =>
         ({
@@ -54,5 +55,7 @@ export class BaseComponent implements OnInit {
           summary: data.success ? 'Warnung' : 'Fehler'
         })));
     }
+
+    return data.success;
   }
 }
