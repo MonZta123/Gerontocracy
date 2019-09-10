@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { PostResult } from '../../shared/models/post-result';
 import { RssData } from '../models/rss-data';
 import { Observable } from 'rxjs';
+import { Parliament } from '../models/parliament';
+import { SearchResult } from '../../shared/models/search-result';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +21,7 @@ export class NewsService {
     return this.httpClient.delete<PostResult<void>>(`api/news/rss/${id}`);
   }
 
-  public getAll(search: string, pageSize: number, pageIndex: number): Observable<void> {
-    return this.httpClient.get<void>(`api/news/rss?search=${search}&pageSize=${pageSize}&pageIndex=${pageIndex}`);
+  public getAll(search: string, pageSize: number, pageIndex: number): Observable<SearchResult<Parliament>> {
+    return this.httpClient.get<SearchResult<Parliament>>(`api/news/rss?search=${search}&pageSize=${pageSize}&pageIndex=${pageIndex}`);
   }
 }

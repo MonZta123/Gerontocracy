@@ -8,8 +8,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 @Component({
   selector: 'app-base',
   templateUrl: './base.component.html',
-  styleUrls: ['./base.component.scss'],
-  providers: [MessageService]
+  styleUrls: ['./base.component.scss']
 })
 export class BaseComponent implements OnInit {
 
@@ -44,7 +43,7 @@ export class BaseComponent implements OnInit {
     this.messageService.add({ severity: 'error', summary: 'Fehler', detail: handleError.message });
   }
 
-  protected handlePostResult(data: PostResult<any>): boolean {
+  protected handlePostResult(data: PostResult<any>, successMessage?: string, successHeader?: string): boolean {
     if (data.errors) {
       this.messageService.addAll(data.errors.map(n =>
         ({
@@ -53,6 +52,15 @@ export class BaseComponent implements OnInit {
           detail: n.message,
           summary: data.success ? 'Warnung' : 'Fehler'
         })));
+    } else {
+      if (successMessage) {
+        this.messageService.add({
+          severity: 'success',
+          closable: true,
+          detail: successMessage,
+          summary: successMessage ? successMessage : 'Erledigt'
+        })
+      }
     }
 
     return data.success;

@@ -30,6 +30,7 @@ import { UnbanUserDialogComponent } from './components/unban-user-dialog/unban-u
 import { SettingsComponent } from './components/settings/settings.component';
 import { TreeTableModule } from 'primeng/treetable';
 import { AccordionModule } from 'primeng/accordion';
+import { AddSourceDialogComponent } from './components/add-source-dialog/add-source-dialog.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { AccordionModule } from 'primeng/accordion';
     TaskTypePipe,
     BanUserDialogComponent,
     UnbanUserDialogComponent,
-    SettingsComponent
+    SettingsComponent,
+    AddSourceDialogComponent
   ],
   imports: [
     CommonModule,

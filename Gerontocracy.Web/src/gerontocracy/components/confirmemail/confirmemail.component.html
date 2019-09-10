@@ -1,14 +1,8 @@
-<p-panel [showHeader]="false" *ngIf="showSuccess">
-    Deine E-Mail-Adresse wurde bestätigt - du kannst dich jetzt einloggen!
-</p-panel>
-<p-panel [showHeader]="false" *ngIf="showError">
-    Es ist ein Fehler aufgetreten!
-</p-panel>
-<!-- 
-<object class="imagesvg" *ngIf="showSuccess" data="../../../assets/mail-success.svg" type="image/svg+xml">
-    Dein Browser kann leider kein svg darstellen.
-</object>
-
-<object class="imagesvg" *ngIf="showError" data="../../../assets/mail-error.svg" type="image/svg+xml">
-    Dein Browser kann leider kein svg darstellen.
-</object> -->
+<app-base>
+    <p-panel [showHeader]="false" *ngIf="showSuccess">
+        Deine E-Mail-Adresse wurde bestätigt - du kannst dich jetzt einloggen!
+    </p-panel>
+    <p-panel [showHeader]="false" *ngIf="showError">
+        Es ist ein Fehler aufgetreten!
+    </p-panel>
+</app-base>

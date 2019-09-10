@@ -21,16 +21,16 @@
             <div class="ui-g-12">
                 <div class="ui-inputgroup">
                     <span class="ui-inputgroup-addon"><i class="pi pi-pencil"></i></span>
-                    <input type="text" pInputText placeholder="Zusatz" formControlName="zusatz">
+                    <input type="text" pInputText placeholder="Name" formControlName="name">
                 </div>
 
                 <div class="d-flex flex-column">
-                    <p-message severity="error" text="Bitte Zusatzinfo angeben!"
-                        *ngIf="formGroup.controls.zusatz.hasError('required') && formGroup.controls.zusatz.touched"
+                    <p-message severity="error" text="Bitte Name eingeben!"
+                        *ngIf="formGroup.controls.name.hasError('required') && formGroup.controls.name.touched"
                         class="mt-5">
                     </p-message>
-                    <p-message severity="error" text="Zusatzinfo darf maximal 255 Zeichen lang sein!"
-                        *ngIf="formGroup.controls.zusatz.hasError('maxlength') && formGroup.controls.zusatz.touched"
+                    <p-message severity="error" text="Name darf maximal 255 Zeichen lang sein!"
+                        *ngIf="formGroup.controls.name.hasError('maxlength') && formGroup.controls.name.touched"
                         class="mt-5">
                     </p-message>
                 </div>

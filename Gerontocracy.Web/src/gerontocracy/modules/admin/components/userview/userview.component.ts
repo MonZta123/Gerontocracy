@@ -6,6 +6,7 @@ import { AdminService } from '../../services/admin.service';
 import { UserOverview } from '../../models/user-overview';
 import { UserDetail } from '../../models/user-detail';
 import { AccountService } from '../../../../services/account.service';
+import { BaseComponent } from '../../../shared/components/base/base.component';
 
 @Component({
   selector: 'app-userview',
@@ -13,7 +14,7 @@ import { AccountService } from '../../../../services/account.service';
   styleUrls: ['./userview.component.scss'],
   providers: [DialogService]
 })
-export class UserviewComponent implements OnInit {
+export class UserviewComponent extends BaseComponent implements OnInit {
 
   searchForm: FormGroup;
 
@@ -33,9 +34,11 @@ export class UserviewComponent implements OnInit {
     private accountService: AccountService,
     private activatedRoute: ActivatedRoute,
     private formBuilder: FormBuilder,
-    private messageService: MessageService,
-    private adminService: AdminService
-  ) { }
+    private adminService: AdminService,
+    messageService: MessageService
+  ) {
+    super(messageService);
+  }
 
   ngOnInit() {
     this.isAdmin = false;
@@ -71,20 +74,22 @@ export class UserviewComponent implements OnInit {
     this.detailData = null;
 
     this.adminService.getUserDetail(id)
+      .pipe(super.start(), super.end())
       .toPromise()
       .then(n => this.detailData = n)
-      .catch(n => this.messageService.add({ severity: 'error', detail: n.Message, summary: 'Fehler' }));
+      .catch(super.handleError);
   }
 
   loadData(): void {
     this.pageIndex = 0;
     this.maxResults = 0;
     this.adminService.search(this.searchForm.value, this.pageSize, this.pageIndex)
+      .pipe(super.start(), super.end())
       .toPromise()
       .then(n => {
         this.data = n.data;
         this.maxResults = n.maxResults;
       })
-      .catch(n => this.messageService.add({ severity: 'error', detail: n.Message, summary: 'Fehler' }));
+      .catch(super.handleError);
   }
 }
