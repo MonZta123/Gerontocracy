@@ -129,7 +129,12 @@ namespace Gerontocracy.Core.Providers
                 .Take(pageSize);
 
             var data = query
-                .GroupBy(n => n.Parlament, n => n, (key, group) => key)
+                .ToList()
+                .GroupBy(n => n.Parlament, n => n, (key, group) =>
+                {
+                    key.Sources = group.ToList();
+                    return key;
+                })
                 .ToList();
 
             return new SearchResult<Parlament>()

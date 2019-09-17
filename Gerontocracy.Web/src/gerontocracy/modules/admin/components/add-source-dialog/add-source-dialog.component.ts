@@ -12,8 +12,8 @@ export class AddSourceDialogComponent implements OnInit {
 
   formGroup: FormGroup;
 
-  private index: number;
   private readonly regex = '((https?://)|(http?://))([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?';
+  private id: number;
 
   constructor(
     private dialogRef: DynamicDialogRef,
@@ -21,6 +21,9 @@ export class AddSourceDialogComponent implements OnInit {
     private formBuilder: FormBuilder,
   ) {
     dialogConfig.header = `Quelle ${dialogConfig.data ? 'bearbeiten' : 'hinzufügen'}`;
+    if (this.dialogConfig.data) {
+      this.id = this.dialogConfig.data.id;
+    }
   }
 
   ngOnInit() {
@@ -41,7 +44,7 @@ export class AddSourceDialogComponent implements OnInit {
 
     if (this.formGroup.valid) {
       const result: RssDialogResult = {
-        id: this.dialogConfig.data.id,
+        id: this.id,
         ...this.formGroup.value
       };
 

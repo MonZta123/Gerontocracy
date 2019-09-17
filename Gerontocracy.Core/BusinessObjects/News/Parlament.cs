@@ -12,6 +12,6 @@ namespace Gerontocracy.Core.BusinessObjects.News
 
         public string Langtext { get; set; }
 
-        public List<RssSource> RssSources { get; set; }
+        public List<RssSource> Sources { get; set; }
     }
 }

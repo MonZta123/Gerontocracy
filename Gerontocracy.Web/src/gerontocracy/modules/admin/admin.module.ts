@@ -78,7 +78,8 @@ import { AddSourceDialogComponent } from './components/add-source-dialog/add-sou
   entryComponents: [
     BanUserDialogComponent,
     UnbanUserDialogComponent,
-    AddRoleDialogComponent
+    AddRoleDialogComponent,
+    AddSourceDialogComponent
   ]
 })
 export class AdminModule { }

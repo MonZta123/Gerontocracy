@@ -5,6 +5,9 @@ import { MessageService, DialogService } from 'primeng/api';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { Parliament } from '../../models/parliament';
 import { AddSourceDialogComponent } from '../add-source-dialog/add-source-dialog.component';
+import { AccountService } from 'Gerontocracy.Web/src/gerontocracy/services/account.service';
+import { Router } from '@angular/router';
+import { RssData } from '../../models/rss-data';
 
 @Component({
   selector: 'app-settings',
@@ -18,6 +21,8 @@ export class SettingsComponent extends BaseComponent implements OnInit {
     private newsService: NewsService,
     private formBuilder: FormBuilder,
     private dialogService: DialogService,
+    private accountService: AccountService,
+    private router: Router,
     messageService: MessageService) {
     super(messageService);
   }
@@ -32,18 +37,48 @@ export class SettingsComponent extends BaseComponent implements OnInit {
   data: Parliament[];
 
   ngOnInit() {
-    this.searchForm = this.formBuilder.group({
-      search: ['']
-    });
+    this.accountService
+      .getCurrentUser()
+      .toPromise()
+      .then(n => {
+        const roles: string[] = n.roles;
+        if (roles.includes('admin') || roles.includes('moderator')) {
+          this.isAdmin = true;
+        } else {
+          this.router.navigate(['~/']);
+        }
 
-    this.loadData();
+        this.searchForm = this.formBuilder.group({
+          search: ['']
+        });
+
+        this.loadData();
+      });
   }
 
-  addSource() {
+  addSource(parlamentId: number) {
     this.dialogService.open(AddSourceDialogComponent, {
       closable: false,
-      header: 'Neuen Vorfall einreichen',
-      width: '800px',
+      header: 'Neue Source hinzufügen',
+      width: '512px',
+    }).onClose.subscribe(n => {
+      if (n) {
+        const data: RssData = {
+          name: n.name,
+          url: n.url,
+          parlamentId
+        };
+        this.newsService.addRssFeed(data)
+          .pipe(super.start(), super.end())
+          .toPromise()
+          .then(m => {
+
+            if (super.handlePostResult(m)) {
+              this.loadData();
+            }
+          })
+          .catch(super.handleError);
+      }
     });
   }
 
@@ -52,11 +87,11 @@ export class SettingsComponent extends BaseComponent implements OnInit {
       data: { id },
       closable: false,
       header: 'Neuen Vorfall einreichen',
-      width: '800px',
+      width: '512px',
     }).onClose.subscribe(n => {
-      if (super.handlePostResult(n)) {
-        this.loadData();
-      }
+      // if (super.handlePostResult(n)) {
+      //   this.loadData();
+      // }
     });
   }
 

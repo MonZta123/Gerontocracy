@@ -8,7 +8,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 @Component({
   selector: 'app-base',
   templateUrl: './base.component.html',
-  styleUrls: ['./base.component.scss']
+  styleUrls: ['./base.component.scss'],
+  providers: [MessageService]
 })
 export class BaseComponent implements OnInit {
 

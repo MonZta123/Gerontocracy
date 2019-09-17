@@ -25,6 +25,6 @@ namespace Gerontocracy.App.Models.News
         /// <summary>
         /// News
         /// </summary>
-        public List<RssSource> RssSources { get; set; }
+        public List<RssSource> Sources { get; set; }
     }
 }
