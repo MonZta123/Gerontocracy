@@ -25,7 +25,7 @@
                     [(ngModel)]="politiker" field="name" [forceSelection]="true" [disabled]="!!politiker"
                     [readonly]="!!politiker" placeholder="Politiker auswählen">
                     <ng-template let-item pTemplate="item">
-                        {{item}}
+                        {{item.name}}
                     </ng-template>
                 </p-autoComplete>
                 <button pButton icon="pi pi-trash" *ngIf="politiker" (click)="unlockPolitiker()"></button>

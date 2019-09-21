@@ -18,6 +18,8 @@ export class TaskviewComponent extends BaseComponent implements OnInit {
   isAdmin: boolean;
 
   searchForm: FormGroup;
+  query: any;
+
   includeDone: boolean;
 
   popupVisible: boolean;
@@ -43,7 +45,6 @@ export class TaskviewComponent extends BaseComponent implements OnInit {
 
   ngOnInit() {
     this.isAdmin = false;
-    this.includeDone = false;
 
     this.selectionItems = [
       {
@@ -78,6 +79,7 @@ export class TaskviewComponent extends BaseComponent implements OnInit {
 
         this.searchForm = this.formBuilder.group({
           userName: '',
+          includeDone: false,
           taskType: null,
         });
 
@@ -92,10 +94,6 @@ export class TaskviewComponent extends BaseComponent implements OnInit {
       });
   }
 
-  checkboxChanged(value: boolean) {
-    this.includeDone = value;
-  }
-
   showDetail(id: number) {
     this.detailData = null;
 
@@ -106,17 +104,22 @@ export class TaskviewComponent extends BaseComponent implements OnInit {
       .catch(error => super.handleError(error));
   }
 
+  search(): void {
+    this.pageIndex = 0;
+
+    this.query = this.searchForm.value;
+    if (!this.query.taskType && this.query.taskType !== 0) {
+      this.query.taskType = '';
+    }
+
+    this.loadData();
+  }
+
   loadData(): void {
     this.pageIndex = 0;
     this.maxResults = 0;
 
-    const searchParameters = this.searchForm.value;
-    if (!searchParameters.taskType && searchParameters.taskType !== 0) {
-      searchParameters.taskType = '';
-    }
-    searchParameters.includeDone = this.includeDone;
-
-    this.adminService.getTasks(searchParameters, this.pageSize, this.pageIndex)
+    this.adminService.getTasks(this.query, this.pageSize, this.pageIndex)
       .pipe(super.start(), super.end())
       .toPromise()
       .then(n => {

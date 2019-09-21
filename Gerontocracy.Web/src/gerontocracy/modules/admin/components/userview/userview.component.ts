@@ -17,6 +17,7 @@ import { BaseComponent } from '../../../shared/components/base/base.component';
 export class UserviewComponent extends BaseComponent implements OnInit {
 
   searchForm: FormGroup;
+  query: any;
 
   popupVisible: boolean;
 
@@ -80,10 +81,16 @@ export class UserviewComponent extends BaseComponent implements OnInit {
       .catch(error => super.handleError(error));
   }
 
+  search(): void {
+    this.pageIndex = 0;
+    this.query = this.searchForm.value;
+    this.loadData();
+  }
+
   loadData(): void {
     this.pageIndex = 0;
     this.maxResults = 0;
-    this.adminService.search(this.searchForm.value, this.pageSize, this.pageIndex)
+    this.adminService.search(this.query, this.pageSize, this.pageIndex)
       .pipe(super.start(), super.end())
       .toPromise()
       .then(n => {

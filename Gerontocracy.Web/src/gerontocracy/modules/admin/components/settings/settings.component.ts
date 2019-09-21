@@ -34,6 +34,8 @@ export class SettingsComponent extends BaseComponent implements OnInit {
   isAdmin: boolean;
   searchForm: FormGroup;
 
+  query: any;
+
   pageSize = 25;
   maxResults = 0;
   pageIndex = 0;
@@ -121,8 +123,14 @@ export class SettingsComponent extends BaseComponent implements OnInit {
     this.loadData();
   }
 
+  search(): void {
+    this.query = this.searchForm.controls.search.value;
+    this.pageIndex = 0;
+    this.loadData();
+  }
+
   loadData(): void {
-    this.newsService.getAll(this.searchForm.controls.search.value, this.pageSize, this.pageIndex)
+    this.newsService.getAll(this.query, this.pageSize, this.pageIndex)
       .pipe(super.start(), super.end())
       .toPromise()
       .then(n => {

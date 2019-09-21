@@ -4,8 +4,8 @@
             <div class="ui-g-12 ui-lg-6 ui-md-12 ui-g-nopad">
                 <div class="ui-g-12">
                     <p-panel header="Suchparameter" toggleable="true" [collapsed]="false">
-                        <div class="ui-fluid">
-                            <div class="ui-g" [formGroup]="searchForm">
+                        <div class="ui-fluid" [formGroup]="searchForm">
+                            <div class="ui-g">
                                 <div class="ui-g-12 ui-md-6">
                                     <div class="ui-inputgroup">
                                         <span class="ui-inputgroup-addon"><i class="pi pi-user"></i></span>
@@ -30,9 +30,9 @@
                             </div>
                             <div class="ui-g">
                                 <div class="ui-g-12 d-flex d-flex-between">
-                                    <p-checkbox (onChange)="checkboxChanged($event)" label="Erledigte Anzeigen">
+                                    <p-checkbox formControlName="includeDone" binary="true" label="Erledigte Anzeigen">
                                     </p-checkbox>
-                                    <p-button label="Suchen" icon="pi pi-search" (click)="loadData()">
+                                    <p-button label="Suchen" icon="pi pi-search" (click)="search()">
                                     </p-button>
                                 </div>
                             </div>

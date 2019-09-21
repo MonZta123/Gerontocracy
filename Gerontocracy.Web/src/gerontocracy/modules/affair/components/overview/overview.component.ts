@@ -20,13 +20,16 @@ import { BaseComponent } from '../../../shared/components/base/base.component';
 export class OverviewComponent extends BaseComponent implements OnInit {
 
   popupVisible: boolean;
+
+  searchForm: FormGroup;
+  query: any;
+
   pageSize = 25;
   maxResults = 0;
   pageIndex = 0;
-  searchForm: FormGroup;
+
   data: VorfallOverview[];
   detailData: VorfallDetail;
-  isLoadingData = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -58,19 +61,6 @@ export class OverviewComponent extends BaseComponent implements OnInit {
     });
 
     this.loadData();
-  }
-
-  loadData(): void {
-    this.isLoadingData = true;
-    this.affairService.search(this.searchForm.value, this.pageSize, this.pageIndex)
-      .pipe(super.start(), super.end())
-      .toPromise()
-      .then(n => {
-        this.data = n.data;
-        this.maxResults = n.maxResults;
-        this.isLoadingData = false;
-      })
-      .catch(error => super.handleError(error));
   }
 
   showPopup(): void {
@@ -120,5 +110,22 @@ export class OverviewComponent extends BaseComponent implements OnInit {
     this.pageIndex = evt.page;
     this.pageSize = evt.rows;
     this.loadData();
+  }
+
+  search(): void {
+    this.pageIndex = 0;
+    this.query = this.searchForm.value;
+    this.loadData();
+  }
+
+  loadData(): void {
+    this.affairService.search(this.query, this.pageSize, this.pageIndex)
+      .pipe(super.start(), super.end())
+      .toPromise()
+      .then(n => {
+        this.data = n.data;
+        this.maxResults = n.maxResults;
+      })
+      .catch(error => super.handleError(error));
   }
 }

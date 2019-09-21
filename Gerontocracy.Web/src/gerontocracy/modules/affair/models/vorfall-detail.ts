@@ -13,6 +13,6 @@ export interface VorfallDetail {
     reputationType: ReputationType;
     reputation: number;
     quellen: QuelleOverview[];
-    politikerOverview: PolitikerOverview;
+    politiker: PolitikerOverview;
     userVote: VoteType;
 }

@@ -112,7 +112,7 @@ namespace Gerontocracy.Core.Providers
                     voteType = _mapper.Map<VoteType?>(vote.VoteType);
                 }
             }
-
+            
             var vorfallMapped = new VorfallDetail
             {
                 Id = vorfall.Id,
@@ -126,6 +126,8 @@ namespace Gerontocracy.Core.Providers
                 Reputation = vorfall.Legitimitaet.Count,
                 UserVote = voteType
             };
+
+            vorfallMapped.ErstelltVon.Roles = _accountService.GetUserOrDefaultAsync(vorfall.UserId).Result.Roles;
 
             return vorfallMapped;
         }

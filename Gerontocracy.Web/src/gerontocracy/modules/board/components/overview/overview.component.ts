@@ -44,6 +44,7 @@ export class OverviewComponent extends BaseComponent implements OnInit {
   popupVisible: boolean;
 
   searchForm: FormGroup;
+  query: any;
 
   ngOnInit() {
     this.isAdmin = false;
@@ -108,9 +109,15 @@ export class OverviewComponent extends BaseComponent implements OnInit {
     });
   }
 
+  search(): void {
+    this.pageIndex = 0;
+    this.query = this.searchForm.value;
+    this.loadData();
+  }
+
   loadData(): void {
     this.isLoadingData = true;
-    this.boardService.search(this.searchForm.value, this.pageSize, this.pageIndex)
+    this.boardService.search(this.query, this.pageSize, this.pageIndex)
       .pipe(super.start(), super.end())
       .toPromise()
       .then(n => {
@@ -118,7 +125,7 @@ export class OverviewComponent extends BaseComponent implements OnInit {
         this.maxResults = n.maxResults;
         this.isLoadingData = false;
       })
-      .catch(this.handleError);
+      .catch(error => super.handleError(error));
   }
 
   showDetail(id: number) {
@@ -130,7 +137,7 @@ export class OverviewComponent extends BaseComponent implements OnInit {
       .pipe(super.start(), super.end())
       .toPromise()
       .then(n => this.detailData = n)
-      .catch(this.handleError);
+      .catch(error => super.handleError(error));
   }
 
   getThreadTitle(row: ThreadOverview): string {

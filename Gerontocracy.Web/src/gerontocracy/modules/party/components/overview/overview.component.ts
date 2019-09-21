@@ -19,12 +19,10 @@ export class OverviewComponent extends BaseComponent implements OnInit {
   data: PolitikerOverview[];
   detailData: PolitikerDetail;
   searchForm: FormGroup;
-  searchParams: any;
+  query: any;
   maxResults = 0;
   pageSize = 25;
   pageIndex = 0;
-  isLoadingData: boolean;
-  includeNotActive: boolean;
   popupVisible: boolean;
 
   constructor(
@@ -70,16 +68,19 @@ export class OverviewComponent extends BaseComponent implements OnInit {
     this.popupVisible = false;
   }
 
+  search(): void {
+    this.pageIndex = 0;
+    this.query = this.searchForm.value;
+    this.loadData();
+  }
+
   loadData(): void {
-    this.searchParams = this.searchForm.value;
-    this.isLoadingData = true;
-    this.partyService.Search(this.searchParams, this.pageSize, this.pageIndex)
+    this.partyService.Search(this.query, this.pageSize, this.pageIndex)
       .pipe(super.start(), super.end())
       .toPromise()
       .then(n => {
         this.data = n.data;
         this.maxResults = n.maxResults;
-        this.isLoadingData = false;
       })
       .catch(error => super.handleError(error));
   }
@@ -93,7 +94,7 @@ export class OverviewComponent extends BaseComponent implements OnInit {
       .pipe(super.start(), super.end())
       .toPromise()
       .then(n => this.detailData = n)
-      .catch(this.handleError);
+      .catch(error => super.handleError(error));
   }
 
   paginate(evt: any) {
