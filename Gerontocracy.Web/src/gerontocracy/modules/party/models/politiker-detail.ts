@@ -12,4 +12,5 @@ export interface PolitikerDetail {
     vorfaelle: VorfallData[];
     reputationUp: number;
     reputationDown: number;
+    isInactive: boolean;
 }

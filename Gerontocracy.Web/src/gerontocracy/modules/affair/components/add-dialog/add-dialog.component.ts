@@ -103,7 +103,7 @@ export class AddDialogComponent extends BaseComponent implements OnInit {
             window.location.href = `/affair/new/${n.data}`;
           }
         })
-        .catch(super.handleError);
+        .catch(error => super.handleError(error));
 
     } else {
       if (this.sources.length < 1) {

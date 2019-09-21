@@ -9,6 +9,9 @@ import { AccountService } from 'Gerontocracy.Web/src/gerontocracy/services/accou
 import { Router } from '@angular/router';
 import { RssData } from '../../models/rss-data';
 
+import { ConfirmationService } from 'primeng/api';
+import { RssSource } from '../../models/rss-source';
+
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
@@ -23,6 +26,7 @@ export class SettingsComponent extends BaseComponent implements OnInit {
     private dialogService: DialogService,
     private accountService: AccountService,
     private router: Router,
+    private confirmationService: ConfirmationService,
     messageService: MessageService) {
     super(messageService);
   }
@@ -73,11 +77,11 @@ export class SettingsComponent extends BaseComponent implements OnInit {
           .toPromise()
           .then(m => {
 
-            if (super.handlePostResult(m)) {
+            if (super.handlePostResult(m, 'Source wurde hinzugefügt!', 'Erfolg')) {
               this.loadData();
             }
           })
-          .catch(super.handleError);
+          .catch(error => super.handleError(error));
       }
     });
   }
@@ -89,19 +93,26 @@ export class SettingsComponent extends BaseComponent implements OnInit {
       header: 'Neuen Vorfall einreichen',
       width: '512px',
     }).onClose.subscribe(n => {
-      // if (super.handlePostResult(n)) {
-      //   this.loadData();
-      // }
+      if (super.handlePostResult(n)) {
+        this.loadData();
+      }
     });
   }
 
-  removeSource(id: number) {
-    this.newsService.removeRssFeed(id).pipe(super.start(), super.end())
-      .toPromise()
-      .then(n => {
-        super.handlePostResult(n);
-      })
-      .catch(super.handleError);
+  removeSource(source: RssSource) {
+    this.confirmationService.confirm({
+      message: `Sicher, dass die Source '${source.name}' entfernt werden soll?`,
+      accept: () => {
+        this.newsService.removeRssFeed(source.id).pipe(super.start(), super.end())
+          .toPromise()
+          .then(n => {
+            if (super.handlePostResult(n, 'Eintrag wurde gelöscht!')) {
+              this.loadData();
+            }
+          })
+          .catch(error => super.handleError(error));
+      }
+    });
   }
 
   paginate(evt: any) {
@@ -118,6 +129,6 @@ export class SettingsComponent extends BaseComponent implements OnInit {
         this.data = n.data;
         this.maxResults = n.maxResults;
       })
-      .catch(super.handleError);
+      .catch(error => super.handleError(error));
   }
 }

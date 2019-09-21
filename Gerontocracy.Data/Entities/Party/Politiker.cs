@@ -15,7 +15,8 @@ namespace Gerontocracy.Data.Entities.Party
         public string Name { get; set; }
         public string Wahlkreis { get; set; }
         public string Bundesland { get; set; }
-
+        public bool IsInactive { get; set; }
+        
         [ForeignKey(nameof(Partei))]
         public long? ParteiId { get; set; }
         public Partei Partei { get; set; }

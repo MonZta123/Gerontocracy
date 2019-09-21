@@ -129,6 +129,7 @@ namespace Gerontocracy.Core
                 .AddException<CredentialException>(HttpStatusCode.OK)
                 .AddException<AffairAlreadyAttachedToNewsException>(HttpStatusCode.OK)
                 .AddException<EmailNotConfirmedException>(HttpStatusCode.OK)
+                .AddException<SourceAlreadyAddedException>(HttpStatusCode.OK)
                 .AddException<AccountNotFoundException>(HttpStatusCode.NotFound)
                 .AddException<PoliticianNotFoundException>(HttpStatusCode.NotFound)
                 .AddException<AffairNotFoundException>(HttpStatusCode.NotFound)

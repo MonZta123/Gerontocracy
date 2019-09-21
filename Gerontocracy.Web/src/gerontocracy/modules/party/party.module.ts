@@ -19,6 +19,7 @@ import { SharedModule } from '../shared/shared.module';
 import { CardModule } from 'primeng/card';
 import { DialogModule } from 'primeng/dialog';
 import { BlockUIModule } from 'primeng/blockui';
+import {CheckboxModule} from 'primeng/checkbox';
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import { BlockUIModule } from 'primeng/blockui';
     InputTextModule,
     DialogModule,
     BlockUIModule,
+    CheckboxModule,
 
     SharedModule
   ],

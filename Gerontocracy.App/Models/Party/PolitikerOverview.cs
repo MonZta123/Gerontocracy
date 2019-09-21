@@ -44,5 +44,10 @@
         /// Reputation of Politician
         /// </summary>
         public long Reputation { get; set; }
+
+        /// <summary>
+        /// Inactive-Flag
+        /// </summary>
+        public bool IsInactive { get; set; }
     }
 }

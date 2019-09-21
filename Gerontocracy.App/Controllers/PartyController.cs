@@ -156,6 +156,7 @@ namespace Gerontocracy.App.Controllers
         /// </summary>
         /// <param name="name">name</param>
         /// <param name="party">party</param>
+        /// <param name="includeInactive">include not active members</param>
         /// <param name="pageSize">number of results</param>
         /// <param name="pageIndex">number of page</param>
         /// <returns>List of politicians</returns>
@@ -165,12 +166,14 @@ namespace Gerontocracy.App.Controllers
         public IActionResult ParteiSearch(
             string name,
             string party,
+            bool includeInactive,
             int pageSize = 25,
             int pageIndex = 0)
             => Ok(_mapper.Map<SearchResult<PolitikerOverview>>(_partyService.Search(new bo.SearchParameters()
             {
                 Name = name,
                 ParteiKurzzeichen = party,
+                IncludeInactive = includeInactive
             }, pageSize, pageIndex)));
 
         /// <summary>

@@ -43,7 +43,7 @@ export class TaskdetailComponent extends BaseComponent implements OnInit {
         this.data.bearbeiter = n.data.userName;
         this.data.bearbeiterId = n.data.id;
       })
-      .catch(super.handleError);
+      .catch(error => super.handleError(error));
   }
 
   closeTask() {
@@ -54,7 +54,7 @@ export class TaskdetailComponent extends BaseComponent implements OnInit {
         super.handlePostResult(n);
         this.data.erledigt = true;
       })
-      .catch(super.handleError);
+      .catch(error => super.handleError(error));
   }
 
   reopenTask() {
@@ -65,6 +65,6 @@ export class TaskdetailComponent extends BaseComponent implements OnInit {
         super.handlePostResult(n);
         this.data.erledigt = false;
       })
-      .catch(super.handleError);
+      .catch(error => super.handleError(error));
   }
 }

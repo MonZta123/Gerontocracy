@@ -89,7 +89,7 @@ export class UserdetailComponent extends BaseComponent implements OnInit {
             this.data.banned = true;
             this.data.lockoutEnd = m.data;
           })
-          .catch(super.handleError);
+          .catch(error => super.handleError(error));
       }
     });
   }
@@ -109,7 +109,7 @@ export class UserdetailComponent extends BaseComponent implements OnInit {
             this.data.banned = false;
             this.data.lockoutEnd = undefined;
           })
-          .catch(super.handleError);
+          .catch(error => super.handleError(error));
       }
     });
   }

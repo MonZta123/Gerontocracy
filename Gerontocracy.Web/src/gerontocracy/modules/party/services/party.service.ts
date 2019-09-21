@@ -14,10 +14,9 @@ export class PartyService {
 
   public Search(params: any, pageSize: number, pageIndex: number): Observable<SearchResult<PolitikerOverview>> {
     const request = `api/party/parteisearch?`
-      + `lastname=${params.lastName}&`
-      + `firstname=${params.firstName}&`
+      + `name=${params.name}&`
       + `party=${params.party}&`
-      + `includenotactive=${params.includeNotActive}&`
+      + `includeInactive=${params.includeInactive}&`
       + `pagesize=${pageSize}&`
       + `pageindex=${pageIndex}`;
 

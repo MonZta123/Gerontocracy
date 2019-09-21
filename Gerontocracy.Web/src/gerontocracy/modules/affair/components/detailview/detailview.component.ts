@@ -48,7 +48,7 @@ export class DetailviewComponent extends BaseComponent implements OnInit {
           .pipe(super.start(), super.end())
           .toPromise()
           .then(() => this.data.userVote = newVoteType)
-          .catch(super.handleError);
+          .catch(error => super.handleError(error));
       }
     });
   }

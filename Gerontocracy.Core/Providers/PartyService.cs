@@ -136,6 +136,9 @@ namespace Gerontocracy.Core.Providers
             if (!string.IsNullOrEmpty(parameters.Name))
                 query = query.Where(n => n.Name.Contains(parameters.Name, StringComparison.CurrentCultureIgnoreCase));
 
+            if (!parameters.IncludeInactive)
+                query = query.Where(n => !n.IsInactive);
+
             if (!string.IsNullOrEmpty(parameters.ParteiKurzzeichen))
             {
                 if (!parameters.ParteiKurzzeichen.Equals(ConstNoFactionShortname, StringComparison.CurrentCultureIgnoreCase))
@@ -155,6 +158,7 @@ namespace Gerontocracy.Core.Providers
                 Bundesland = n.Bundesland,
                 ExternalId = n.ExternalId,
                 Wahlkreis = n.Wahlkreis,
+                IsInactive = n.IsInactive,
                 Name = n.Name,
                 ParteiId = n.ParteiId,
                 ParteiKurzzeichen = n.Partei.Kurzzeichen,
@@ -251,6 +255,7 @@ namespace Gerontocracy.Core.Providers
                 {
                     Id = n.Id,
                     Name = n.Name,
+                    IsInactive = n.IsInactive,
                     Wahlkreis = n.Wahlkreis,
                     ParteiId = n.ParteiId,
                     Partei = GetParteiOverviewQuery().SingleOrDefault(m => m.Id == n.ParteiId) ?? GetOkParteiOverview(),
@@ -290,6 +295,7 @@ namespace Gerontocracy.Core.Providers
                        Id = n.Id,
                        ExternalId = n.ExternalId,
                        Name = n.Name,
+                       IsInactive = n.IsInactive,
                        Bundesland = n.Bundesland,
                        ParteiKurzzeichen = n.Partei.Kurzzeichen,
                        ParteiId = n.ParteiId,

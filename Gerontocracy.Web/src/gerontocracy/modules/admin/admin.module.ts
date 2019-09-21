@@ -18,7 +18,7 @@ import { MessagesModule } from 'primeng/messages';
 import { BlockUIModule } from 'primeng/blockui';
 import { ToastModule } from 'primeng/toast';
 import { DropdownModule } from 'primeng/dropdown';
-import { MessageService } from 'primeng/api';
+import { MessageService, ConfirmationService } from 'primeng/api';
 import { AddRoleDialogComponent } from './components/add-role-dialog/add-role-dialog.component';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { TaskviewComponent } from './components/taskview/taskview.component';
@@ -31,6 +31,7 @@ import { SettingsComponent } from './components/settings/settings.component';
 import { TreeTableModule } from 'primeng/treetable';
 import { AccordionModule } from 'primeng/accordion';
 import { AddSourceDialogComponent } from './components/add-source-dialog/add-source-dialog.component';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @NgModule({
   declarations: [
@@ -70,10 +71,12 @@ import { AddSourceDialogComponent } from './components/add-source-dialog/add-sou
     DropdownModule,
     CheckboxModule,
     TreeTableModule,
-    AccordionModule
+    AccordionModule,
+    ConfirmDialogModule
   ],
   providers: [
-    MessageService
+    MessageService,
+    ConfirmationService
   ],
   entryComponents: [
     BanUserDialogComponent,

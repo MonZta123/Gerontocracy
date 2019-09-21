@@ -70,7 +70,7 @@ export class OverviewComponent extends BaseComponent implements OnInit {
         this.maxResults = n.maxResults;
         this.isLoadingData = false;
       })
-      .catch(super.handleError);
+      .catch(error => super.handleError(error));
   }
 
   showPopup(): void {
@@ -88,7 +88,7 @@ export class OverviewComponent extends BaseComponent implements OnInit {
       .pipe(super.start(), super.end())
       .toPromise()
       .then(n => this.detailData = n)
-      .catch(super.handleError);
+      .catch(error => super.handleError(error));
   }
 
   addAffair() {

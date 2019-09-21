@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Serialization;
 
 namespace Morphius
 {
@@ -50,7 +51,11 @@ namespace Morphius
         {
             context.Response.StatusCode = (int)statusCode;
             context.Response.ContentType = "application/json";
-            var json = JsonConvert.SerializeObject(result);
+            var json = JsonConvert.SerializeObject(result,
+                new JsonSerializerSettings
+                {
+                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                });
 
             await context.Response.WriteAsync(json);
         }

@@ -32,7 +32,9 @@ namespace Gerontocracy.Core.Providers
 
         public List<Artikel> GetLatestNews(int maxResults = 15)
             => _mapper.Map<List<Artikel>>(
-             _context.Artikel.OrderByDescending(n => n.PubDate)
+             _context.Artikel.Include(n => n.RssSource)
+             .Where(n => n.RssSource.Enabled)
+             .OrderByDescending(n => n.PubDate)
              .Take(maxResults)
              .ToList());
 
@@ -87,7 +89,7 @@ namespace Gerontocracy.Core.Providers
 
         public long AddRssSource(string url, string name, long parlamentId)
         {
-            var source = _context.RssSource.SingleOrDefault(n => n.Url.Equals(url, StringComparison.CurrentCultureIgnoreCase));
+            var source = _context.RssSource.SingleOrDefault(n => n.Enabled && n.Url.Equals(url, StringComparison.CurrentCultureIgnoreCase));
             if (source != null)
                 throw new SourceAlreadyAddedException();
 
@@ -119,35 +121,25 @@ namespace Gerontocracy.Core.Providers
 
         public SearchResult<Parlament> GetRssSources(string search, int pageSize, int pageIndex)
         {
-            var query = _context.RssSource.Include(n => n.Parlament).AsQueryable();
+            var query = _context.Parlament.Include(n => n.Sources).AsQueryable();
 
-            query = query.OrderBy(n => n.Parlament.Code);
+            query = query.OrderBy(n => n.Code);
+            
+            var data = query.Skip(pageSize * pageIndex).Take(pageSize).ToList();
 
-            var count = query.Count();
-
-            query = query.Skip(pageSize * pageIndex)
-                .Take(pageSize);
-
-            var data = query
-                .ToList()
-                .GroupBy(n => n.Parlament, n => n, (key, group) =>
-                {
-                    key.Sources = group.ToList();
-                    return key;
-                })
-                .ToList();
-
+            data.ForEach(n => n.Sources = n.Sources.Where(m => m.Enabled).ToList());
+            
             return new SearchResult<Parlament>()
             {
                 Data = _mapper.Map<List<Parlament>>(data),
-                MaxResults = count
-            };
+                MaxResults = query.Count()
+        };
         }
 
         public SearchResult<ParlamentOverview> GetParlaments(string search, int pageSize = 25, int pageIndex = 0)
         {
             var query = _context.Parlament.AsQueryable();
-            
+
             var data = query.Skip(pageSize * pageIndex)
                 .Take(pageSize);
 

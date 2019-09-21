@@ -11,6 +11,7 @@ namespace Gerontocracy.Core.BusinessObjects.Party
         public string Name { get; set; }
         public string Wahlkreis { get; set; }
         public string Bundesland { get; set; }
+        public bool IsInactive { get; set; }
 
         public int ReputationUp { get; set; }
         public int ReputationDown { get; set; }

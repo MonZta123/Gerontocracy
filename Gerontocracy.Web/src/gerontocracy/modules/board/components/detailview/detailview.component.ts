@@ -136,7 +136,7 @@ export class DetailviewComponent extends BaseComponent implements OnInit {
           .pipe(super.start(), super.end())
           .toPromise()
           .then(() => post.userLike = newLikeType)
-          .catch(super.handleError);
+          .catch(error => super.handleError(error));
       } else {
         this.showLoginDialog();
       }
@@ -172,7 +172,7 @@ export class DetailviewComponent extends BaseComponent implements OnInit {
             .pipe(super.start(), super.end())
             .toPromise()
             .then(() => window.location.reload())
-            .catch(super.handleError);
+            .catch(error => super.handleError(error));
         }
       } else {
         this.showLoginDialog();

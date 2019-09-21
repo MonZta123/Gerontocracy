@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using System.Threading.Tasks;
 using AutoMapper;
 
 using Microsoft.AspNetCore.Builder;
@@ -15,8 +14,6 @@ using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Swagger;
 
 using Gerontocracy.Core;
-using Gerontocracy.Core.Config;
-using Microsoft.AspNetCore.Identity;
 using Morphius;
 
 namespace Gerontocracy.App
@@ -24,19 +21,9 @@ namespace Gerontocracy.App
 #pragma warning disable CS1591
     public class Startup
     {
-        public Startup(IHostingEnvironment hostingEnvironment)
+        public Startup(IHostingEnvironment hostingEnvironment, IConfiguration configuration)
         {
-            var fileName = !string.IsNullOrEmpty(hostingEnvironment.EnvironmentName)
-                ? hostingEnvironment.EnvironmentName
-                : "Development";
-            
-            var configBuilder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{fileName}.json", optional: false)
-                .AddEnvironmentVariables();
-
-            _configuration = configBuilder.Build();
+            _configuration = configuration;
         }
 
         private readonly IConfiguration _configuration;
@@ -45,7 +32,7 @@ namespace Gerontocracy.App
         {
             // ===== Add Automapper =====
             services.AddAutoMapper();
-            
+
             // ===== Add GerontocracyApp =====
             services.AddGerontocracy(cfg => cfg
                 .UseNpgsql(_configuration.GetConnectionString("Gerontocracy"))
@@ -72,7 +59,7 @@ namespace Gerontocracy.App
             // ===== Add Mvc ========
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
-        
+
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
@@ -90,7 +77,7 @@ namespace Gerontocracy.App
 
             // Handle Authentication
             app.UseAuthentication();
-            
+
             // handle Application
             app.UseGerontocracy();
 

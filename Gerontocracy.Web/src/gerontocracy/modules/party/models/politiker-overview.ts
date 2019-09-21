@@ -6,5 +6,6 @@ export interface PolitikerOverview {
     bundesland: string;
     parteiId?: number;
     parteiKurzzeichen: string;
+    isInactive: boolean;
     reputation: number;
 }

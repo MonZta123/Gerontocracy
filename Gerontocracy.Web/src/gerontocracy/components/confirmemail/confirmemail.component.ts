@@ -33,7 +33,7 @@ export class ConfirmemailComponent extends BaseComponent implements OnInit {
         .pipe(super.start(), super.end())
         .toPromise()
         .then(() => this.showSuccess = true)
-        .catch(super.handleError)
+        .catch(error => super.handleError(error))
         .then(() => this.showError = true);
     });
   }

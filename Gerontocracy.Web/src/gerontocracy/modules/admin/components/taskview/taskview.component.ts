@@ -103,7 +103,7 @@ export class TaskviewComponent extends BaseComponent implements OnInit {
       .pipe(super.start(), super.end())
       .toPromise()
       .then(n => this.detailData = n)
-      .catch(super.handleError);
+      .catch(error => super.handleError(error));
   }
 
   loadData(): void {
@@ -123,6 +123,6 @@ export class TaskviewComponent extends BaseComponent implements OnInit {
         this.data = n.data;
         this.maxResults = n.maxResults;
       })
-      .catch(super.handleError);
+      .catch(error => super.handleError(error));
   }
 }

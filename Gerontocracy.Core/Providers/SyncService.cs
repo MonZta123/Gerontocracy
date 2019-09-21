@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 using Gerontocracy.Core.BusinessObjects.Sync;
@@ -18,6 +16,16 @@ using db = Gerontocracy.Data.Entities;
 
 namespace Gerontocracy.Core.Providers
 {
+    internal class ExternalIdComparer : IEqualityComparer<Politiker>
+    {
+        #region Methods
+
+        public bool Equals(Politiker x, Politiker y) => y != null && x != null && x.ExternalId == y.ExternalId;
+        public int GetHashCode(Politiker obj) => obj.ExternalId.GetHashCode();
+
+        #endregion Methods
+    }
+
     internal class SyncService : ISyncService
     {
         #region Fields
@@ -45,7 +53,6 @@ namespace Gerontocracy.Core.Providers
 
         public void SyncPolitiker()
         {
-
             foreach (var importer in _importerRepository.Importers)
             {
                 var parlament = importer.GetParlament(_clientFactory);
@@ -55,10 +62,10 @@ namespace Gerontocracy.Core.Providers
                 using (var context = new ContextFactory().CreateDbContext())
                 {
                     context.Database.BeginTransaction();
-                    
+
                     var parliament = EnsureParliamentCreated(context, parlament);
                     UpdateParteien(context, parteien, parliament.Id);
-                    UpdatePolitiker(context,politiker, parliament.Id);
+                    UpdatePolitiker(context, politiker, parliament.Id);
 
                     context.Database.CommitTransaction();
                 }
@@ -87,7 +94,7 @@ namespace Gerontocracy.Core.Providers
                 context.SaveChanges();
             }
         }
-        
+
         private db.Party.Parlament EnsureParliamentCreated(GerontocracyContext context, Parlament parlament)
         {
             var dbObj = context.Parlament.SingleOrDefault(n => n.Code.Equals(parlament.Code, StringComparison.CurrentCultureIgnoreCase));
@@ -105,7 +112,7 @@ namespace Gerontocracy.Core.Providers
 
             return dbObj;
         }
-        
+
         private async Task Sync(GerontocracyContext context, RssSource source)
         {
             var feed = await FeedReader.ReadAsync(source.Url);
@@ -184,6 +191,11 @@ namespace Gerontocracy.Core.Providers
                     n.ExternalId = newObject.ExternalId;
                     n.ParteiId = partys.SingleOrDefault(m => m.Kurzzeichen == newObject.ParteiKurzzeichen)?.Id;
                     n.ParlamentId = parlamentId;
+                    n.IsInactive = false;
+                }
+                else
+                {
+                    n.IsInactive = true;
                 }
             });
 
@@ -204,11 +216,5 @@ namespace Gerontocracy.Core.Providers
             context.SaveChanges();
         }
         #endregion Methods
-    }
-
-    internal class ExternalIdComparer : IEqualityComparer<Politiker>
-    {
-        public bool Equals(Politiker x, Politiker y) => x.ExternalId == y.ExternalId;
-        public int GetHashCode(Politiker obj) => obj.ExternalId.GetHashCode();
     }
 }

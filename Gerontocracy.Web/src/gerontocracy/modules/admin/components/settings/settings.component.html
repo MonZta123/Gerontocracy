@@ -29,7 +29,7 @@
                                             <th>Url</th>
                                             <th width="12%">
                                                 <button pButton class="action-button" icon="pi pi-plus"
-                                                    (click)="addSource()"></button>
+                                                    (click)="addSource(parliament.id)"></button>
                                             </th>
                                         </tr>
                                     </ng-template>
@@ -38,7 +38,14 @@
                                             <td><a target="_blank" [href]="source.url">{{source.name}}</a></td>
                                             <td>{{source.url | stringTrim : 50}}</td>
                                             <td><button pButton class="action-button" icon="pi pi-trash"
-                                                    (click)="removeSource(source.id)"></button></td>
+                                                    (click)="removeSource(source)"></button></td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="emptymessage" let-columns>
+                                        <tr>
+                                            <td colspan="3">
+                                                Keine Einträge gefunden
+                                            </td>
                                         </tr>
                                     </ng-template>
                                 </p-table>
@@ -49,4 +56,6 @@
             </div>
         </div>
     </div>
+
+    <p-confirmDialog header="Achtung" icon="pi pi-exclamation-triangle"></p-confirmDialog>
 </app-base>

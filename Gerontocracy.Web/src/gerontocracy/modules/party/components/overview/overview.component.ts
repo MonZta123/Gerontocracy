@@ -24,6 +24,7 @@ export class OverviewComponent extends BaseComponent implements OnInit {
   pageSize = 25;
   pageIndex = 0;
   isLoadingData: boolean;
+  includeNotActive: boolean;
   popupVisible: boolean;
 
   constructor(
@@ -42,9 +43,9 @@ export class OverviewComponent extends BaseComponent implements OnInit {
     this.pageIndex = 0;
     this.maxResults = 0;
     this.searchForm = this.formBuilder.group({
-      lastName: [''],
-      firstName: [''],
+      name: [''],
       party: [''],
+      includeInactive: [false]
     });
 
     this.activatedRoute.params.subscribe(n => {
@@ -80,7 +81,7 @@ export class OverviewComponent extends BaseComponent implements OnInit {
         this.maxResults = n.maxResults;
         this.isLoadingData = false;
       })
-      .catch(super.handleError);
+      .catch(error => super.handleError(error));
   }
 
   showDetail(id: number) {

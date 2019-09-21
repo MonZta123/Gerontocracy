@@ -13,7 +13,7 @@ import { BaseComponent } from '../../../shared/components/base/base.component';
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
-  providers: [MessageService]
+  providers: [MessageService, DialogService]
 })
 export class DashboardComponent extends BaseComponent implements OnInit {
 
@@ -39,7 +39,7 @@ export class DashboardComponent extends BaseComponent implements OnInit {
       if (r) {
         this.dialogService.open(PoliticianSelectionDialogComponent,
           {
-            header: 'Login',
+            header: 'Neuen Vorfalle einreichen',
             width: '800px',
             closable: false,
           })
@@ -60,7 +60,7 @@ export class DashboardComponent extends BaseComponent implements OnInit {
                   super.handlePostResult(o);
                   this.showAffair(o.data);
                 })
-                .catch(super.handleError);
+                .catch(error => super.handleError(error));
             }
           });
       } else {

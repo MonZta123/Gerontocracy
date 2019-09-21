@@ -56,5 +56,10 @@ namespace Gerontocracy.App.Models.Party
         /// Reputation Downvotes
         /// </summary>
         public int ReputationDown { get; set; }
+
+        /// <summary>
+        /// Inactive-Flag
+        /// </summary>
+        public bool IsInactive { get; set; }
     }
 }
