@@ -7,6 +7,7 @@ import { AdminService } from '../../services/admin.service';
 import { AufgabeOverview } from '../../models/aufgabe-overview';
 import { AufgabeDetail } from '../../models/aufgabe-detail';
 import { BaseComponent } from '../../../shared/components/base/base.component';
+import { SharedService } from '../../../shared/services/shared.service';
 
 @Component({
   selector: 'app-taskview',
@@ -39,8 +40,9 @@ export class TaskviewComponent extends BaseComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private formBuilder: FormBuilder,
     private adminService: AdminService,
-    messageService: MessageService) {
-    super(messageService);
+    messageService: MessageService,
+    sharedService: SharedService) {
+    super(messageService, sharedService);
   }
 
   ngOnInit() {
@@ -90,7 +92,7 @@ export class TaskviewComponent extends BaseComponent implements OnInit {
           }
         });
 
-        this.loadData();
+        this.search();
       });
   }
 

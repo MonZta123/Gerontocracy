@@ -5,6 +5,7 @@ import { AccountService } from '../../services/account.service';
 import { pipe } from 'rxjs';
 import { BaseComponent } from '../../modules/shared/components/base/base.component';
 import { MessageService } from 'primeng/api';
+import { SharedService } from '../../modules/shared/services/shared.service';
 
 @Component({
   selector: 'app-confirmemail',
@@ -20,9 +21,10 @@ export class ConfirmemailComponent extends BaseComponent implements OnInit {
   constructor(
     private accountService: AccountService,
     private activatedRoute: ActivatedRoute,
-    messageService: MessageService
+    messageService: MessageService,
+    sharedService: SharedService
   ) {
-    super(messageService);
+    super(messageService, sharedService);
     this.showSuccess = false;
 
     this.activatedRoute.queryParams.subscribe(params => {

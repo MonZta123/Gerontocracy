@@ -4,6 +4,7 @@ import { AdminService } from '../../services/admin.service';
 import { AccountService } from '../../../../services/account.service';
 import { AufgabeDetail } from '../../models/aufgabe-detail';
 import { BaseComponent } from '../../../shared/components/base/base.component';
+import { SharedService } from '../../../shared/services/shared.service';
 
 @Component({
   selector: 'app-taskdetail',
@@ -23,8 +24,9 @@ export class TaskdetailComponent extends BaseComponent implements OnInit {
   constructor(
     private adminService: AdminService,
     private accountService: AccountService,
-    messageService: MessageService) {
-    super(messageService);
+    messageService: MessageService,
+    sharedService: SharedService) {
+    super(messageService, sharedService);
   }
 
   ngOnInit() {

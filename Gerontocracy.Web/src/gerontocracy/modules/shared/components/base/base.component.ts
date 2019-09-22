@@ -3,7 +3,7 @@ import { MessageService } from 'primeng/api';
 import { finalize } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { PostResult } from '../../models/post-result';
-import { HttpErrorResponse } from '@angular/common/http';
+import { SharedService } from '../../services/shared.service';
 
 @Component({
   selector: 'app-base',
@@ -12,14 +12,16 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class BaseComponent implements OnInit {
 
-  constructor(private messageService: MessageService) { }
+  constructor(
+    private messageService: MessageService,
+    private sharedService: SharedService) { }
 
   public loading: boolean;
   @Input() public uiBlocked: boolean;
 
   ngOnInit() {
-    this.uiBlocked = false;
     this.loading = false;
+    this.uiBlocked = false;
   }
 
   protected blockUI() {
@@ -28,14 +30,14 @@ export class BaseComponent implements OnInit {
 
   protected start() {
     return <T>(source: Observable<T>) => {
-      this.loading = true;
+      this.sharedService.loading = true;
       return source;
     };
   }
 
   protected end() {
     return <T>(source: Observable<T>) => source.pipe(finalize(() => {
-      this.loading = false;
+      this.sharedService.loading = false;
     }));
   }
 

@@ -28,6 +28,7 @@ import { LoginDialogComponent } from './components/login-dialog/login-dialog.com
 import { RegisterDialogComponent } from './components/register-dialog/register-dialog.component';
 import { RegistrationConfirmDialogComponent } from './components/registration-confirm-dialog/registration-confirm-dialog.component';
 import { SharedModule } from './modules/shared/shared.module';
+import { ProgressBarModule } from 'primeng/progressbar';
 
 @NgModule({
   declarations: [
@@ -64,6 +65,7 @@ import { SharedModule } from './modules/shared/shared.module';
     CheckboxModule,
     SplitButtonModule,
     PanelModule,
+    ProgressBarModule,
     DynamicDialogModule
   ],
   providers: [

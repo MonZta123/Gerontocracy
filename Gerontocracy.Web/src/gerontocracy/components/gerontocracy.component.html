@@ -26,11 +26,18 @@
         <p-splitButton [label]="accountData.userName" icon="pi pi-user" [model]="userMenu"></p-splitButton>
       </div>
     </p-menubar>
+
+    <div *ngIf="sharedService.loading">
+      <p-progressBar mode="indeterminate" [style]="{'height': '5px'}"></p-progressBar>
+    </div>
+    <div *ngIf="!sharedService.loading" style="height: 5px">
+    </div>
   </div>
 
   <p-sidebar [(visible)]="sidebarVisible">
     <p-menu [model]="items"></p-menu>
   </p-sidebar>
+
 
   <div class="geronto_content">
     <router-outlet></router-outlet>

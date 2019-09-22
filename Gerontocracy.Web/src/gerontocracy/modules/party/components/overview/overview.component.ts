@@ -7,6 +7,7 @@ import { PartyService } from '../../services/party.service';
 import { MessageService } from 'primeng/api';
 import { PolitikerDetail } from '../../models/politiker-detail';
 import { BaseComponent } from '../../../shared/components/base/base.component';
+import { SharedService } from '../../../shared/services/shared.service';
 
 @Component({
   selector: 'app-overview',
@@ -31,9 +32,10 @@ export class OverviewComponent extends BaseComponent implements OnInit {
     private formBuilder: FormBuilder,
     private partyService: PartyService,
     private router: Router,
+    sharedService: SharedService,
     messageService: MessageService
   ) {
-    super(messageService);
+    super(messageService, sharedService);
   }
 
   ngOnInit() {
@@ -53,7 +55,7 @@ export class OverviewComponent extends BaseComponent implements OnInit {
       }
     });
 
-    this.loadData();
+    this.search();
   }
 
   showVorfall(id: number) {

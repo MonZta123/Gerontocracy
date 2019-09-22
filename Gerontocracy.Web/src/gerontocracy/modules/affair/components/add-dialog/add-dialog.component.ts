@@ -11,6 +11,7 @@ import { SourceDialogData } from '../source-dialog/source-dialog-data';
 import { QuelleData } from './quelle-data';
 import { ReputationType } from '../../../shared/models/reputation-type';
 import { BaseComponent } from '../../../shared/components/base/base.component';
+import { SharedService } from '../../../shared/services/shared.service';
 
 @Component({
   selector: 'app-add-dialog',
@@ -36,8 +37,9 @@ export class AddDialogComponent extends BaseComponent implements OnInit {
     private dialogService: DialogService,
     private affairService: AffairService,
     private dialogReference: DynamicDialogRef,
-    messageService: MessageService) {
-    super(messageService);
+    messageService: MessageService,
+    sharedService: SharedService) {
+    super(messageService, sharedService);
   }
 
   ngOnInit() {

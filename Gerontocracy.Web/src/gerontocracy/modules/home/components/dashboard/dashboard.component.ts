@@ -8,6 +8,7 @@ import { DashboardService } from '../../services/dashboard.service';
 import { PoliticianSelectionDialogComponent } from '../politician-selection-dialog/politician-selection-dialog.component';
 import { NewsData } from '../../models/news-data';
 import { BaseComponent } from '../../../shared/components/base/base.component';
+import { SharedService } from '../../../shared/services/shared.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -22,9 +23,10 @@ export class DashboardComponent extends BaseComponent implements OnInit {
     private sharedAccountService: SharedAccountService,
     private dialogService: DialogService,
     private router: Router,
+    sharedService: SharedService,
     messageService: MessageService,
   ) {
-    super(messageService);
+    super(messageService, sharedService);
   }
 
   dashboard: DashboardData;

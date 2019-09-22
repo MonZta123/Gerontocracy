@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { PolitikerDetail } from '../../models/politiker-detail';
 import { BaseComponent } from '../../../shared/components/base/base.component';
 import { MessageService } from 'primeng/api';
+import { SharedService } from '../../../shared/services/shared.service';
 
 @Component({
   selector: 'app-detailview',
@@ -17,8 +18,10 @@ export class DetailviewComponent extends BaseComponent implements OnInit {
   @Output() popout: EventEmitter<void> = new EventEmitter<void>();
   @Output() vorfallClicked: EventEmitter<number> = new EventEmitter<number>();
 
-  constructor(messageService: MessageService) {
-    super(messageService);
+  constructor(
+    sharedService: SharedService,
+    messageService: MessageService) {
+    super(messageService, sharedService);
   }
 
   ngOnInit() {

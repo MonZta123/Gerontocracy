@@ -10,6 +10,7 @@ import { SharedAccountService } from '../../../shared/services/shared-account.se
 import { LoginDialogComponent } from 'Gerontocracy.Web/src/gerontocracy/components/login-dialog/login-dialog.component';
 import { AddDialogComponent } from '../add-dialog/add-dialog.component';
 import { BaseComponent } from '../../../shared/components/base/base.component';
+import { SharedService } from '../../../shared/services/shared.service';
 
 @Component({
   selector: 'app-overview',
@@ -26,9 +27,10 @@ export class OverviewComponent extends BaseComponent implements OnInit {
     private boardService: BoardService,
     private sharedAccountService: SharedAccountService,
     private dialogService: DialogService,
-    messageService: MessageService
+    messageService: MessageService,
+    sharedService: SharedService
   ) {
-    super(messageService);
+    super(messageService, sharedService);
   }
 
   pageSize = 25;
@@ -66,7 +68,7 @@ export class OverviewComponent extends BaseComponent implements OnInit {
       }
     });
 
-    this.loadData();
+    this.search();
   }
 
   paginate(evt: any) {

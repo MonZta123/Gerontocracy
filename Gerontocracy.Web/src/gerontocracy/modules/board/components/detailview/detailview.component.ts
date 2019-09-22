@@ -11,6 +11,7 @@ import { ReportDialogComponent } from '../report-dialog/report-dialog.component'
 import { ReportData } from '../../models/report-data';
 import { AdminService } from '../../../admin/services/admin.service';
 import { BaseComponent } from '../../../shared/components/base/base.component';
+import { SharedService } from '../../../shared/services/shared.service';
 
 @Component({
   selector: 'app-detailview',
@@ -35,8 +36,9 @@ export class DetailviewComponent extends BaseComponent implements OnInit {
     private sharedAccountService: SharedAccountService,
     private confirmationService: ConfirmationService,
     private dialogService: DialogService,
+    sharedService: SharedService,
     messageService: MessageService) {
-    super(messageService);
+    super(messageService, sharedService);
   }
 
   items: TreeNode[];

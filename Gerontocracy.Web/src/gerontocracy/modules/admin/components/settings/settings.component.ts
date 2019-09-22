@@ -11,6 +11,7 @@ import { RssData } from '../../models/rss-data';
 
 import { ConfirmationService } from 'primeng/api';
 import { RssSource } from '../../models/rss-source';
+import { SharedService } from '../../../shared/services/shared.service';
 
 @Component({
   selector: 'app-settings',
@@ -27,8 +28,9 @@ export class SettingsComponent extends BaseComponent implements OnInit {
     private accountService: AccountService,
     private router: Router,
     private confirmationService: ConfirmationService,
-    messageService: MessageService) {
-    super(messageService);
+    messageService: MessageService,
+    sharedService: SharedService) {
+    super(messageService, sharedService);
   }
 
   isAdmin: boolean;
@@ -58,7 +60,7 @@ export class SettingsComponent extends BaseComponent implements OnInit {
           search: ['']
         });
 
-        this.loadData();
+        this.search();
       });
   }
 
@@ -78,7 +80,6 @@ export class SettingsComponent extends BaseComponent implements OnInit {
           .pipe(super.start(), super.end())
           .toPromise()
           .then(m => {
-
             if (super.handlePostResult(m, 'Source wurde hinzugefügt!', 'Erfolg')) {
               this.loadData();
             }

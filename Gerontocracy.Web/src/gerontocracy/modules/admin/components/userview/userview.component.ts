@@ -7,6 +7,7 @@ import { UserOverview } from '../../models/user-overview';
 import { UserDetail } from '../../models/user-detail';
 import { AccountService } from '../../../../services/account.service';
 import { BaseComponent } from '../../../shared/components/base/base.component';
+import { SharedService } from '../../../shared/services/shared.service';
 
 @Component({
   selector: 'app-userview',
@@ -36,9 +37,10 @@ export class UserviewComponent extends BaseComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private formBuilder: FormBuilder,
     private adminService: AdminService,
+    sharedService: SharedService,
     messageService: MessageService
   ) {
-    super(messageService);
+    super(messageService, sharedService);
   }
 
   ngOnInit() {
@@ -68,7 +70,7 @@ export class UserviewComponent extends BaseComponent implements OnInit {
       }
     });
 
-    this.loadData();
+    this.search();
   }
 
   showDetail(id: number) {

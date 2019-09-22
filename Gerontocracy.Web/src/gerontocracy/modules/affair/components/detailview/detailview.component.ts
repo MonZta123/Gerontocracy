@@ -5,6 +5,7 @@ import { VorfallDetail } from '../../models/vorfall-detail';
 import { VoteType } from '../../models/vote-type';
 import { BaseComponent } from '../../../shared/components/base/base.component';
 import { MessageService } from 'primeng/api';
+import { SharedService } from '../../../shared/services/shared.service';
 
 @Component({
   selector: 'app-detailview',
@@ -25,9 +26,10 @@ export class DetailviewComponent extends BaseComponent implements OnInit {
   constructor(
     private affairService: AffairService,
     private sharedAccountService: SharedAccountService,
-    messageService: MessageService
+    messageService: MessageService,
+    sharedService: SharedService
   ) {
-    super(messageService);
+    super(messageService, sharedService);
   }
 
   ngOnInit() {

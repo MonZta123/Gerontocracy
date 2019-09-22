@@ -9,6 +9,7 @@ import { BanData } from '../../models/ban-data';
 import { UnbanUserDialogComponent } from '../unban-user-dialog/unban-user-dialog.component';
 import { UnbanData } from '../../models/unban-data';
 import { BaseComponent } from '../../../shared/components/base/base.component';
+import { SharedService } from '../../../shared/services/shared.service';
 
 @Component({
   selector: 'app-userdetail',
@@ -31,8 +32,9 @@ export class UserdetailComponent extends BaseComponent implements OnInit {
     private dialogService: DialogService,
     private adminService: AdminService,
     private accountService: AccountService,
+    sharedService: SharedService,
     messageService: MessageService) {
-    super(messageService);
+    super(messageService, sharedService);
   }
 
   ngOnInit() {

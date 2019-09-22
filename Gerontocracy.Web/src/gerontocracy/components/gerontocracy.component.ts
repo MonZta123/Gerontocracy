@@ -5,6 +5,7 @@ import { AccountService } from '../services/account.service';
 import { DialogService } from 'primeng/api';
 import { LoginDialogComponent } from './login-dialog/login-dialog.component';
 import { RegisterDialogComponent } from './register-dialog/register-dialog.component';
+import { SharedService } from '../modules/shared/services/shared.service';
 
 @Component({
   selector: 'app-root',
@@ -30,6 +31,7 @@ export class GerontocracyComponent implements OnInit {
   registerConfirmVisible: boolean;
 
   constructor(
+    private sharedService: SharedService,
     private accountService: AccountService,
     private dialogService: DialogService) {
   }

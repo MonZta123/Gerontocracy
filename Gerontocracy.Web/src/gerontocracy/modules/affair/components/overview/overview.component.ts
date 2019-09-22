@@ -10,6 +10,7 @@ import { AddDialogComponent } from '../add-dialog/add-dialog.component';
 import { SharedAccountService } from '../../../shared/services/shared-account.service';
 import { LoginDialogComponent } from '../../../../components/login-dialog/login-dialog.component';
 import { BaseComponent } from '../../../shared/components/base/base.component';
+import { SharedService } from '../../../shared/services/shared.service';
 
 @Component({
   selector: 'app-overview',
@@ -38,9 +39,10 @@ export class OverviewComponent extends BaseComponent implements OnInit {
     private affairService: AffairService,
     private sharedAccountService: SharedAccountService,
     private dialogService: DialogService,
-    messageService: MessageService
+    messageService: MessageService,
+    sharedService: SharedService
   ) {
-    super(messageService);
+    super(messageService, sharedService);
   }
 
   ngOnInit() {
@@ -60,7 +62,7 @@ export class OverviewComponent extends BaseComponent implements OnInit {
       }
     });
 
-    this.loadData();
+    this.search();
   }
 
   showPopup(): void {
