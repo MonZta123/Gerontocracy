@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Gerontocracy.App.Models.Account;
 
 namespace Gerontocracy.App.Models.User
 {
@@ -21,5 +23,20 @@ namespace Gerontocracy.App.Models.User
         /// score
         /// </summary>
         public int Score { get; set; }
+
+        /// <summary>
+        /// Roles of user
+        /// </summary>
+        public IEnumerable<Role> Roles { get; set; }
+
+        /// <summary>
+        /// List of last 15 submitted affairs
+        /// </summary>
+        public IEnumerable<Vorfall> Affairs { get; set; }
+        
+        /// <summary>
+        /// List of last 15 posts
+        /// </summary>
+        public IEnumerable<Post> Posts { get; set; }
     }
 }

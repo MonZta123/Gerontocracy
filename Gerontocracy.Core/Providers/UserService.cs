@@ -13,6 +13,8 @@ using Gerontocracy.Shared.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
+using bo = Gerontocracy.Core.BusinessObjects.User;
+
 namespace Gerontocracy.Core.Providers
 {
     public class UserService : IUserService
@@ -108,7 +110,7 @@ namespace Gerontocracy.Core.Providers
                 },
                 new NpgsqlParameter<long>("userId", id).AsList().ToArray())
                 .ToList();
-            
+
             return new UserDetail
             {
                 Id = dbUser.Id,
@@ -135,10 +137,37 @@ namespace Gerontocracy.Core.Providers
                     Id = n.Id,
                     RegisterDate = n.RegisterDate,
                     Score = n.Vorfaelle.Sum(m => m.Legitimitaet.Count(o => o.VoteType == VoteType.Up) - m.Legitimitaet.Count(o => o.VoteType == VoteType.Down)) +
-                            n.Posts.Sum(m => m.Likes.Count(o => o.LikeType == LikeType.Like) - m.Likes.Count(o => o.LikeType == LikeType.Dislike))
+                            n.Posts.Sum(m => m.Likes.Count(o => o.LikeType == LikeType.Like) - m.Likes.Count(o => o.LikeType == LikeType.Dislike)),
+                    Affairs = n.Vorfaelle.OrderByDescending(m => m.ErstelltAm).Select(m => new bo.Vorfall()
+                    {
+                        Id = m.Id,
+                        Beschreibung = m.Beschreibung,
+                        Titel = m.Titel,
+                        Upvotes = m.Legitimitaet.Count(o => o.VoteType == VoteType.Up),
+                        Downvotes = m.Legitimitaet.Count(o => o.VoteType == VoteType.Down)
+                    }).ToList(),
+                    Posts = n.Posts.Select(m => new bo.Post()
+                    {
+                        Id = m.Id,
+                        Content = m.Content,
+                        CreatedOn = m.CreatedOn,
+                        Likes = m.Likes.Count(o => o.LikeType == LikeType.Like),
+                        Dislikes = m.Likes.Count(o => o.LikeType == LikeType.Dislike)
+                    }).ToList()
                 }).SingleOrDefault(n => n.Id == id);
+
             if (user == null)
                 throw new UserNotFoundException();
+
+            user.Roles = _context.GetData(
+                    UserDetailQuery,
+                    reader => new Role
+                    {
+                        Id = reader.GetInt64(0),
+                        Name = reader.GetString(1)
+                    },
+                    new NpgsqlParameter<long>("userId", id).AsList().ToArray())
+                .ToList();
 
             return user;
         }
