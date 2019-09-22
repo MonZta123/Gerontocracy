@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Gerontocracy.Core.BusinessObjects.Board
+﻿namespace Gerontocracy.Core.BusinessObjects.Board
 {
     public class PostData
     {

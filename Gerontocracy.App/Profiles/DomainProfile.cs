@@ -1,5 +1,4 @@
 using AutoMapper;
-using Gerontocracy.App.Models.Party;
 using ap = Gerontocracy.App.Models;
 using bo = Gerontocracy.Core.BusinessObjects;
 

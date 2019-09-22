@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using AutoMapper;
@@ -63,7 +62,6 @@ namespace Gerontocracy.App.Controllers
         public async Task<IActionResult> CreateRole([FromBody]string roleName)
             => Ok(await _accountService.CreateRole(roleName));
 
-
         /// <summary>
         /// Returns a list of all available roles
         /// </summary>
@@ -84,7 +82,6 @@ namespace Gerontocracy.App.Controllers
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> GrantRole([FromBody] RoleData data)
         => Ok(await _accountService.AddToRole(data.UserId, data.RoleId));
-
 
         /// <summary>
         /// Updates the user permission roles

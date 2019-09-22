@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Gerontocracy.Core.BusinessObjects.Shared;
+﻿using Gerontocracy.Core.BusinessObjects.Shared;
 
 namespace Gerontocracy.Core.BusinessObjects.News
 {

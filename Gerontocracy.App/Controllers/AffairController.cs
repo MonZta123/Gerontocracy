@@ -55,7 +55,6 @@ namespace Gerontocracy.App.Controllers
         public IActionResult AddVorfall([FromBody] VorfallAdd data)
             => ModelState.IsValid ? PostOk(_affairService.AddVorfall(User, _mapper.Map<bo.Vorfall>(data))) : Ok(ModelState);
 
-
         /// <summary>
         /// Returns an affair of an politician
         /// </summary>

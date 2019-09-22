@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
 using AutoMapper;
-using Gerontocracy.App.Models.Affair;
 using Gerontocracy.App.Models.Dashboard;
 using Gerontocracy.Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Morphius;
 
 namespace Gerontocracy.App.Controllers

@@ -3,7 +3,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Gerontocracy.Data.Entities.News;
-using Gerontocracy.Data.Entities.Party;
 
 namespace Gerontocracy.Data.Entities.Party
 {

@@ -54,8 +54,7 @@ namespace Gerontocracy.App.Controllers
             => ModelState.IsValid
                 ? PostOk(_boardService.AddThread(User, _mapper.Map<bo.ThreadData>(data)))
                 : Ok(ModelState);
-
-
+        
         /// <summary>
         /// Autocomplete
         /// </summary>

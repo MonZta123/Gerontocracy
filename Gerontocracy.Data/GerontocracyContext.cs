@@ -35,8 +35,7 @@ namespace Gerontocracy.Data
 
         public DbSet<Artikel> Artikel { get; set; }
         public DbSet<RssSource> RssSource { get; set; }
-
-
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder) => base.OnModelCreating(modelBuilder);
         
         public List<T> GetData<T>(string query, Func<DbDataReader, T> readerFunc, Array parameters = null)

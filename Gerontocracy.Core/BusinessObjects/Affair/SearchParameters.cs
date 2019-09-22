@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Gerontocracy.Core.BusinessObjects.Affair
+﻿namespace Gerontocracy.Core.BusinessObjects.Affair
 {
     public class SearchParameters
     {

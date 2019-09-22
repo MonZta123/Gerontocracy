@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Gerontocracy.App.Models.Board
+﻿namespace Gerontocracy.App.Models.Board
 {
     /// <summary>
     /// A thread to a topic

@@ -1,7 +1,5 @@
-﻿
-namespace Gerontocracy.Core.BusinessObjects.News
+﻿namespace Gerontocracy.Core.BusinessObjects.News
 {
-
     public class ParlamentOverview
     {
         public long Id { get; set; }

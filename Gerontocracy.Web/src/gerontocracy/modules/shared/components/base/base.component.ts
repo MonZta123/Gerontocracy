@@ -14,7 +14,7 @@ export class BaseComponent implements OnInit {
 
   constructor(
     private messageService: MessageService,
-    private sharedService: SharedService) { }
+    public sharedService: SharedService) { }
 
   public loading: boolean;
   @Input() public uiBlocked: boolean;

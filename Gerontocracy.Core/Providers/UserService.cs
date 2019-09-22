@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Linq;
-using AutoMapper;
 using Gerontocracy.Core.BusinessObjects.Account;
 using Gerontocracy.Core.BusinessObjects.Shared;
 using Gerontocracy.Core.BusinessObjects.User;

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Gerontocracy.Core.BusinessObjects.Sync;
 using Gerontocracy.Core.Config;
 using Gerontocracy.Core.Interfaces;
+using Gerontocracy.Core.Utilities;
 using Gerontocracy.Data;
 using Gerontocracy.Data.Entities.News;
 
@@ -16,16 +17,6 @@ using db = Gerontocracy.Data.Entities;
 
 namespace Gerontocracy.Core.Providers
 {
-    internal class ExternalIdComparer : IEqualityComparer<Politiker>
-    {
-        #region Methods
-
-        public bool Equals(Politiker x, Politiker y) => y != null && x != null && x.ExternalId == y.ExternalId;
-        public int GetHashCode(Politiker obj) => obj.ExternalId.GetHashCode();
-
-        #endregion Methods
-    }
-
     internal class SyncService : ISyncService
     {
         #region Fields

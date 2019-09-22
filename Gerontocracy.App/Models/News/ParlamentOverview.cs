@@ -1,5 +1,4 @@
-﻿
-namespace Gerontocracy.App.Models.News
+﻿namespace Gerontocracy.App.Models.News
 {
     /// <summary>
     /// Parlament News

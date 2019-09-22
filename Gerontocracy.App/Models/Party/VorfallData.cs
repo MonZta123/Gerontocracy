@@ -1,5 +1,4 @@
 ﻿using System;
-using Gerontocracy.App.Models.Account;
 
 namespace Gerontocracy.App.Models.Party
 {

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Gerontocracy.App.Models.Account
+﻿namespace Gerontocracy.App.Models.Account
 {
     /// <summary>
     /// Role which is shown in the frontend

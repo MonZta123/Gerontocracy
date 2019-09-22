@@ -1,5 +1,4 @@
-﻿using Gerontocracy.Core.BusinessObjects.Account;
-using System;
+﻿using System;
 
 namespace Gerontocracy.Core.BusinessObjects.Affair
 {

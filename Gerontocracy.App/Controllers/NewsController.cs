@@ -5,7 +5,6 @@ using Gerontocracy.App.Models.Shared;
 using Gerontocracy.Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Morphius;
 
 namespace Gerontocracy.App.Controllers
