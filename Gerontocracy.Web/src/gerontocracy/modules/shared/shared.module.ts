@@ -7,23 +7,28 @@ import { SharedBoardService } from './services/shared-board.service';
 import { LockedInterceptorService } from './services/locked-interceptor.service';
 
 import { StringTrimPipe } from './pipes/string-trim.pipe';
-import { FullnamePipe } from './pipes/fullname.pipe';
 import { UrlPipe } from './pipes/url.pipe';
+import { ToastModule } from 'primeng/toast';
+
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { BaseComponent } from './components/base/base.component';
+import { BlockUIModule } from 'primeng/blockui';
 
 @NgModule({
   declarations: [
     StringTrimPipe,
-    FullnamePipe,
     UrlPipe,
+    BaseComponent,
   ],
   exports: [
     StringTrimPipe,
-    FullnamePipe,
     UrlPipe,
+    BaseComponent
   ],
   imports: [
     CommonModule,
+    ToastModule,
+    BlockUIModule
   ],
   entryComponents: [
   ],

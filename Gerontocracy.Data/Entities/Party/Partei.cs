@@ -15,5 +15,8 @@ namespace Gerontocracy.Data.Entities.Party
         public string Name { get; set; }
 
         public ICollection<Politiker> Politiker { get; set; }
+
+        public long ParlamentId { get; set; }
+        public Parlament Parlament { get; set; }
     }
 }

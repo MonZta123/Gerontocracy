@@ -9,8 +9,9 @@ import { QuelleAdd } from '../../models/quelle-add';
 import { SourceDialogComponent } from '../source-dialog/source-dialog.component';
 import { SourceDialogData } from '../source-dialog/source-dialog-data';
 import { QuelleData } from './quelle-data';
-import { FullnamePipe } from '../../../shared/pipes/fullname.pipe';
 import { ReputationType } from '../../../shared/models/reputation-type';
+import { BaseComponent } from '../../../shared/components/base/base.component';
+import { SharedService } from '../../../shared/services/shared.service';
 
 @Component({
   selector: 'app-add-dialog',
@@ -18,13 +19,11 @@ import { ReputationType } from '../../../shared/models/reputation-type';
   styleUrls: ['./add-dialog.component.scss'],
   providers: [DialogService]
 })
-export class AddDialogComponent implements OnInit {
+export class AddDialogComponent extends BaseComponent implements OnInit {
 
   formGroup: FormGroup;
   sources: QuelleData[];
   showSourcesError: boolean;
-
-  isLoadingData: boolean;
 
   options: PolitikerSelection[];
   politiker: any;
@@ -36,16 +35,17 @@ export class AddDialogComponent implements OnInit {
     private formBuilder: FormBuilder,
     private sharedPartyService: SharedPartyService,
     private dialogService: DialogService,
-    private messageService: MessageService,
     private affairService: AffairService,
-    private dialogReference: DynamicDialogRef) {
+    private dialogReference: DynamicDialogRef,
+    messageService: MessageService,
+    sharedService: SharedService) {
+    super(messageService, sharedService);
   }
 
   ngOnInit() {
     this.sources = [];
     this.reputationType = ReputationType.Neutral;
     this.showSourcesError = false;
-    this.isLoadingData = false;
     this.formGroup = this.formBuilder.group({
       titel: ['', [Validators.maxLength(50), Validators.required]],
       beschreibung: ['', [Validators.maxLength(4000), Validators.required]],
@@ -57,9 +57,7 @@ export class AddDialogComponent implements OnInit {
     this.sharedPartyService
       .getPoliticianSelection(evt.query)
       .toPromise()
-      .then(n => {
-        this.options = n.map(m => ({ ...m, fullname: new FullnamePipe().transform(m) }));
-      });
+      .then(n => this.options = n);
   }
 
   unlockPolitiker() {
@@ -90,8 +88,6 @@ export class AddDialogComponent implements OnInit {
 
   public addAffair() {
     if (this.formGroup.valid && this.sources.length > 0) {
-      this.isLoadingData = true;
-
       const obj: VorfallAdd = this.formGroup.value;
       obj.quellen = this.sources;
       if (this.politiker) {
@@ -99,16 +95,17 @@ export class AddDialogComponent implements OnInit {
         obj.reputationType = this.reputationType;
       }
 
-      this.isLoadingData = true;
       this.affairService.addAffair(obj)
+        .pipe(super.start(), super.end())
         .toPromise()
-        .then(id => {
-          window.location.href = `/affair/new/${id}`;
+        .then(n => {
+          super.handlePostResult(n);
+          if (n.success) {
+            console.log(n.data);
+            window.location.href = `/affair/new/${n.data}`;
+          }
         })
-        .catch(() => {
-          this.messageService.add({ severity: 'error', summary: 'Ein Fehler ist aufgetreten!', detail: 'Keine Ahnung!' });
-        })
-        .then(() => this.isLoadingData = false);
+        .catch(error => super.handleError(error));
 
     } else {
       if (this.sources.length < 1) {

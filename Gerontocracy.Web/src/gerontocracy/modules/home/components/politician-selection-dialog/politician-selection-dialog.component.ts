@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { PolitikerSelection } from '../../../shared/models/politiker-selection';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
-import { DialogService, DynamicDialogRef } from 'primeng/api';
+import { DynamicDialogRef } from 'primeng/api';
 import { SharedPartyService } from '../../../shared/services/shared-party.service';
 import { ReputationType } from '../../../shared/models/reputation-type';
-import { FullnamePipe } from '../../../shared/pipes/fullname.pipe';
 
 @Component({
   selector: 'app-politician-selection-dialog',
@@ -37,7 +36,7 @@ export class PoliticianSelectionDialogComponent implements OnInit {
     this.sharedPartyService
       .getPoliticianSelection(evt.query)
       .toPromise()
-      .then(n => this.options = n.map(m => ({ ...m, fullname: new FullnamePipe().transform(m) })));
+      .then(n => this.options = n);
   }
 
   unlockPolitiker() {

@@ -10,11 +10,11 @@
                 <div class="d-flex flex-column">
                     <p-message severity="error" text="Url ist ein Pflichtfeld!"
                         *ngIf="formGroup.controls.url.hasError('required') && formGroup.controls.url.touched"
-                         class="mt-5">
+                        class="mt-5">
                     </p-message>
                     <p-message severity="error" text="Url nicht im richtigen Format! (zB: https://www.google.at/)"
                         *ngIf="formGroup.controls.url.hasError('pattern') && formGroup.controls.url.touched"
-                         class="mt-5">
+                        class="mt-5">
                     </p-message>
                 </div>
             </div>
@@ -27,11 +27,11 @@
                 <div class="d-flex flex-column">
                     <p-message severity="error" text="Bitte Zusatzinfo angeben!"
                         *ngIf="formGroup.controls.zusatz.hasError('required') && formGroup.controls.zusatz.touched"
-                         class="mt-5">
+                        class="mt-5">
                     </p-message>
                     <p-message severity="error" text="Zusatzinfo darf maximal 255 Zeichen lang sein!"
                         *ngIf="formGroup.controls.zusatz.hasError('maxlength') && formGroup.controls.zusatz.touched"
-                         class="mt-5">
+                        class="mt-5">
                     </p-message>
                 </div>
             </div>

@@ -8,6 +8,7 @@ import { Login } from '../models/login';
 import { EmailConfirmation } from '../models/emailconfirmation';
 import { Result } from '../models/result';
 import { User } from '../models/user';
+import { PostResult } from '../modules/shared/models/post-result';
 
 @Injectable({
   providedIn: 'root'
@@ -16,11 +17,7 @@ export class AccountService {
 
   public currentUser: User;
 
-  constructor(
-    private httpClient: HttpClient
-  ) {
-
-  }
+  constructor(private httpClient: HttpClient) { }
 
   private refreshCurrentUser() {
     this.getCurrentUser().toPromise().then(n => {
@@ -38,20 +35,20 @@ export class AccountService {
     return this.httpClient.get<boolean>(`api/account/emailexists/${email}/mail`);
   }
 
-  registerUser(data: Register): Observable<void> {
-    return this.httpClient.post<void>(`api/account/register`, data);
+  registerUser(data: Register): Observable<PostResult<void>> {
+    return this.httpClient.post<PostResult<void>>(`api/account/register`, data);
   }
 
-  loginUser(data: Login): Observable<void> {
-    return this.httpClient.post<void>(`api/account/login`, data);
+  loginUser(data: Login): Observable<PostResult<void>> {
+    return this.httpClient.post<PostResult<void>>(`api/account/login`, data);
   }
 
-  logoutUser(): Observable<void> {
-    return this.httpClient.post<void>(`api/account/logout`, null);
+  logoutUser(): Observable<PostResult<void>> {
+    return this.httpClient.post<PostResult<void>>(`api/account/logout`, null);
   }
 
-  confirmEmail(data: EmailConfirmation): Observable<Result> {
-    return this.httpClient.post<Result>(`api/account/confirmemail`,
+  confirmEmail(data: EmailConfirmation): Observable<PostResult<void>> {
+    return this.httpClient.post<PostResult<void>>(`api/account/confirmemail`,
       { id: data.id, token: replaceAll(replaceAll(data.token, '%20', '+'), ' ', '+') });
   }
 

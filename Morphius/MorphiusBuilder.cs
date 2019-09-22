@@ -9,6 +9,7 @@ namespace Morphius
         {
             var data = new MorphiusOptions();
             config(data);
+            
             return app.UseMiddleware<Morphius>(data);
         }
     }

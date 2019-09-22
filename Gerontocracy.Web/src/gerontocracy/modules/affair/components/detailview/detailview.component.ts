@@ -3,13 +3,17 @@ import { SharedAccountService } from '../../../shared/services/shared-account.se
 import { AffairService } from '../../services/affair.service';
 import { VorfallDetail } from '../../models/vorfall-detail';
 import { VoteType } from '../../models/vote-type';
+import { BaseComponent } from '../../../shared/components/base/base.component';
+import { MessageService } from 'primeng/api';
+import { SharedService } from '../../../shared/services/shared.service';
 
 @Component({
   selector: 'app-detailview',
   templateUrl: './detailview.component.html',
-  styleUrls: ['./detailview.component.scss']
+  styleUrls: ['./detailview.component.scss'],
+  providers: [MessageService]
 })
-export class DetailviewComponent implements OnInit {
+export class DetailviewComponent extends BaseComponent implements OnInit {
 
   @Input() data: VorfallDetail;
 
@@ -22,7 +26,11 @@ export class DetailviewComponent implements OnInit {
   constructor(
     private affairService: AffairService,
     private sharedAccountService: SharedAccountService,
-  ) { }
+    messageService: MessageService,
+    sharedService: SharedService
+  ) {
+    super(messageService, sharedService);
+  }
 
   ngOnInit() {
   }
@@ -39,8 +47,10 @@ export class DetailviewComponent implements OnInit {
 
         this.affairService
           .vote(this.data.id, newVoteType)
+          .pipe(super.start(), super.end())
           .toPromise()
-          .then(() => this.data.userVote = newVoteType);
+          .then(() => this.data.userVote = newVoteType)
+          .catch(error => super.handleError(error));
       }
     });
   }

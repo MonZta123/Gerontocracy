@@ -18,25 +18,10 @@ namespace Gerontocracy.App.Models.Party
         public long ExternalId { get; set; }
 
         /// <summary>
-        /// Firstname
+        /// Name
         /// </summary>
-        public string Vorname { get; set; }
-
-        /// <summary>
-        /// Lastname
-        /// </summary>
-        public string Nachname { get; set; }
-
-        /// <summary>
-        /// Title before name
-        /// </summary>
-        public string AkadGradPre { get; set; }
-
-        /// <summary>
-        /// Title after name
-        /// </summary>
-        public string AkadGradPost { get; set; }
-
+        public string Name { get; set; }
+        
         /// <summary>
         /// Election circle
         /// </summary>
@@ -46,16 +31,6 @@ namespace Gerontocracy.App.Models.Party
         /// State
         /// </summary>
         public string Bundesland { get; set; }
-
-        /// <summary>
-        /// Currently active in national council
-        /// </summary>
-        public bool IsNationalrat { get; set; }
-
-        /// <summary>
-        /// currently active in government
-        /// </summary>
-        public bool IsRegierung { get; set; }
 
         /// <summary>
         /// Id of the party
@@ -81,5 +56,10 @@ namespace Gerontocracy.App.Models.Party
         /// Reputation Downvotes
         /// </summary>
         public int ReputationDown { get; set; }
+
+        /// <summary>
+        /// Inactive-Flag
+        /// </summary>
+        public bool IsInactive { get; set; }
     }
 }

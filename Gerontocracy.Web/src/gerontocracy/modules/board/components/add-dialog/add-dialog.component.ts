@@ -31,7 +31,7 @@ export class AddDialogComponent implements OnInit {
     this.sharedBoardService
       .getAffairSelection(evt.query)
       .toPromise()
-      .then(n => this.options = n.map(m => ({ ...m, fulltext: `${m.titel} (${m.user})` })));
+      .then(n => this.options = n);
   }
 
   unlockSelection() {

@@ -37,7 +37,7 @@ namespace Gerontocracy.Core.HostedServices
 
         private void TriggerParlamentSyncJob(object state)
         {
-            _logger.LogInformation("Parlament Background Service is working.");
+            _logger.LogInformation("Parlament Background Service is starting.");
 
             using (var scope = _services.CreateScope())
             {
@@ -51,7 +51,7 @@ namespace Gerontocracy.Core.HostedServices
 
         private void TriggerNewsSyncJob(object state)
         {
-            _logger.LogInformation("News Background Service is working.");
+            _logger.LogInformation("News Background Service is starting.");
 
             using (var scope = _services.CreateScope())
             {
@@ -59,7 +59,7 @@ namespace Gerontocracy.Core.HostedServices
                     scope.ServiceProvider
                         .GetRequiredService<ISyncService>();
 
-                syncService.SyncApa();
+                syncService.SyncSources().Wait();
             }
         }
 

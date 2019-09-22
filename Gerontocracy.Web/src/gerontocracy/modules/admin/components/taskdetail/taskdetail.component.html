@@ -1,62 +1,64 @@
-<div class="ui-fluid">
-    <div>
-        <p-panel header="Übersicht">
-            <div class="ui-g">
-                <div class="ui-g-12">
-                    <h6>Meldung von</h6>
-                    <p>{{data.einreicher}}</p>
-                    <p>
-                        <i class="pi pi-calendar"></i>
-                        {{data.eingereichtAm | date: 'dd.MM.yyyy hh:mm'}}
-                    </p>
-                </div>
-            </div>
-            <div class="ui-g">
-                <div class="ui-g-12">
-                    <p *ngIf="data.bearbeiterId !== 0"> <i class="pi pi-tag"></i>{{data.bearbeiter}}</p>
-                    <p *ngIf="data.bearbeiterId === 0"> <i class="pi pi-tag"></i>(Noch kein Bearbeiter)</p>
-                    <p-button label="Mir zuweisen" icon="pi pi-user" (click)="assignToMe()"></p-button>
-                </div>
-            </div>
-            <div class="ui-g">
-                <div class="ui-g-6">
-                    Kategorie:
-                    {{data.taskType | taskType}}
-                </div>
-                <div class="ui-g-6">
-                    <div *ngIf="data.erledigt">
-                        <i class="pi pi-check"></i> Erledigt!
-                        <p-button label="Neu Öffnen" icon="pi pi-unlock" (click)="reopenTask()"></p-button>
-                    </div>
-                    <div *ngIf="!data.erledigt">
-                        <i class="pi pi-times"></i> Nicht erledigt!
-                        <p-button label="Schließen" icon="pi pi-check" (click)="closeTask()"></p-button>
+<app-base *ngIf="isAdmin">
+    <div class="ui-fluid">
+        <div>
+            <p-panel header="Übersicht">
+                <div class="ui-g">
+                    <div class="ui-g-12">
+                        <h6>Meldung von</h6>
+                        <p>{{data.einreicher}}</p>
+                        <p>
+                            <i class="pi pi-calendar"></i>
+                            {{data.eingereichtAm | date: 'dd.MM.yyyy hh:mm'}}
+                        </p>
                     </div>
                 </div>
-            </div>
-        </p-panel>
-    </div>
-    <div class="mt-5">
-        <p-panel header="Meldung">
-            <div class="ui-g">
-                <div class="ui-g-12">
-                    {{data.metaData}}
+                <div class="ui-g">
+                    <div class="ui-g-12">
+                        <p *ngIf="data.bearbeiterId !== 0"> <i class="pi pi-tag"></i>{{data.bearbeiter}}</p>
+                        <p *ngIf="data.bearbeiterId === 0"> <i class="pi pi-tag"></i>(Noch kein Bearbeiter)</p>
+                        <p-button label="Mir zuweisen" icon="pi pi-user" (click)="assignToMe()"></p-button>
+                    </div>
                 </div>
-            </div>
-        </p-panel>
-    </div>
-    <div class="mt-5">
-        <p-panel header="Userkommentar">
-            <div class="ui-g">
-                <div class="ui-g-12">
-                    <p *ngIf="data.beschreibung && data.beschreibung !== ''">
-                        {{data.beschreibung}}
-                    </p>
-                    <p *ngIf="!data.beschreibung || data.beschreibung === ''">
-                        (Keine Beschreibung vorhanden!)
-                    </p>
+                <div class="ui-g">
+                    <div class="ui-g-6">
+                        Kategorie:
+                        {{data.taskType | taskType}}
+                    </div>
+                    <div class="ui-g-6">
+                        <div *ngIf="data.erledigt">
+                            <i class="pi pi-check"></i> Erledigt!
+                            <p-button label="Neu Öffnen" icon="pi pi-unlock" (click)="reopenTask()"></p-button>
+                        </div>
+                        <div *ngIf="!data.erledigt">
+                            <i class="pi pi-times"></i> Nicht erledigt!
+                            <p-button label="Schließen" icon="pi pi-check" (click)="closeTask()"></p-button>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </p-panel>
+            </p-panel>
+        </div>
+        <div class="mt-5">
+            <p-panel header="Meldung">
+                <div class="ui-g">
+                    <div class="ui-g-12">
+                        {{data.metaData}}
+                    </div>
+                </div>
+            </p-panel>
+        </div>
+        <div class="mt-5">
+            <p-panel header="Userkommentar">
+                <div class="ui-g">
+                    <div class="ui-g-12">
+                        <p *ngIf="data.beschreibung && data.beschreibung !== ''">
+                            {{data.beschreibung}}
+                        </p>
+                        <p *ngIf="!data.beschreibung || data.beschreibung === ''">
+                            (Keine Beschreibung vorhanden!)
+                        </p>
+                    </div>
+                </div>
+            </p-panel>
+        </div>
     </div>
-</div>
+</app-base>

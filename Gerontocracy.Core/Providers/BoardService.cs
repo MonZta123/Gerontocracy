@@ -75,10 +75,7 @@ namespace Gerontocracy.Core.Providers
             "                COALESCE(vorfalls.\"PolitikerId\",0) AS politikerid, " +
             "                threads.\"Title\", " +
             "                users.\"UserName\", " +
-            "                COALESCE(politikers.\"AkadGradPre\",'')  AS akadgradpre, " +
-            "                COALESCE(politikers.\"Vorname\",'')      AS vorname, " +
-            "                COALESCE(politikers.\"Nachname\",'')     AS nachname, " +
-            "                COALESCE(politikers.\"AkadGradPost\",'') AS akadgradpost, " +
+            "                COALESCE(politikers.\"Name\",'')      AS name, " +
             "                COALESCE(vorfalls.\"Titel\",'')          AS titel, " +
             "                num.\"NumPosts\" " +
             "FROM            \"Thread\" threads " +
@@ -120,7 +117,7 @@ namespace Gerontocracy.Core.Providers
             "ORDER BY posts.\"CreatedOn\" DESC " +
             "LIMIT    @limit " +
             "OFFSET   @offset ";
-        
+
         private readonly IAccountService _accountService;
         private readonly GerontocracyContext _context;
         private readonly IMapper _mapper;
@@ -230,7 +227,7 @@ namespace Gerontocracy.Core.Providers
             {
                 Id = thread.Id,
                 PolitikerId = thread.Vorfall?.PolitikerId,
-                PolitikerName = thread.Vorfall?.Politiker?.TitelName,
+                PolitikerName = thread.Vorfall?.Politiker?.Name,
                 Titel = thread.Title,
                 VorfallId = thread.VorfallId,
                 VorfallTitel = thread.Vorfall?.Titel,
@@ -240,16 +237,18 @@ namespace Gerontocracy.Core.Providers
             return mappedThread;
         }
 
-        public void Like(ClaimsPrincipal user, long postId, LikeType? type)
+        public long? Like(ClaimsPrincipal user, long postId, LikeType? type)
         {
             var userId = _accountService.GetIdOfUser(user);
 
             if (!_context.Post.Any(n => n.Id == postId && !n.Deleted))
                 throw new PostNotFoundException();
 
+            db.Like dbObj = null;
+
             if (type.HasValue)
             {
-                var dbObj = _context.Like.SingleOrDefault(n => n.UserId == userId && n.PostId == postId);
+                dbObj = _context.Like.SingleOrDefault(n => n.UserId == userId && n.PostId == postId);
 
                 if (dbObj == null)
                 {
@@ -267,6 +266,8 @@ namespace Gerontocracy.Core.Providers
                 _context.Remove(_context.Like.Single(n => n.UserId == userId && n.PostId == postId));
 
             _context.SaveChanges();
+
+            return dbObj?.Id;
         }
 
         public Post Reply(ClaimsPrincipal user, PostData data)
@@ -302,15 +303,15 @@ namespace Gerontocracy.Core.Providers
             };
         }
 
-        public void Report(ClaimsPrincipal user, long postId, string comment)
+        public long Report(ClaimsPrincipal user, long postId, string comment)
         {
             var userId = this._accountService.GetIdOfUser(user);
 
             var post = _context.Post.SingleOrDefault(n => n.Id == postId);
             if (post == null)
                 throw new PostNotFoundException();
-
-            this._taskService.Report(userId, TaskType.PostReport, comment, post.Id.ToString());
+            
+            return this._taskService.Report(userId, TaskType.PostReport, comment, post.Id.ToString());
         }
 
         public void DeletePost(long postId)
@@ -358,18 +359,6 @@ namespace Gerontocracy.Core.Providers
 
             var data = this._context.GetData(builder.ToString(), n =>
             {
-                var politikerName = string.Empty;
-
-                var akadGradPre = n.GetString(8);
-                if (!string.IsNullOrEmpty(akadGradPre))
-                    politikerName = $"{akadGradPre} ";
-
-                politikerName = $"{politikerName} {n.GetString(9)} {n.GetString(10)}";
-
-                var akadGradPost = n.GetString(11);
-                if (!string.IsNullOrEmpty(akadGradPost))
-                    politikerName = $"{politikerName}, {akadGradPost}";
-
                 var thread = new ThreadOverview()
                 {
                     Id = n.GetInt64(0),
@@ -380,9 +369,9 @@ namespace Gerontocracy.Core.Providers
                     PolitikerId = n.GetInt64(5),
                     Titel = n.GetString(6),
                     UserName = n.GetString(7),
-                    PolitikerName = politikerName.Trim(),
-                    VorfallTitel = n.GetString(12),
-                    NumPosts = n.GetInt64(13),
+                    PolitikerName = n.GetString(8),
+                    VorfallTitel = n.GetString(9),
+                    NumPosts = n.GetInt64(10),
                 };
 
                 if (thread.VorfallId == 0)

@@ -289,6 +289,8 @@ namespace Gerontocracy.Data.Migrations
 
                     b.Property<DateTime?>("PubDate");
 
+                    b.Property<long?>("RssSourceId");
+
                     b.Property<string>("Title")
                         .IsRequired();
 
@@ -296,9 +298,48 @@ namespace Gerontocracy.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("RssSourceId");
+
                     b.HasIndex("VorfallId");
 
                     b.ToTable("Artikel");
+                });
+
+            modelBuilder.Entity("Gerontocracy.Data.Entities.News.RssSource", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<bool>("Enabled");
+
+                    b.Property<string>("Name");
+
+                    b.Property<long>("ParlamentId");
+
+                    b.Property<string>("Url");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParlamentId");
+
+                    b.ToTable("RssSource");
+                });
+
+            modelBuilder.Entity("Gerontocracy.Data.Entities.Party.Parlament", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(2);
+
+                    b.Property<string>("Langtext")
+                        .IsRequired();
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Parlament");
                 });
 
             modelBuilder.Entity("Gerontocracy.Data.Entities.Party.Partei", b =>
@@ -312,7 +353,11 @@ namespace Gerontocracy.Data.Migrations
 
                     b.Property<string>("Name");
 
+                    b.Property<long>("ParlamentId");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ParlamentId");
 
                     b.ToTable("Partei");
                 });
@@ -322,27 +367,23 @@ namespace Gerontocracy.Data.Migrations
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("AkadGradPost");
-
-                    b.Property<string>("AkadGradPre");
-
                     b.Property<string>("Bundesland");
 
                     b.Property<long>("ExternalId");
 
-                    b.Property<bool>("IsNationalrat");
+                    b.Property<bool>("IsInactive");
 
-                    b.Property<bool>("IsRegierung");
+                    b.Property<string>("Name");
 
-                    b.Property<string>("Nachname");
+                    b.Property<long?>("ParlamentId");
 
                     b.Property<long?>("ParteiId");
-
-                    b.Property<string>("Vorname");
 
                     b.Property<string>("Wahlkreis");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ParlamentId");
 
                     b.HasIndex("ParteiId");
 
@@ -550,13 +591,37 @@ namespace Gerontocracy.Data.Migrations
 
             modelBuilder.Entity("Gerontocracy.Data.Entities.News.Artikel", b =>
                 {
+                    b.HasOne("Gerontocracy.Data.Entities.News.RssSource", "RssSource")
+                        .WithMany("Artikel")
+                        .HasForeignKey("RssSourceId");
+
                     b.HasOne("Gerontocracy.Data.Entities.Affair.Vorfall", "Vorfall")
                         .WithMany()
                         .HasForeignKey("VorfallId");
                 });
 
+            modelBuilder.Entity("Gerontocracy.Data.Entities.News.RssSource", b =>
+                {
+                    b.HasOne("Gerontocracy.Data.Entities.Party.Parlament", "Parlament")
+                        .WithMany("Sources")
+                        .HasForeignKey("ParlamentId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Gerontocracy.Data.Entities.Party.Partei", b =>
+                {
+                    b.HasOne("Gerontocracy.Data.Entities.Party.Parlament", "Parlament")
+                        .WithMany("Parteien")
+                        .HasForeignKey("ParlamentId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("Gerontocracy.Data.Entities.Party.Politiker", b =>
                 {
+                    b.HasOne("Gerontocracy.Data.Entities.Party.Parlament", "Parlament")
+                        .WithMany()
+                        .HasForeignKey("ParlamentId");
+
                     b.HasOne("Gerontocracy.Data.Entities.Party.Partei", "Partei")
                         .WithMany("Politiker")
                         .HasForeignKey("ParteiId");

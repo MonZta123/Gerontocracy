@@ -9,7 +9,7 @@ using Gerontocracy.Core.Interfaces;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using Morphius;
 using bo = Gerontocracy.Core.BusinessObjects.Party;
 
 namespace Gerontocracy.App.Controllers
@@ -17,9 +17,8 @@ namespace Gerontocracy.App.Controllers
     /// <summary>
     /// PartyController
     /// </summary>
-    [Produces("application/json")]
     [Route("api/[controller]")]
-    public class PartyController : Controller
+    public class PartyController : MorphiusController
     {
         #region Constructors
 
@@ -88,28 +87,6 @@ namespace Gerontocracy.App.Controllers
             => Ok(_mapper.Map<List<ParteiDetail>>(this._partyService.GetParteienDetail()));
 
         /// <summary>
-        /// Returns a list of all parties and their members of the national council
-        /// optimized for menu-selection
-        /// </summary>
-        /// <returns>list of national council parties</returns>
-        [HttpGet]
-        [AllowAnonymous]
-        [Route("nationalrat-selection")]
-        public IActionResult GetNationalratSelection()
-            => Ok(_mapper.Map<List<ParteiSelection>>(this._partyService.GetNationalratSelection()));
-
-        /// <summary>
-        /// Returns a list of all parties and their members of the government
-        /// optimized for menu-selection
-        /// </summary>
-        /// <returns>list of government parties</returns>
-        [HttpGet]
-        [AllowAnonymous]
-        [Route("regierung-selection")]
-        public IActionResult GetRegierungSelection()
-            => Ok(_mapper.Map<List<ParteiSelection>>(this._partyService.GetRegierungSelection()));
-
-        /// <summary>
         /// Returns a list of all parties and their members
         /// optimized for menu-selection
         /// </summary>
@@ -119,17 +96,6 @@ namespace Gerontocracy.App.Controllers
         [Route("selection")]
         public IActionResult GetSelection()
             => Ok(_mapper.Map<List<ParteiSelection>>(this._partyService.GetSelection()));
-
-        /// <summary>
-        /// Returns a list of all parties and their inactive members
-        /// optimized for menu-selection
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        [AllowAnonymous]
-        [Route("inactive-selection")]
-        public IActionResult GetInactiveSelection()
-            => Ok(_mapper.Map<List<ParteiSelection>>(this._partyService.GetInactiveSelection()));
 
         /// <summary>
         /// Returns a Party by its shortname.
@@ -188,9 +154,9 @@ namespace Gerontocracy.App.Controllers
         /// <summary>
         /// Search for a politician with parameters
         /// </summary>
-        /// <param name="lastname">lastname</param>
-        /// <param name="firstname">firstname</param>
+        /// <param name="name">name</param>
         /// <param name="party">party</param>
+        /// <param name="includeInactive">include not active members</param>
         /// <param name="pageSize">number of results</param>
         /// <param name="pageIndex">number of page</param>
         /// <returns>List of politicians</returns>
@@ -198,16 +164,16 @@ namespace Gerontocracy.App.Controllers
         [AllowAnonymous]
         [Route("parteisearch")]
         public IActionResult ParteiSearch(
-            string lastname,
-            string firstname,
+            string name,
             string party,
+            bool includeInactive,
             int pageSize = 25,
             int pageIndex = 0)
             => Ok(_mapper.Map<SearchResult<PolitikerOverview>>(_partyService.Search(new bo.SearchParameters()
             {
-                Nachname = lastname,
-                Vorname = firstname,
+                Name = name,
                 ParteiKurzzeichen = party,
+                IncludeInactive = includeInactive
             }, pageSize, pageIndex)));
 
         /// <summary>
@@ -220,6 +186,16 @@ namespace Gerontocracy.App.Controllers
         [Route("politiker-selection")]
         public IActionResult FilteredPolitikerSelection(string search = "")
             => Ok(_mapper.Map<List<PolitikerSelection>>(_partyService.GetFilteredByName(search ?? string.Empty, 5)));
+
+        /// <summary>
+        /// Returns a list of all parliaments
+        /// </summary>
+        /// <returns>list of parliaments</returns>
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("parliaments")]
+        public IActionResult GetParliaments()
+            => Ok(_mapper.Map<List<Parlament>>(_partyService.GetParliaments()));
 
         private IActionResult GetObject<TMappedValue, TParameterType, TReturnValue>
             (Func<TParameterType, TReturnValue> func, TParameterType param)

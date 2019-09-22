@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { DashboardData } from '../models/dashboard-data';
 import { NewsData } from '../models/news-data';
+import { PostResult } from '../../shared/models/post-result';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,7 @@ export class DashboardService {
     return this.httpClient.get<DashboardData>('api/dashboard');
   }
 
-  public generateNews(data: NewsData): Observable<number> {
-    return this.httpClient.post<number>('api/dashboard/generate', data);
+  public generateNews(data: NewsData): Observable<PostResult<number>> {
+    return this.httpClient.post<PostResult<number>>('api/dashboard/generate', data);
   }
 }

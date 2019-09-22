@@ -19,6 +19,7 @@ namespace Gerontocracy.Data
         {
         }
 
+        public DbSet<Parlament> Parlament { get; set; }
         public DbSet<Partei> Partei { get; set; }
         public DbSet<Politiker> Politiker { get; set; }
 
@@ -29,11 +30,12 @@ namespace Gerontocracy.Data
         public DbSet<Post> Post { get; set; }
         public DbSet<Thread> Thread { get; set; }
         public DbSet<Like> Like { get; set; }
-
-        public DbSet<Artikel> Artikel { get; set; }
-
         public DbSet<Aufgabe> Aufgabe { get; set; }
         public DbSet<Ban> Ban { get; set; }
+
+        public DbSet<Artikel> Artikel { get; set; }
+        public DbSet<RssSource> RssSource { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) => base.OnModelCreating(modelBuilder);
         

@@ -15,10 +15,10 @@ namespace Gerontocracy.Core.Interfaces
 
         Task<User> AssignTask(ClaimsPrincipal user, long id);
 
-        bool CloseTask(long id);
+        void CloseTask(long id);
+        
+        void ReopenTask(long id);
 
-        bool ReopenTask(long id);
-
-        void Report(long userId, TaskType type, string description, string metaData);
+        long Report(long userId, TaskType type, string description, string metaData);
     }
 }

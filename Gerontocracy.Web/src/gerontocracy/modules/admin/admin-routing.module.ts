@@ -4,12 +4,17 @@ import { RouterModule, Routes } from '@angular/router';
 import { AdminComponent } from './components/admin.component';
 import { UserviewComponent } from './components/userview/userview.component';
 import { TaskviewComponent } from './components/taskview/taskview.component';
+import { SettingsComponent } from './components/settings/settings.component';
 
 export const routes: Routes = [
     {
         path: '',
         component: AdminComponent,
         children: [
+            {
+                path: 'settings',
+                component: SettingsComponent
+            },
             {
                 path: 'task/:id',
                 component: TaskviewComponent

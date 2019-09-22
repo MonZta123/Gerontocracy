@@ -1,72 +1,70 @@
-<p-toast [style]="{marginTop: '80px'}"></p-toast>
-
-<p-blockUI [blocked]="popupVisible"></p-blockUI>
-
-<div class="ui-fluid">
-    <div class="ui-g">
-        <div class="ui-g-12 ui-lg-6 ui-md-12 ui-g-nopad">
-            <div class="ui-g-12">
-                <p-panel header="Suchparameter" toggleable="true" [collapsed]="false">
-                    <div class="ui-fluid ui-g" [formGroup]="searchForm">
-                        <div class="ui-g-12">
-                            <div class="ui-inputgroup">
-                                <span class="ui-inputgroup-addon"><i class="pi pi-copy"></i></span>
-                                <input type="text" pInputText formControlName="title" placeholder="Titel">
+<app-base [uiBlocked]="popupVisible">
+    <div class="ui-fluid">
+        <div class="ui-g">
+            <div class="ui-g-12 ui-lg-6 ui-md-12 ui-g-nopad">
+                <div class="ui-g-12">
+                    <p-panel header="Suchparameter" toggleable="true" [collapsed]="false">
+                        <div class="ui-fluid ui-g" [formGroup]="searchForm">
+                            <div class="ui-g-12">
+                                <div class="ui-inputgroup">
+                                    <span class="ui-inputgroup-addon"><i class="pi pi-copy"></i></span>
+                                    <input type="text" pInputText formControlName="title" placeholder="Titel">
+                                </div>
+                            </div>
+                            <div class="ui-g-12 d-flex d-flex-between" align="end">
+                                <p-button label="Neuer Thread" icon="pi pi-plus" (click)="addThread()">
+                                </p-button>
+                                <p-button label="Suchen" icon="pi pi-search" (click)="search()">
+                                </p-button>
                             </div>
                         </div>
-                        <div class="ui-g-12 d-flex d-flex-between" align="end">
-                            <p-button label="Neuer Thread" icon="pi pi-plus" (click)="addThread()">
-                            </p-button>
-                            <p-button label="Suchen" icon="pi pi-search" (click)="loadData()">
-                            </p-button>
+                    </p-panel>
+                </div>
+                <div class="ui-g-12">
+                    <p-panel header="Übersicht">
+                        <p-paginator [rows]="pageSize" [showCurrentPageReport]="true" [totalRecords]="maxResults"
+                            [rowsPerPageOptions]="[10,25,50]" (onPageChange)="paginate($event)"></p-paginator>
+                        <div class="mt-5">
+                            <p-table [value]="data">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th width="30%">Titel</th>
+                                        <th width="19%">Verantwortlicher</th>
+                                        <th width="5%"><i class="pi pi-comments"></i></th>
+                                        <th width="12%">Generiert</th>
+                                        <th width="7.3%"></th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-row>
+                                    <tr>
+                                        <td>{{getThreadTitle(row)}}</td>
+                                        <td *ngIf="row.politikerId">
+                                            <a [href]="'party/' + row.politikerId">{{row.politikerName}}</a>
+                                        </td>
+                                        <td *ngIf="!row.politikerId">n/a</td>
+                                        <td>{{row.numPosts}}</td>
+                                        <td><i *ngIf="row.generated" class="pi pi-check"></i></td>
+                                        <td>
+                                            <p-button icon="pi pi-arrow-circle-right" (click)="showDetail(row.id)">
+                                            </p-button>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
                         </div>
-                    </div>
+                    </p-panel>
+                </div>
+            </div>
+            <div class="ui-g-12 ui-lg-6 ui-md-12">
+                <p-panel header="Übersicht" *ngIf="detailData">
+                    <app-detailview [data]="detailData" [isPopup]="false" [isAdmin]="isAdmin" (popout)="showPopup()">
+                    </app-detailview>
                 </p-panel>
             </div>
-            <div class="ui-g-12">
-                <p-panel header="Übersicht">
-                    <p-paginator [rows]="pageSize" [showCurrentPageReport]="true" [totalRecords]="maxResults"
-                        [rowsPerPageOptions]="[10,25,50]" (onPageChange)="paginate($event)"></p-paginator>
-                    <div class="mt-5">
-                        <p-table [value]="data">
-                            <ng-template pTemplate="header">
-                                <tr>
-                                    <th width="30%">Titel</th>
-                                    <th width="19%">Verantwortlicher</th>
-                                    <th width="5%"><i class="pi pi-comments"></i></th>
-                                    <th width="12%">Generiert</th>
-                                    <th width="7.3%"></th>
-                                </tr>
-                            </ng-template>
-                            <ng-template pTemplate="body" let-row>
-                                <tr>
-                                    <td>{{getThreadTitle(row)}}</td>
-                                    <td *ngIf="row.politikerId">
-                                        <a [href]="'party/' + row.politikerId">{{row.politikerName}}</a>
-                                    </td>
-                                    <td *ngIf="!row.politikerId">n/a</td>
-                                    <td>{{row.numPosts}}</td>
-                                    <td><i *ngIf="row.generated" class="pi pi-check"></i></td>
-                                    <td>
-                                        <p-button icon="pi pi-arrow-circle-right" (click)="showDetail(row.id)">
-                                        </p-button>
-                                    </td>
-                                </tr>
-                            </ng-template>
-                        </p-table>
-                    </div>
-                </p-panel>
-            </div>
-        </div>
-        <div class="ui-g-12 ui-lg-6 ui-md-12">
-            <p-panel header="Übersicht" *ngIf="detailData">
-                <app-detailview [data]="detailData" [isPopup]="false" [isAdmin]="isAdmin" (popout)="showPopup()">
-                </app-detailview>
-            </p-panel>
         </div>
     </div>
-</div>
 
-<p-dialog *ngIf="detailData" header="Detailansicht" [style]="{width: '512'}" [(visible)]="popupVisible">
-    <app-detailview [data]="detailData" [isAdmin]="isAdmin" [isPopup]="true"></app-detailview>
-</p-dialog>
+    <p-dialog *ngIf="detailData" header="Detailansicht" [style]="{width: '512'}" [(visible)]="popupVisible">
+        <app-detailview [data]="detailData" [isAdmin]="isAdmin" [isPopup]="true"></app-detailview>
+    </p-dialog>
+</app-base>

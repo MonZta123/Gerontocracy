@@ -6,6 +6,7 @@ using Gerontocracy.Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Morphius;
 
 namespace Gerontocracy.App.Controllers
 {
@@ -13,8 +14,18 @@ namespace Gerontocracy.App.Controllers
     /// Controller for aggregated data on dashboard
     /// </summary>
     [Route("api/[controller]")]
-    public class DashboardController : Controller
+    public class DashboardController : MorphiusController
     {
+        #region Fields
+
+        private readonly IMapper _mapper;
+
+        private readonly INewsService _newsService;
+
+        #endregion Fields
+
+        #region Constructors
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -24,25 +35,9 @@ namespace Gerontocracy.App.Controllers
             this._mapper = mapper;
         }
 
-        private readonly INewsService _newsService;
-        private readonly IMapper _mapper;
+        #endregion Constructors
 
-        /// <summary>
-        /// Get the information required for the dashboard
-        /// </summary>
-        /// <returns>dashboard Data</returns>
-        [HttpGet]
-        [Route("")]
-        [AllowAnonymous]
-        public IActionResult GetDashboard()
-        {
-            var dashboardData = new DashboardData
-            {
-                News = _mapper.Map<List<Artikel>>(_newsService.GetLatestNews(15))
-            };
-
-            return Ok(dashboardData);
-        }
+        #region Methods
 
         /// <summary>
         /// Generates an affair from the selected news
@@ -53,13 +48,20 @@ namespace Gerontocracy.App.Controllers
         [Route("generate")]
         [Authorize]
         public IActionResult GenerateVorfall([FromBody]NewsData data)
+            => ModelState.IsValid ? PostOk(_newsService.GenerateAffair(User, _mapper.Map<Core.BusinessObjects.News.NewsData>(data))) : Ok(ModelState);
+
+        /// <summary>
+        /// Get the information required for the dashboard
+        /// </summary>
+        /// <returns>dashboard Data</returns>
+        [HttpGet]
+        [Route("")]
+        [AllowAnonymous]
+        public IActionResult GetDashboard() => Ok(new DashboardData
         {
-            if (ModelState.IsValid)
-            {
-                return Ok(_newsService.GenerateAffair(User, _mapper.Map<Core.BusinessObjects.News.NewsData>(data)));
-            }
-            else
-                return BadRequest(ModelState);
-        }
+            News = _mapper.Map<List<Artikel>>(_newsService.GetLatestNews(15))
+        });
+
+        #endregion Methods
     }
 }

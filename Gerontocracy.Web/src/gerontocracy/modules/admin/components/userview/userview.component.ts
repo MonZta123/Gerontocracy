@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { DialogService, MessageService } from 'primeng/api';
-import { Location } from '@angular/common';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { SearchParams } from '../../../affair/models/search-params';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AdminService } from '../../services/admin.service';
 import { UserOverview } from '../../models/user-overview';
 import { UserDetail } from '../../models/user-detail';
 import { AccountService } from '../../../../services/account.service';
+import { BaseComponent } from '../../../shared/components/base/base.component';
+import { SharedService } from '../../../shared/services/shared.service';
 
 @Component({
   selector: 'app-userview',
@@ -15,9 +15,10 @@ import { AccountService } from '../../../../services/account.service';
   styleUrls: ['./userview.component.scss'],
   providers: [DialogService]
 })
-export class UserviewComponent implements OnInit {
+export class UserviewComponent extends BaseComponent implements OnInit {
 
   searchForm: FormGroup;
+  query: any;
 
   popupVisible: boolean;
 
@@ -35,9 +36,12 @@ export class UserviewComponent implements OnInit {
     private accountService: AccountService,
     private activatedRoute: ActivatedRoute,
     private formBuilder: FormBuilder,
-    private messageService: MessageService,
-    private adminService: AdminService
-  ) { }
+    private adminService: AdminService,
+    sharedService: SharedService,
+    messageService: MessageService
+  ) {
+    super(messageService, sharedService);
+  }
 
   ngOnInit() {
     this.isAdmin = false;
@@ -66,27 +70,35 @@ export class UserviewComponent implements OnInit {
       }
     });
 
-    this.loadData();
+    this.search();
   }
 
   showDetail(id: number) {
     this.detailData = null;
 
     this.adminService.getUserDetail(id)
+      .pipe(super.start(), super.end())
       .toPromise()
       .then(n => this.detailData = n)
-      .catch(n => this.messageService.add({ severity: 'error', detail: n.Message, summary: 'Fehler' }));
+      .catch(error => super.handleError(error));
+  }
+
+  search(): void {
+    this.pageIndex = 0;
+    this.query = this.searchForm.value;
+    this.loadData();
   }
 
   loadData(): void {
     this.pageIndex = 0;
     this.maxResults = 0;
-    this.adminService.search(this.searchForm.value, this.pageSize, this.pageIndex)
+    this.adminService.search(this.query, this.pageSize, this.pageIndex)
+      .pipe(super.start(), super.end())
       .toPromise()
       .then(n => {
         this.data = n.data;
         this.maxResults = n.maxResults;
       })
-      .catch(n => this.messageService.add({ severity: 'error', detail: n.Message, summary: 'Fehler' }));
+      .catch(error => super.handleError(error));
   }
 }

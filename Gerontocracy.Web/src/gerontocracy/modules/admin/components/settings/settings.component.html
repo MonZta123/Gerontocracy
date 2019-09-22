@@ -1,0 +1,63 @@
+<app-base>
+    <div class="ui-fluid" *ngIf="isAdmin">
+        <div class="ui-g">
+            <div class="ui-g-12 ui-lg-6 ui-md-12 ui-g-nopad">
+                <div class="ui-g-12">
+                    <p-panel header="Suchparameter" toggleable="true" [collapsed]="false">
+                        <div class="ui-fluid ui-g" [formGroup]="searchForm">
+                            <div class="ui-g-12 ui-md-8">
+                                <div class="ui-inputgroup">
+                                    <span class="ui-inputgroup-addon"><i class="pi pi-user"></i></span>
+                                    <input class="mr-5" type="text" pInputText formControlName="search"
+                                        placeholder="Suche">
+                                </div>
+                            </div>
+                            <div class="ui-g-12 ui-md-4" align="end">
+                                <p-button label="Suchen" icon="pi pi-search" (click)="search()">
+                                </p-button>
+                            </div>
+                        </div>
+                    </p-panel>
+                </div>
+                <div class="ui-g-12">
+                    <p-panel header="Übersicht">
+                        <p-accordion multiple="true">
+                            <p-accordionTab *ngFor="let parliament of data"
+                                [header]="parliament.code + ' - ' + parliament.langtext">
+                                <p-table [value]="parliament.sources">
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Url</th>
+                                            <th width="12%">
+                                                <button pButton class="action-button" icon="pi pi-plus"
+                                                    (click)="addSource(parliament.id)"></button>
+                                            </th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-source>
+                                        <tr>
+                                            <td><a target="_blank" [href]="source.url">{{source.name}}</a></td>
+                                            <td>{{source.url | stringTrim : 50}}</td>
+                                            <td><button pButton class="action-button" icon="pi pi-trash"
+                                                    (click)="removeSource(source)"></button></td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="emptymessage" let-columns>
+                                        <tr>
+                                            <td colspan="3">
+                                                Keine Einträge gefunden
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </p-accordionTab>
+                        </p-accordion>
+                    </p-panel>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p-confirmDialog header="Achtung" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+</app-base>

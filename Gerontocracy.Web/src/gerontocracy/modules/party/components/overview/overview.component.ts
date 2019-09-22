@@ -6,22 +6,24 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { PartyService } from '../../services/party.service';
 import { MessageService } from 'primeng/api';
 import { PolitikerDetail } from '../../models/politiker-detail';
+import { BaseComponent } from '../../../shared/components/base/base.component';
+import { SharedService } from '../../../shared/services/shared.service';
 
 @Component({
   selector: 'app-overview',
   templateUrl: './overview.component.html',
-  styleUrls: ['./overview.component.scss']
+  styleUrls: ['./overview.component.scss'],
+  providers: [MessageService]
 })
-export class OverviewComponent implements OnInit {
+export class OverviewComponent extends BaseComponent implements OnInit {
 
   data: PolitikerOverview[];
   detailData: PolitikerDetail;
   searchForm: FormGroup;
-  searchParams: any;
+  query: any;
   maxResults = 0;
   pageSize = 25;
   pageIndex = 0;
-  isLoadingData: boolean;
   popupVisible: boolean;
 
   constructor(
@@ -30,17 +32,20 @@ export class OverviewComponent implements OnInit {
     private formBuilder: FormBuilder,
     private partyService: PartyService,
     private router: Router,
-    private messageService: MessageService
-  ) { }
+    sharedService: SharedService,
+    messageService: MessageService
+  ) {
+    super(messageService, sharedService);
+  }
 
   ngOnInit() {
     this.popupVisible = false;
     this.pageIndex = 0;
     this.maxResults = 0;
     this.searchForm = this.formBuilder.group({
-      lastName: [''],
-      firstName: [''],
+      name: [''],
       party: [''],
+      includeInactive: [false]
     });
 
     this.activatedRoute.params.subscribe(n => {
@@ -50,7 +55,7 @@ export class OverviewComponent implements OnInit {
       }
     });
 
-    this.loadData();
+    this.search();
   }
 
   showVorfall(id: number) {
@@ -65,17 +70,21 @@ export class OverviewComponent implements OnInit {
     this.popupVisible = false;
   }
 
+  search(): void {
+    this.pageIndex = 0;
+    this.query = this.searchForm.value;
+    this.loadData();
+  }
+
   loadData(): void {
-    this.searchParams = this.searchForm.value;
-    this.isLoadingData = true;
-    this.partyService.Search(this.searchParams, this.pageSize, this.pageIndex)
+    this.partyService.Search(this.query, this.pageSize, this.pageIndex)
+      .pipe(super.start(), super.end())
       .toPromise()
       .then(n => {
         this.data = n.data;
         this.maxResults = n.maxResults;
-        this.isLoadingData = false;
       })
-      .catch(n => this.messageService.add({ severity: 'error', summary: n.name, detail: n.Message }));
+      .catch(error => super.handleError(error));
   }
 
   showDetail(id: number) {
@@ -84,9 +93,10 @@ export class OverviewComponent implements OnInit {
     this.location.replaceState(`party/${id}`);
 
     this.partyService.getPolitikerDetail(id)
+      .pipe(super.start(), super.end())
       .toPromise()
       .then(n => this.detailData = n)
-      .catch(n => this.messageService.add({ severity: 'error', summary: n.name, detail: n.Message }));
+      .catch(error => super.handleError(error));
   }
 
   paginate(evt: any) {

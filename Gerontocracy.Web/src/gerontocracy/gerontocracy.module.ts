@@ -27,6 +27,8 @@ import { ConfirmemailComponent } from './components/confirmemail/confirmemail.co
 import { LoginDialogComponent } from './components/login-dialog/login-dialog.component';
 import { RegisterDialogComponent } from './components/register-dialog/register-dialog.component';
 import { RegistrationConfirmDialogComponent } from './components/registration-confirm-dialog/registration-confirm-dialog.component';
+import { SharedModule } from './modules/shared/shared.module';
+import { ProgressBarModule } from 'primeng/progressbar';
 
 @NgModule({
   declarations: [
@@ -45,6 +47,8 @@ import { RegistrationConfirmDialogComponent } from './components/registration-co
     ReactiveFormsModule,
     HttpClientModule,
 
+    SharedModule,
+
     SidebarModule,
     ToolbarModule,
     ButtonModule,
@@ -61,6 +65,7 @@ import { RegistrationConfirmDialogComponent } from './components/registration-co
     CheckboxModule,
     SplitButtonModule,
     PanelModule,
+    ProgressBarModule,
     DynamicDialogModule
   ],
   providers: [

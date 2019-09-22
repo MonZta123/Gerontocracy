@@ -6,17 +6,21 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { AdminService } from '../../services/admin.service';
 import { AufgabeOverview } from '../../models/aufgabe-overview';
 import { AufgabeDetail } from '../../models/aufgabe-detail';
+import { BaseComponent } from '../../../shared/components/base/base.component';
+import { SharedService } from '../../../shared/services/shared.service';
 
 @Component({
   selector: 'app-taskview',
   templateUrl: './taskview.component.html',
   styleUrls: ['./taskview.component.scss']
 })
-export class TaskviewComponent implements OnInit {
+export class TaskviewComponent extends BaseComponent implements OnInit {
 
   isAdmin: boolean;
 
   searchForm: FormGroup;
+  query: any;
+
   includeDone: boolean;
 
   popupVisible: boolean;
@@ -35,13 +39,14 @@ export class TaskviewComponent implements OnInit {
     private accountService: AccountService,
     private activatedRoute: ActivatedRoute,
     private formBuilder: FormBuilder,
-    private messageService: MessageService,
-    private adminService: AdminService
-  ) { }
+    private adminService: AdminService,
+    messageService: MessageService,
+    sharedService: SharedService) {
+    super(messageService, sharedService);
+  }
 
   ngOnInit() {
     this.isAdmin = false;
-    this.includeDone = false;
 
     this.selectionItems = [
       {
@@ -70,12 +75,13 @@ export class TaskviewComponent implements OnInit {
         if (roles.includes('admin') || roles.includes('moderator')) {
           this.isAdmin = true;
         } else {
-          this.router.navigate(['/']);
+          this.router.navigate(['~/']);
         }
         this.popupVisible = false;
 
         this.searchForm = this.formBuilder.group({
           userName: '',
+          includeDone: false,
           taskType: null,
         });
 
@@ -86,39 +92,42 @@ export class TaskviewComponent implements OnInit {
           }
         });
 
-        this.loadData();
+        this.search();
       });
-  }
-
-  checkboxChanged(value: boolean) {
-    this.includeDone = value;
   }
 
   showDetail(id: number) {
     this.detailData = null;
 
     this.adminService.getTaskDetail(id)
+      .pipe(super.start(), super.end())
       .toPromise()
       .then(n => this.detailData = n)
-      .catch(n => this.messageService.add({ severity: 'error', detail: n.Message, summary: 'Fehler' }));
+      .catch(error => super.handleError(error));
+  }
+
+  search(): void {
+    this.pageIndex = 0;
+
+    this.query = this.searchForm.value;
+    if (!this.query.taskType && this.query.taskType !== 0) {
+      this.query.taskType = '';
+    }
+
+    this.loadData();
   }
 
   loadData(): void {
     this.pageIndex = 0;
     this.maxResults = 0;
 
-    const searchParameters = this.searchForm.value;
-    if (!searchParameters.taskType && searchParameters.taskType !== 0) {
-      searchParameters.taskType = '';
-    }
-    searchParameters.includeDone = this.includeDone;
-
-    this.adminService.getTasks(searchParameters, this.pageSize, this.pageIndex)
+    this.adminService.getTasks(this.query, this.pageSize, this.pageIndex)
+      .pipe(super.start(), super.end())
       .toPromise()
       .then(n => {
         this.data = n.data;
         this.maxResults = n.maxResults;
       })
-      .catch(n => this.messageService.add({ severity: 'error', detail: n.Message, summary: 'Fehler' }));
+      .catch(error => super.handleError(error));
   }
 }

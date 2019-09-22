@@ -5,6 +5,7 @@ import { AccountService } from '../services/account.service';
 import { DialogService } from 'primeng/api';
 import { LoginDialogComponent } from './login-dialog/login-dialog.component';
 import { RegisterDialogComponent } from './register-dialog/register-dialog.component';
+import { SharedService } from '../modules/shared/services/shared.service';
 
 @Component({
   selector: 'app-root',
@@ -30,6 +31,7 @@ export class GerontocracyComponent implements OnInit {
   registerConfirmVisible: boolean;
 
   constructor(
+    private sharedService: SharedService,
     private accountService: AccountService,
     private dialogService: DialogService) {
   }
@@ -81,20 +83,31 @@ export class GerontocracyComponent implements OnInit {
         ];
 
         if (this.accountData && this.accountData.roles.find(n => n === 'admin' || n === 'moderator')) {
+          const subItems = [{
+            label: 'Aufgaben',
+            icon: 'pi pi-list',
+            routerLink: '/admin/task',
+          },
+          {
+            label: 'Users',
+            icon: 'pi pi-users',
+            routerLink: '/admin/user'
+          }];
+
+          if (this.accountData.roles.find(m => m === 'admin')) {
+            subItems.push(
+              {
+                label: 'Einstellungen',
+                icon: 'pi pi-globe',
+                routerLink: '/admin/settings'
+              });
+          }
+
           urls.push({
             label: 'Admin',
             icon: 'pi pi-cog',
             routerLink: '/admin/task',
-            items: [{
-              label: 'Aufgaben',
-              icon: 'pi pi-list',
-              routerLink: '/admin/task',
-            },
-            {
-              label: 'Users',
-              icon: 'pi pi-users',
-              routerLink: '/admin/user'
-            }]
+            items: subItems
           });
         }
 

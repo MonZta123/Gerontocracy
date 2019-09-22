@@ -7,21 +7,27 @@ import { LoginDialogComponent } from 'Gerontocracy.Web/src/gerontocracy/componen
 import { DashboardService } from '../../services/dashboard.service';
 import { PoliticianSelectionDialogComponent } from '../politician-selection-dialog/politician-selection-dialog.component';
 import { NewsData } from '../../models/news-data';
+import { BaseComponent } from '../../../shared/components/base/base.component';
+import { SharedService } from '../../../shared/services/shared.service';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss']
+  styleUrls: ['./dashboard.component.scss'],
+  providers: [MessageService, DialogService]
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent extends BaseComponent implements OnInit {
 
   constructor(
     private dashboardService: DashboardService,
     private sharedAccountService: SharedAccountService,
     private dialogService: DialogService,
-    private messageService: MessageService,
-    private router: Router
-  ) { }
+    private router: Router,
+    sharedService: SharedService,
+    messageService: MessageService,
+  ) {
+    super(messageService, sharedService);
+  }
 
   dashboard: DashboardData;
 
@@ -35,7 +41,7 @@ export class DashboardComponent implements OnInit {
       if (r) {
         this.dialogService.open(PoliticianSelectionDialogComponent,
           {
-            header: 'Login',
+            header: 'Neuen Vorfalle einreichen',
             width: '800px',
             closable: false,
           })
@@ -49,11 +55,14 @@ export class DashboardComponent implements OnInit {
                 politikerId: n.politikerId
               };
 
-              this.dashboardService
-                .generateNews(data)
+              this.dashboardService.generateNews(data)
+                .pipe(super.start(), super.end())
                 .toPromise()
-                .then(o => this.showAffair(o))
-                .catch(o => this.messageService.add({ severity: 'error', detail: o.message, summary: 'Fehler' }));
+                .then(o => {
+                  super.handlePostResult(o);
+                  this.showAffair(o.data);
+                })
+                .catch(error => super.handleError(error));
             }
           });
       } else {

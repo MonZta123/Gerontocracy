@@ -9,24 +9,29 @@ import { ThreadDetail } from '../../models/thread-detail';
 import { SharedAccountService } from '../../../shared/services/shared-account.service';
 import { LoginDialogComponent } from 'Gerontocracy.Web/src/gerontocracy/components/login-dialog/login-dialog.component';
 import { AddDialogComponent } from '../add-dialog/add-dialog.component';
+import { BaseComponent } from '../../../shared/components/base/base.component';
+import { SharedService } from '../../../shared/services/shared.service';
 
 @Component({
   selector: 'app-overview',
   templateUrl: './overview.component.html',
   styleUrls: ['./overview.component.scss'],
-  providers: [DialogService]
+  providers: [DialogService, MessageService]
 })
-export class OverviewComponent implements OnInit {
+export class OverviewComponent extends BaseComponent implements OnInit {
 
   constructor(
     private location: Location,
     private activatedRoute: ActivatedRoute,
     private formBuilder: FormBuilder,
     private boardService: BoardService,
-    private messageService: MessageService,
     private sharedAccountService: SharedAccountService,
-    private dialogService: DialogService
-  ) { }
+    private dialogService: DialogService,
+    messageService: MessageService,
+    sharedService: SharedService
+  ) {
+    super(messageService, sharedService);
+  }
 
   pageSize = 25;
   maxResults = 0;
@@ -41,6 +46,7 @@ export class OverviewComponent implements OnInit {
   popupVisible: boolean;
 
   searchForm: FormGroup;
+  query: any;
 
   ngOnInit() {
     this.isAdmin = false;
@@ -48,7 +54,7 @@ export class OverviewComponent implements OnInit {
       if (n && n.roles && (n.roles.includes('admin') || n.roles.includes('moderator'))) {
         this.isAdmin = true;
       }
-    })
+    });
     this.popupVisible = false;
 
     this.searchForm = this.formBuilder.group({
@@ -62,7 +68,7 @@ export class OverviewComponent implements OnInit {
       }
     });
 
-    this.loadData();
+    this.search();
   }
 
   paginate(evt: any) {
@@ -105,16 +111,23 @@ export class OverviewComponent implements OnInit {
     });
   }
 
+  search(): void {
+    this.pageIndex = 0;
+    this.query = this.searchForm.value;
+    this.loadData();
+  }
+
   loadData(): void {
     this.isLoadingData = true;
-    this.boardService.search(this.searchForm.value, this.pageSize, this.pageIndex)
+    this.boardService.search(this.query, this.pageSize, this.pageIndex)
+      .pipe(super.start(), super.end())
       .toPromise()
       .then(n => {
         this.data = n.data;
         this.maxResults = n.maxResults;
         this.isLoadingData = false;
       })
-      .catch(n => this.messageService.add({ severity: 'error', summary: 'Fehler', detail: n.message }));
+      .catch(error => super.handleError(error));
   }
 
   showDetail(id: number) {
@@ -123,9 +136,10 @@ export class OverviewComponent implements OnInit {
     this.location.replaceState(`board/new/${id}`);
 
     this.boardService.getThread(id)
+      .pipe(super.start(), super.end())
       .toPromise()
       .then(n => this.detailData = n)
-      .catch(n => this.messageService.add({ severity: 'error', summary: n.name, detail: n.Message }));
+      .catch(error => super.handleError(error));
   }
 
   getThreadTitle(row: ThreadOverview): string {

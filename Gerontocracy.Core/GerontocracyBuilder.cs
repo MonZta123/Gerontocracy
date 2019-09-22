@@ -1,40 +1,43 @@
 ﻿using AutoMapper;
 
+using Gerontocracy.Core.Config;
 using Gerontocracy.Core.Exceptions;
 using Gerontocracy.Core.Exceptions.Account;
 using Gerontocracy.Core.Exceptions.Affair;
+using Gerontocracy.Core.Exceptions.Board;
+using Gerontocracy.Core.Exceptions.News;
 using Gerontocracy.Core.Exceptions.Party;
 using Gerontocracy.Core.Exceptions.User;
+using Gerontocracy.Core.HostedServices;
+using Gerontocracy.Core.Middlewares;
 using Gerontocracy.Data;
-
-using Morphius;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
+using Morphius;
+
 using System;
 using System.IO;
 using System.Net;
-
-using Gerontocracy.Core.Config;
-using Gerontocracy.Core.Exceptions.Board;
-using Gerontocracy.Core.Exceptions.News;
-using Gerontocracy.Core.HostedServices;
-using Gerontocracy.Core.Middlewares;
 using System.Threading.Tasks;
 
 namespace Gerontocracy.Core
 {
     public static class GerontocracyBuilder
     {
+        #region Methods
+
+        private static GerontocracySettings _settings;
+
         public static IServiceCollection AddGerontocracy(this IServiceCollection services, Action<GerontocracyOptions> action)
         {
             var config = new GerontocracyOptions();
 
             action(config);
-
+            _settings = config.GerontocracyConfig;
             // ===== Null Checks =====
             if (string.IsNullOrEmpty(config.ConnectionString))
                 throw new StartupException($"{nameof(config.ConnectionString)} not set!");
@@ -62,7 +65,8 @@ namespace Gerontocracy.Core
             services.AddSingleton<SendGrid.ISendGridClient>(n =>
                 new SendGrid.SendGridClient(new SendGrid.SendGridClientOptions() { ApiKey = config.GerontocracyConfig.SendGridApiKey }));
             services.AddSingleton<ContextFactory>();
-            services.AddSingleton<GerontocracySettings>(config.GerontocracyConfig);
+            services.AddSingleton<ImporterRepository>();
+            services.AddSingleton(config.GerontocracyConfig);
 
             // ===== Add Entity Framework =====
             services.AddEntityFrameworkNpgsql()
@@ -109,8 +113,32 @@ namespace Gerontocracy.Core
             // ==== Add Hosted Services =====
             if (config.GerontocracyConfig.SyncActive)
                 services.AddHostedService<SyncHostedService>();
-
+            
             return services;
+        }
+
+        public static MorphiusOptions GetGerontocracyEntries(this MorphiusOptions cfg)
+        {
+            return cfg
+                .AddException<EmailAlreadyConfirmedException>(HttpStatusCode.OK)
+                .AddException<AccountAlreadyBannedException>(HttpStatusCode.OK)
+                .AddException<AccountIsBannedException>(HttpStatusCode.OK)
+                .AddException<AccountNotBannedException>(HttpStatusCode.OK)
+                .AddException<AccountCannotBeBannedException>(HttpStatusCode.OK)
+                .AddException<CannotChangeAdminPermissionException>(HttpStatusCode.OK)
+                .AddException<CredentialException>(HttpStatusCode.OK)
+                .AddException<AffairAlreadyAttachedToNewsException>(HttpStatusCode.OK)
+                .AddException<EmailNotConfirmedException>(HttpStatusCode.OK)
+                .AddException<SourceAlreadyAddedException>(HttpStatusCode.OK)
+                .AddException<AccountNotFoundException>(HttpStatusCode.NotFound)
+                .AddException<PoliticianNotFoundException>(HttpStatusCode.NotFound)
+                .AddException<AffairNotFoundException>(HttpStatusCode.NotFound)
+                .AddException<PartyNotFoundException>(HttpStatusCode.NotFound)
+                .AddException<ThreadNotFoundException>(HttpStatusCode.NotFound)
+                .AddException<PostNotFoundException>(HttpStatusCode.NotFound)
+                .AddException<NewsNotFoundException>(HttpStatusCode.NotFound)
+                .AddException<UserNotFoundException>(HttpStatusCode.NotFound)
+                .AddException<TaskNotFoundException>(HttpStatusCode.NotFound);
         }
 
         public static IApplicationBuilder UseGerontocracy(this IApplicationBuilder app)
@@ -118,7 +146,7 @@ namespace Gerontocracy.Core
             app.Use(async (httpContext, next) =>
             {
                 await next();
-                if ((httpContext.Response.StatusCode == 404) &&
+                if (httpContext.Response.StatusCode == 404 &&
                     !Path.HasExtension(httpContext.Request.Path.Value) &&
                     !httpContext.Request.Path.Value.StartsWith("/api/") &&
                     !httpContext.Request.Path.Value.StartsWith("/swagger/"))
@@ -127,33 +155,14 @@ namespace Gerontocracy.Core
                     await next();
                 }
             });
+            
+            app.EnsureSeed();
 
             app.UseMiddleware<UserDestroyerMiddleware>();
 
             return app;
         }
 
-        public static MorphiusOptions GetGerontocracyEntries(this MorphiusOptions cfg)
-        {
-            return cfg
-                .AddException<EmailAlreadyConfirmedException>(HttpStatusCode.BadRequest)
-                .AddException<AccountNotFoundException>(HttpStatusCode.BadRequest)
-                .AddException<CredentialException>(HttpStatusCode.BadRequest)
-                .AddException<EmailNotConfirmedException>(HttpStatusCode.BadRequest)
-                .AddException<PoliticianNotFoundException>(HttpStatusCode.NotFound)
-                .AddException<AffairNotFoundException>(HttpStatusCode.NotFound)
-                .AddException<PartyNotFoundException>(HttpStatusCode.NotFound)
-                .AddException<ThreadNotFoundException>(HttpStatusCode.NotFound)
-                .AddException<PostNotFoundException>(HttpStatusCode.NotFound)
-                .AddException<NewsNotFoundException>(HttpStatusCode.NotFound)
-                .AddException<AffairAlreadyAttachedToNewsException>(HttpStatusCode.BadRequest)
-                .AddException<UserNotFoundException>(HttpStatusCode.NotFound)
-                .AddException<AccountAlreadyBannedException>(HttpStatusCode.BadRequest)
-                .AddException<AccountIsBannedException>(HttpStatusCode.Forbidden)
-                .AddException<AccountNotBannedException>(HttpStatusCode.BadRequest)
-                .AddException<AccountCannotBeBannedException>(HttpStatusCode.BadRequest)
-                .AddException<CannotChangeAdminPermissionException>(HttpStatusCode.BadRequest)
-                .AddException<TaskNotFoundException>(HttpStatusCode.NotFound);
-        }
+        #endregion Methods
     }
 }

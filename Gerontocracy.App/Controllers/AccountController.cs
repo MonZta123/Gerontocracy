@@ -7,6 +7,7 @@ using Gerontocracy.Core.Interfaces;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Morphius;
 
 using bo = Gerontocracy.Core.BusinessObjects;
 
@@ -15,9 +16,8 @@ namespace Gerontocracy.App.Controllers
     /// <summary>
     /// This controller is responsible for the account and session management
     /// </summary>
-    [Produces("application/json")]
     [Route("api/account")]
-    public class AccountController : Controller
+    public class AccountController : MorphiusController
     {
         #region Fields
 
@@ -109,18 +109,7 @@ namespace Gerontocracy.App.Controllers
         [Route("register")]
         [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] Register data)
-        {
-            var result = await _accountService.RegisterAsync(_mapper.Map<bo.Account.Register>(data));
-
-            if (result.Succeeded)
-            {
-                return Ok();
-            }
-            else
-            {
-                return BadRequest(result.Errors);
-            }
-        }
+           => Ok(await _accountService.RegisterAsync(_mapper.Map<bo.Account.Register>(data)));
 
         /// <summary>
         /// resends a new e-mail-confirmation token

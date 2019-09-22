@@ -9,23 +9,28 @@ import { MessageService, DialogService } from 'primeng/api';
 import { AddDialogComponent } from '../add-dialog/add-dialog.component';
 import { SharedAccountService } from '../../../shared/services/shared-account.service';
 import { LoginDialogComponent } from '../../../../components/login-dialog/login-dialog.component';
+import { BaseComponent } from '../../../shared/components/base/base.component';
+import { SharedService } from '../../../shared/services/shared.service';
 
 @Component({
   selector: 'app-overview',
   templateUrl: './overview.component.html',
   styleUrls: ['./overview.component.scss'],
-  providers: [DialogService]
+  providers: [DialogService, MessageService]
 })
-export class OverviewComponent implements OnInit {
+export class OverviewComponent extends BaseComponent implements OnInit {
 
   popupVisible: boolean;
+
+  searchForm: FormGroup;
+  query: any;
+
   pageSize = 25;
   maxResults = 0;
   pageIndex = 0;
-  searchForm: FormGroup;
+
   data: VorfallOverview[];
   detailData: VorfallDetail;
-  isLoadingData = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -33,8 +38,12 @@ export class OverviewComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private affairService: AffairService,
     private sharedAccountService: SharedAccountService,
-    private messageService: MessageService,
-    private dialogService: DialogService) { }
+    private dialogService: DialogService,
+    messageService: MessageService,
+    sharedService: SharedService
+  ) {
+    super(messageService, sharedService);
+  }
 
   ngOnInit() {
     this.popupVisible = false;
@@ -53,19 +62,7 @@ export class OverviewComponent implements OnInit {
       }
     });
 
-    this.loadData();
-  }
-
-  loadData(): void {
-    this.isLoadingData = true;
-    this.affairService.search(this.searchForm.value, this.pageSize, this.pageIndex)
-      .toPromise()
-      .then(n => {
-        this.data = n.data;
-        this.maxResults = n.maxResults;
-        this.isLoadingData = false;
-      })
-      .catch(n => this.messageService.add({ severity: 'error', summary: n.name, detail: n.Message }));
+    this.search();
   }
 
   showPopup(): void {
@@ -80,9 +77,10 @@ export class OverviewComponent implements OnInit {
     this.detailData = null;
     this.location.replaceState(`/affair/new/${id}`);
     this.affairService.getAffairDetail(id)
+      .pipe(super.start(), super.end())
       .toPromise()
       .then(n => this.detailData = n)
-      .catch(n => this.messageService.add({ severity: 'error', summary: n.name, detail: n.Message }));
+      .catch(error => super.handleError(error));
   }
 
   addAffair() {
@@ -114,5 +112,22 @@ export class OverviewComponent implements OnInit {
     this.pageIndex = evt.page;
     this.pageSize = evt.rows;
     this.loadData();
+  }
+
+  search(): void {
+    this.pageIndex = 0;
+    this.query = this.searchForm.value;
+    this.loadData();
+  }
+
+  loadData(): void {
+    this.affairService.search(this.query, this.pageSize, this.pageIndex)
+      .pipe(super.start(), super.end())
+      .toPromise()
+      .then(n => {
+        this.data = n.data;
+        this.maxResults = n.maxResults;
+      })
+      .catch(error => super.handleError(error));
   }
 }
