@@ -8,6 +8,8 @@ namespace Gerontocracy.Core.BusinessObjects.User
     {
         public long Id { get; set; }
 
+        public string Name { get; set; }
+
         public DateTime RegisterDate { get; set; }
 
         public int Score { get; set; }

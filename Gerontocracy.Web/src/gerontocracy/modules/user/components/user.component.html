@@ -1,1 +1,33 @@
-<router-outlet></router-outlet>
+<app-base>
+    <div class="ui-fluid" *ngIf="user">
+        <div class="ui-g">
+            <div class="ui-g-6 ui-g-nopad">
+                <div class="ui-g">
+                    <div class="ui-g-12">
+                        <p-panel header="Name">
+                            <h1>
+                                {{user.name}}
+                            </h1>
+                            <h1>
+                                Score: {{user.score}}
+                            </h1>
+                        </p-panel>
+                    </div>
+                </div>
+                <div class="ui-g">
+                    <div class="ui-g-12">
+                        <p-panel header="Eingereichte Vorfälle"></p-panel>
+                    </div>
+                </div>
+                <div class="ui-g">
+                    <div class="ui-g-12">
+                        <p-panel header="Angelegte Threads"></p-panel>
+                    </div>
+                </div>
+            </div>
+            <div class="ui-g-6">
+                <p-panel header="Letzte Posts"></p-panel>
+            </div>
+        </div>
+    </div>
+</app-base>

@@ -15,6 +15,11 @@ namespace Gerontocracy.App.Models.User
         public long Id { get; set; }
 
         /// <summary>
+        /// Username
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
         /// registered on
         /// </summary>
         public DateTime RegisterDate { get; set; }

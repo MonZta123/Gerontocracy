@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using Gerontocracy.Core.BusinessObjects.Account;
 using Gerontocracy.Core.BusinessObjects.Shared;
 using Gerontocracy.Core.BusinessObjects.User;
@@ -96,9 +97,9 @@ namespace Gerontocracy.Core.Providers
             if (dbUser == null)
                 throw new UserNotFoundException();
 
-            var affairCount = _context.Vorfall.Count(n => n.UserId == id);
+            var affairCount = _context.Vorfall.Count(n => n.Id == dbUser.Id);
 
-            var banned = _accountService.TryFindBan(id, out var ban);
+            var banned = _accountService.TryFindBan(dbUser.Id, out var ban);
             var lockoutEnd = banned ? ban.BanEnd : null;
 
             var roles = _context.GetData(
@@ -108,7 +109,7 @@ namespace Gerontocracy.Core.Providers
                     Id = reader.GetInt64(0),
                     Name = reader.GetString(1)
                 },
-                new NpgsqlParameter<long>("userId", id).AsList().ToArray())
+                new NpgsqlParameter<long>("userId", dbUser.Id).AsList().ToArray())
                 .ToList();
 
             return new UserDetail
@@ -125,7 +126,16 @@ namespace Gerontocracy.Core.Providers
             };
         }
 
+        public UserData GetUserPageData(ClaimsPrincipal user)
+            => GetUserPageData(_accountService.GetIdOfUser(user));
+
+        public UserData GetUserPageData(string name)
+            => GetUserPageData(n => n.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
+
         public UserData GetUserPageData(long id)
+            => GetUserPageData(n => n.Id == id);
+
+        public UserData GetUserPageData(Func<UserData, bool> condition)
         {
             var user = this._accountService.GetUserQuery()
                 .Include(n => n.Vorfaelle)
@@ -138,6 +148,7 @@ namespace Gerontocracy.Core.Providers
                     RegisterDate = n.RegisterDate,
                     Score = n.Vorfaelle.Sum(m => m.Legitimitaet.Count(o => o.VoteType == VoteType.Up) - m.Legitimitaet.Count(o => o.VoteType == VoteType.Down)) +
                             n.Posts.Sum(m => m.Likes.Count(o => o.LikeType == LikeType.Like) - m.Likes.Count(o => o.LikeType == LikeType.Dislike)),
+                    Name = n.UserName,
                     Affairs = n.Vorfaelle.OrderByDescending(m => m.ErstelltAm).Select(m => new bo.Vorfall()
                     {
                         Id = m.Id,
@@ -154,7 +165,7 @@ namespace Gerontocracy.Core.Providers
                         Likes = m.Likes.Count(o => o.LikeType == LikeType.Like),
                         Dislikes = m.Likes.Count(o => o.LikeType == LikeType.Dislike)
                     }).ToList()
-                }).SingleOrDefault(n => n.Id == id);
+                }).SingleOrDefault(condition);
 
             if (user == null)
                 throw new UserNotFoundException();
@@ -166,7 +177,7 @@ namespace Gerontocracy.Core.Providers
                         Id = reader.GetInt64(0),
                         Name = reader.GetString(1)
                     },
-                    new NpgsqlParameter<long>("userId", id).AsList().ToArray())
+                    new NpgsqlParameter<long>("userId", user.Id).AsList().ToArray())
                 .ToList();
 
             return user;
