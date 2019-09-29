@@ -38,6 +38,11 @@ namespace Gerontocracy.App.Models.User
         /// List of last 15 submitted affairs
         /// </summary>
         public IEnumerable<Vorfall> Affairs { get; set; }
+
+        /// <summary>
+        /// List of last 15 opened threads
+        /// </summary>
+        public IEnumerable<Thread> Threads { get; set; }
         
         /// <summary>
         /// List of last 15 posts

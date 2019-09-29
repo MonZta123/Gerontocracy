@@ -138,8 +138,12 @@ namespace Gerontocracy.Core.Providers
         public UserData GetUserPageData(Func<UserData, bool> condition)
         {
             var user = this._accountService.GetUserQuery()
+                .Include(n => n.Threads)
+                .ThenInclude(n => n.InitialPost)
                 .Include(n => n.Vorfaelle)
                 .ThenInclude(n => n.Legitimitaet)
+                .Include(n => n.Vorfaelle)
+                .ThenInclude(n => n.Politiker)
                 .Include(n => n.Posts)
                 .ThenInclude(n => n.Likes)
                 .Select(n => new UserData()
@@ -152,10 +156,17 @@ namespace Gerontocracy.Core.Providers
                     Affairs = n.Vorfaelle.OrderByDescending(m => m.ErstelltAm).Select(m => new bo.Vorfall()
                     {
                         Id = m.Id,
-                        Beschreibung = m.Beschreibung,
                         Titel = m.Titel,
-                        Upvotes = m.Legitimitaet.Count(o => o.VoteType == VoteType.Up),
-                        Downvotes = m.Legitimitaet.Count(o => o.VoteType == VoteType.Down)
+                        Reputation = m.Legitimitaet.Count(o => o.VoteType == VoteType.Up) - m.Legitimitaet.Count(o => o.VoteType == VoteType.Down),
+                        ErstelltAm = m.ErstelltAm,
+                        PolitikerId = m.PolitikerId,
+                        PolitikerName = m.Politiker.Name
+                    }).ToList(),
+                    Threads = n.Threads.Where(m => !m.Deleted && !m.Generated).Select(m => new bo.Thread()
+                    {
+                        Id = m.Id,
+                        Titel = m.Title,
+                        CreatedOn = m.InitialPost.CreatedOn,
                     }).ToList(),
                     Posts = n.Posts.Select(m => new bo.Post()
                     {

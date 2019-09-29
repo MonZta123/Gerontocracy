@@ -1,15 +1,15 @@
-﻿namespace Gerontocracy.Core.BusinessObjects.User
+﻿using System;
+
+namespace Gerontocracy.Core.BusinessObjects.User
 {
     public class Vorfall
     {
         public long Id { get; set; }
-
         public string Titel { get; set; }
+        public int Reputation { get; set; }
+        public DateTime ErstelltAm { get; set; }
 
-        public string Beschreibung { get; set; }
-
-        public int Upvotes { get; set; }
-
-        public int Downvotes { get; set; }
+        public long? PolitikerId { get; set; }
+        public string PolitikerName { get; set; }
     }
 }

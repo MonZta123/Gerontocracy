@@ -11,28 +11,33 @@ namespace Gerontocracy.App.Models.User
     public class Vorfall
     {
         /// <summary>
-        /// Id of affair
+        /// Identifier of Affair
         /// </summary>
         public long Id { get; set; }
 
         /// <summary>
-        /// Titel of affair
+        /// Affair Title
         /// </summary>
         public string Titel { get; set; }
 
         /// <summary>
-        /// Description of affair
+        /// How famous is the politician because of this affair
         /// </summary>
-        public string Beschreibung { get; set; }
+        public int Reputation { get; set; }
 
         /// <summary>
-        /// How many upvotes
+        /// Created on
         /// </summary>
-        public int Upvotes { get; set; }
+        public DateTime ErstelltAm { get; set; }
 
         /// <summary>
-        /// How many downvotes
+        /// Politician identifier
         /// </summary>
-        public int Downvotes { get; set; }
+        public long PolitikerId { get; set; }
+
+        /// <summary>
+        /// Politician Name
+        /// </summary>
+        public string PolitikerName { get; set; }
     }
 }

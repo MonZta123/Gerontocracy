@@ -12,6 +12,7 @@ import { MessageModule } from 'primeng/message';
 import { ToastModule } from 'primeng/toast';
 import { BlockUIModule } from 'primeng/blockui';
 import { DialogModule } from 'primeng/dialog';
+import { ButtonModule } from 'primeng/button';
 
 @NgModule({
   declarations: [UserComponent],
@@ -29,6 +30,8 @@ import { DialogModule } from 'primeng/dialog';
     DialogModule,
     BlockUIModule,
     ToastModule,
+    ButtonModule,
+    TableModule,
 
     SharedModule
   ]

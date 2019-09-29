@@ -22,6 +22,8 @@ namespace Gerontocracy.Core.BusinessObjects.User
 
         public IEnumerable<Vorfall> Affairs { get; set; }
 
+        public IEnumerable<Thread> Threads { get; set; }
+
         public IEnumerable<Post> Posts { get; set; }
     }
 }
