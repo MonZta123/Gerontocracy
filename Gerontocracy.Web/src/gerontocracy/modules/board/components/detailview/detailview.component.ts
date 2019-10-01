@@ -12,6 +12,7 @@ import { ReportData } from '../../models/report-data';
 import { AdminService } from '../../../admin/services/admin.service';
 import { BaseComponent } from '../../../shared/components/base/base.component';
 import { SharedService } from '../../../shared/services/shared.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-detailview',
@@ -36,6 +37,7 @@ export class DetailviewComponent extends BaseComponent implements OnInit {
     private sharedAccountService: SharedAccountService,
     private confirmationService: ConfirmationService,
     private dialogService: DialogService,
+    private activatedRoute: ActivatedRoute,
     sharedService: SharedService,
     messageService: MessageService) {
     super(messageService, sharedService);
@@ -45,6 +47,13 @@ export class DetailviewComponent extends BaseComponent implements OnInit {
 
   ngOnInit() {
     this.items = [this.convertToTreeNode(this.data.initialPost)];
+
+    this.activatedRoute.fragment.subscribe(n => {
+      if (n) {
+        const top = document.getElementById(n).offsetTop;
+        window.scrollTo(0, top);
+      }
+    });
   }
 
   report(post: Post) {

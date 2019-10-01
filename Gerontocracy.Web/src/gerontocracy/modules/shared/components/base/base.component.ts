@@ -31,6 +31,7 @@ export class BaseComponent implements OnInit {
   protected start() {
     return <T>(source: Observable<T>) => {
       this.sharedService.loading = true;
+      this.loading = true;
       return source;
     };
   }
@@ -38,6 +39,7 @@ export class BaseComponent implements OnInit {
   protected end() {
     return <T>(source: Observable<T>) => source.pipe(finalize(() => {
       this.sharedService.loading = false;
+      this.loading = false;
     }));
   }
 

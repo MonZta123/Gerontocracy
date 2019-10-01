@@ -33,6 +33,11 @@ export const routes: Routes = [
     pathMatch: 'prefix'
   },
   {
+    path: 'user',
+    loadChildren: './modules/user/user.module#UserModule',
+    pathMatch: 'prefix'
+  },
+  {
     path: '',
     loadChildren: './modules/home/home.module#HomeModule',
     pathMatch: 'prefix'

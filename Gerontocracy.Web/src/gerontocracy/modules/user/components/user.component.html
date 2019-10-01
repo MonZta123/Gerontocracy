@@ -1,0 +1,89 @@
+<app-base>
+    <div class="ui-fluid" *ngIf="user">
+        <div class="ui-g">
+            <div class="ui-g-6 ui-g-nopad">
+                <div class="ui-g">
+                    <div class="ui-g-12">
+                        <p-panel header="Name">
+                            <h1>
+                                {{user.name}}
+                            </h1>
+                            <h1>
+                                Score: {{user.score}}
+                            </h1>
+                        </p-panel>
+                    </div>
+                </div>
+                <div class="ui-g">
+                    <div class="ui-g-12">
+                        <p-table [value]="user.affairs">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th width="47%">Eingereichte Vorfälle</th>
+                                    <th width="23%">Verantwortlicher</th>
+                                    <th width="9%"><i class="pi pi-chart-bar"></i></th>
+                                    <th width="9%"></th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-row>
+                                <tr>
+                                    <td>{{row.titel}}</td>
+                                    <td>{{row.politikerName}}</td>
+                                    <td>{{row.reputation}}</td>
+                                    <td>
+                                        <p-button icon="pi pi-arrow-circle-right" (click)="navigateToAffair(row)">
+                                        </p-button>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+                <div class="ui-g">
+                    <div class="ui-g-12">
+                        <p-table [value]="user.threads">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th width="60%">Angelegte Threads</th>
+                                    <th width="7.3%"></th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-row>
+                                <tr>
+                                    <td>{{row.titel}}</td>
+                                    <td>
+                                        <p-button icon="pi pi-arrow-circle-right" (click)="navigateToThread(row)">
+                                        </p-button>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+            </div>
+            <div class="ui-g-6">
+                <p-table [value]="user.posts">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th width="60%">Letzte Posts</th>
+                            <th width="7.3%"><i class="pi pi-plus"></i></th>
+                            <th width="7.3%"><i class="pi pi-minus"></i></th>
+                            <th width="7.3%"></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-row>
+                        <tr>
+                            <td>{{row.content}}</td>
+                            <td>{{row.likes}}</td>
+                            <td>{{row.dislikes}}</td>
+                            <td>
+                                <p-button icon="pi pi-arrow-circle-right" (click)="navigateToPost(row)">
+                                </p-button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+</app-base>

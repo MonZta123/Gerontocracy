@@ -60,10 +60,31 @@ namespace Gerontocracy.App.Controllers
         /// <param name="id">identifier</param>
         /// <returns>statuscode and user object</returns>
         [HttpGet]
-        [Route("user/{id:long}")]
+        [Route("{id:long}")]
         [AllowAnonymous]
         public IActionResult GetUserData(long id)
             => Ok(_mapper.Map<UserData>(_userService.GetUserPageData(id)));
+
+        /// <summary>
+        /// Returns the data required for the user page
+        /// </summary>
+        /// <param name="name">username</param>
+        /// <returns>statuscode and user object</returns>
+        [HttpGet]
+        [Route("{name}")]
+        [AllowAnonymous]
+        public IActionResult GetUserData(string name)
+            => Ok(_mapper.Map<UserData>(_userService.GetUserPageData(name)));
+
+        /// <summary>
+        /// Returns the data required for the user page
+        /// </summary>
+        /// <returns>statuscode and user object</returns>
+        [HttpGet]
+        [Route("")]
+        [Authorize]
+        public IActionResult GetUserData()
+            => Ok(_mapper.Map<UserData>(_userService.GetUserPageData(User)));
 
         #endregion Methods
     }

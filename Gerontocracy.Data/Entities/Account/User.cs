@@ -18,5 +18,7 @@ namespace Gerontocracy.Data.Entities.Account
         public ICollection<Vorfall> Vorfaelle { get; set; }
 
         public ICollection<Post> Posts { get; set; }
+
+        public ICollection<Thread> Threads { get; set; }
     }
 }

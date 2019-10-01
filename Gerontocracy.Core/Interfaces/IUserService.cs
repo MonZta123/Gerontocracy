@@ -1,4 +1,5 @@
-﻿using Gerontocracy.Core.BusinessObjects.Account;
+﻿using System.Security.Claims;
+using Gerontocracy.Core.BusinessObjects.Account;
 using Gerontocracy.Core.BusinessObjects.Shared;
 using Gerontocracy.Core.BusinessObjects.User;
 
@@ -11,5 +12,7 @@ namespace Gerontocracy.Core.Interfaces
         UserDetail GetUserDetail(long id);
 
         UserData GetUserPageData(long id);
+        UserData GetUserPageData(ClaimsPrincipal user);
+        UserData GetUserPageData(string name);
     }
 }

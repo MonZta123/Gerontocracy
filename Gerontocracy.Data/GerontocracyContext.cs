@@ -9,6 +9,7 @@ using Gerontocracy.Data.Entities.News;
 using System.Data.Common;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using Gerontocracy.Data.Entities.Task;
 
 namespace Gerontocracy.Data
@@ -35,25 +36,27 @@ namespace Gerontocracy.Data
 
         public DbSet<Artikel> Artikel { get; set; }
         public DbSet<RssSource> RssSource { get; set; }
-        
+
         protected override void OnModelCreating(ModelBuilder modelBuilder) => base.OnModelCreating(modelBuilder);
-        
+
         public List<T> GetData<T>(string query, Func<DbDataReader, T> readerFunc, Array parameters = null)
         {
             var data = new List<T>();
-            using (var connection = this.Database.GetDbConnection())
+            var connection = this.Database.GetDbConnection();
             using (var command = connection.CreateCommand())
             {
                 command.CommandText = query;
                 if (parameters != null)
                     command.Parameters.AddRange(parameters);
-                connection.Open();
+
+                if (connection.State != ConnectionState.Open)
+                    connection.Open();
+
                 using (var result = command.ExecuteReader())
                 {
                     while (result.Read())
                         data.Add(readerFunc(result));
                 }
-                connection.Close();
             }
 
             return data;
