@@ -2,10 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { BaseComponent } from '../../shared/components/base/base.component';
 import { MessageService } from 'primeng/api';
 import { SharedService } from '../../shared/services/shared.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { UserService } from '../services/user.service';
 import { User } from '../models/user';
+import { Thread } from '../models/thread';
+import { Vorfall } from '../models/vorfall';
+import { Post } from '../models/post';
 
 @Component({
   selector: 'app-user',
@@ -21,6 +24,7 @@ export class UserComponent extends BaseComponent implements OnInit {
   constructor(
     messageService: MessageService,
     sharedService: SharedService,
+    private router: Router,
     private userService: UserService,
     private activatedRoute: ActivatedRoute) {
     super(messageService, sharedService);
@@ -34,6 +38,18 @@ export class UserComponent extends BaseComponent implements OnInit {
         this.handleUserPageResponse(this.userService.getUserByClaims());
       }
     });
+  }
+
+  navigateToThread(thread: Thread): void {
+    this.router.navigate(['board', 'new', thread.id]);
+  }
+
+  navigateToAffair(affair: Vorfall): void {
+    this.router.navigate(['affair', 'new', affair.id]);
+  }
+
+  navigateToPost(post: Post): void {
+    this.router.navigate([`board/new/${post.threadId}`], { fragment: post.id.toString() });
   }
 
   private handleUserPageResponse(response: Observable<User>) {

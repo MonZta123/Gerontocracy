@@ -32,57 +32,62 @@ export class DashboardComponent extends BaseComponent implements OnInit {
   dashboard: DashboardData;
 
   ngOnInit() {
-    this.dashboardService.getDashboardData().toPromise()
+    this.dashboardService.getDashboardData()
+      .pipe(super.start(), super.end())
+      .toPromise()
       .then(n => this.dashboard = n);
   }
 
   addAffair(newsId: number) {
-    this.sharedAccountService.isLoggedIn().toPromise().then(r => {
-      if (r) {
-        this.dialogService.open(PoliticianSelectionDialogComponent,
-          {
-            header: 'Neuen Vorfalle einreichen',
-            width: '800px',
-            closable: false,
-          })
-          .onClose
-          .subscribe(n => {
-            if (n) {
-              const data: NewsData = {
-                beschreibung: n.beschreibung,
-                newsId,
-                reputationType: n.reputationType,
-                politikerId: n.politikerId
-              };
+    this.sharedAccountService.isLoggedIn()
+      .pipe(super.start(), super.end())
+      .toPromise()
+      .then(r => {
+        if (r) {
+          this.dialogService.open(PoliticianSelectionDialogComponent,
+            {
+              header: 'Neuen Vorfalle einreichen',
+              width: '800px',
+              closable: false,
+            })
+            .onClose
+            .subscribe(n => {
+              if (n) {
+                const data: NewsData = {
+                  beschreibung: n.beschreibung,
+                  newsId,
+                  reputationType: n.reputationType,
+                  politikerId: n.politikerId
+                };
 
-              this.dashboardService.generateNews(data)
-                .pipe(super.start(), super.end())
-                .toPromise()
-                .then(o => {
-                  super.handlePostResult(o);
-                  this.showAffair(o.data);
-                })
-                .catch(error => super.handleError(error));
-            }
-          });
-      } else {
-        this.dialogService.open(LoginDialogComponent,
-          {
-            header: 'Login',
-            width: '407px',
-            closable: false,
-          })
-          .onClose
-          .subscribe(n => {
-            if (n) {
-              window.location.reload();
-            }
-          });
-      }
-    });
+                this.dashboardService.generateNews(data)
+                  .pipe(super.start(), super.end())
+                  .toPromise()
+                  .then(o => {
+                    super.handlePostResult(o);
+                    this.showAffair(o.data);
+                  })
+                  .catch(error => super.handleError(error));
+              }
+            });
+        } else {
+          this.dialogService.open(LoginDialogComponent,
+            {
+              header: 'Login',
+              width: '407px',
+              closable: false,
+            })
+            .onClose
+            .subscribe(n => {
+              if (n) {
+                window.location.reload();
+              }
+            });
+        }
+      });
   }
 
   showAffair(affairId: number) {
-    this.router.navigate([`affair/new/${affairId}`]);
+    this.router.navigate(['affair', 'new', affairId]);
   }
 }

@@ -47,6 +47,48 @@ namespace Gerontocracy.Core.Providers
             "         ON roles.\"Id\" = userRoles.\"RoleId\" " +
             "WHERE  userRoles.\"UserId\" = @userId ";
 
+        private const string PostQuery =
+            "WITH recursive post_hierarchy(\"Id\", \"ParentId\", \"ThreadId\") AS " +
+            "( " +
+            "                SELECT          p2.\"Id\", " +
+            "                                p2.\"ParentId\", " +
+            "                                th.\"Id\" " +
+            "                FROM            \"Post\" p2 " +
+            "                LEFT OUTER JOIN \"Thread\" th " +
+            "                ON              th.\"InitialPostId\" = p2.\"Id\" " +
+            "                WHERE           th.\"InitialPostId\" IS NOT NULL " +
+            "                AND             p2.\"UserId\" = @userId" +
+            "                UNION ALL " +
+            "                SELECT     p3.\"Id\", " +
+            "                           p3.\"ParentId\", " +
+            "                           post_hierarchy.\"ThreadId\" " +
+            "                FROM       \"Post\" p3 " +
+            "                INNER JOIN post_hierarchy " +
+            "                ON         p3.\"ParentId\" = post_hierarchy.\"Id\" ) " +
+            "SELECT          po.\"Id\", " +
+            "                po.\"Content\", " +
+            "                po.\"CreatedOn\", " +
+            "                hi.\"ThreadId\", " +
+            "                ( " +
+            "                       SELECT count(*) " +
+            "                       FROM   \"Like\" " +
+            "                       WHERE  \"LikeType\" = 0 " +
+            "                       AND    \"PostId\" = po.\"Id\") AS \"Likes\", " +
+            "                ( " +
+            "                       SELECT count(*) " +
+            "                       FROM   \"Like\" " +
+            "                       WHERE  \"LikeType\" = 1 " +
+            "                       AND    \"PostId\" = po.\"Id\") AS \"Dislikes\" " +
+            "FROM            \"Post\" po " +
+            "JOIN            post_hierarchy hi " +
+            "ON              po.\"Id\" = hi.\"Id\" " +
+            "LEFT OUTER JOIN \"Like\" li " +
+            "ON              li.\"PostId\" = po.\"Id\" " +
+            "WHERE           po.\"Deleted\" = false " +
+            "ORDER BY        po.\"CreatedOn\" DESC " +
+            "OFFSET          @offset " +
+            "LIMIT           @limit ";
+
         public UserService(GerontocracyContext context, IAccountService accountService)
         {
             this._context = context;
@@ -189,6 +231,27 @@ namespace Gerontocracy.Core.Providers
                         Name = reader.GetString(1)
                     },
                     new NpgsqlParameter<long>("userId", user.Id).AsList().ToArray())
+                .ToList();
+
+            var dbParams = new List<NpgsqlParameter>
+            {
+                new NpgsqlParameter<int>("limit", 15),
+                new NpgsqlParameter<int>("offset", 0),
+                new NpgsqlParameter<long>("userId", user.Id)
+            };
+
+            user.Posts = _context.GetData(
+                    PostQuery,
+                    reader => new bo.Post
+                    {
+                        Id = reader.GetInt64(0),
+                        Content = reader.GetString(1),
+                        CreatedOn = reader.GetDateTime(2),
+                        ThreadId = reader.GetInt64(3),
+                        Likes = reader.GetInt32(4),
+                        Dislikes = reader.GetInt32(5)
+                    },
+                    dbParams.ToArray())
                 .ToList();
 
             return user;

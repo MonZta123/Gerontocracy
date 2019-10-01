@@ -4,4 +4,5 @@ export interface Post {
     createdOn: Date;
     likes: number;
     dislikes: number;
+    threadId: number;
 }

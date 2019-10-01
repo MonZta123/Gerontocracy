@@ -64,7 +64,7 @@ export class OverviewComponent extends BaseComponent implements OnInit {
     this.activatedRoute.params.subscribe(n => {
       const id = +n.id;
       if (id) {
-        this.showDetail(id);
+        this.showDetail(id, true);
       }
     });
 
@@ -130,10 +130,12 @@ export class OverviewComponent extends BaseComponent implements OnInit {
       .catch(error => super.handleError(error));
   }
 
-  showDetail(id: number) {
+  showDetail(id: number, keepState?: boolean) {
     this.detailData = null;
 
-    this.location.replaceState(`board/new/${id}`);
+    if (!keepState) {
+      this.location.replaceState(`board/new/${id}`);
+    }
 
     this.boardService.getThread(id)
       .pipe(super.start(), super.end())

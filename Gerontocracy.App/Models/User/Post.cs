@@ -31,5 +31,10 @@ namespace Gerontocracy.App.Models.User
         /// How many downvotes
         /// </summary>
         public int Dislikes { get; set; }
+
+        /// <summary>
+        /// The Thread Id
+        /// </summary>
+        public long ThreadId { get; set; }
     }
 }

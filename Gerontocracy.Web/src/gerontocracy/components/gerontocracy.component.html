@@ -1,8 +1,8 @@
-<div class="geronto-loading-shade" *ngIf="isLoading">
+<div class="geronto-loading-shade" *ngIf="isLoadingMain">
   <p-progressSpinner strokeWidth="4" fill="#EEEEEE"></p-progressSpinner>
 </div>
 
-<div class="geronto_container" *ngIf="!isLoading">
+<div class="geronto_container" *ngIf="!isLoadingMain">
   <p-blockUI [blocked]="isDialogOpen">
   </p-blockUI>
 
@@ -13,7 +13,8 @@
         <button pButton label="Registrieren" icon="pi pi-user-plus" (click)="signup()"></button>
       </div>
       <div *ngIf="accountData">
-        <p-splitButton [label]="accountData.userName" icon="pi pi-user" [model]="userMenu"></p-splitButton>
+        <p-splitButton [label]="accountData.userName" icon="pi pi-user" (onClick)="userClicked()" [model]="userMenu">
+        </p-splitButton>
       </div>
     </p-menubar>
 
@@ -23,21 +24,21 @@
         <button pButton label="Registrieren" icon="pi pi-user-plus" (click)="signup($event)"></button>
       </div>
       <div *ngIf="accountData">
-        <p-splitButton [label]="accountData.userName" icon="pi pi-user" [model]="userMenu"></p-splitButton>
+        <p-splitButton [label]="accountData.userName" (onClick)="userClicked()" icon="pi pi-user" [model]="userMenu">
+        </p-splitButton>
       </div>
     </p-menubar>
 
-    <div *ngIf="sharedService.loading">
+    <div *ngIf="isLoading">
       <p-progressBar mode="indeterminate" [style]="{'height': '5px'}"></p-progressBar>
     </div>
-    <div *ngIf="!sharedService.loading" style="height: 5px">
+    <div *ngIf="!isLoading" style="height: 5px">
     </div>
   </div>
 
   <p-sidebar [(visible)]="sidebarVisible">
     <p-menu [model]="items"></p-menu>
   </p-sidebar>
-
 
   <div class="geronto_content">
     <router-outlet></router-outlet>

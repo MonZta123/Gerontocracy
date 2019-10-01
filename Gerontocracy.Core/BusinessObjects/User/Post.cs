@@ -13,5 +13,7 @@ namespace Gerontocracy.Core.BusinessObjects.User
         public int Likes { get; set; }
 
         public int Dislikes { get; set; }
+
+        public long ThreadId { get; set; }
     }
 }

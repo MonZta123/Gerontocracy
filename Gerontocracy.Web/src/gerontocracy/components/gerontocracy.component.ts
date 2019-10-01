@@ -6,6 +6,7 @@ import { DialogService } from 'primeng/api';
 import { LoginDialogComponent } from './login-dialog/login-dialog.component';
 import { RegisterDialogComponent } from './register-dialog/register-dialog.component';
 import { SharedService } from '../modules/shared/services/shared.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -24,19 +25,20 @@ export class GerontocracyComponent implements OnInit {
   userMenu: MenuItem[] = [];
   burger: MenuItem[] = [];
 
-  isLoading: boolean;
   accountData: User;
   sidebarVisible: boolean;
-
+  isLoadingMain: boolean;
   registerConfirmVisible: boolean;
 
   constructor(
     private sharedService: SharedService,
+    private router: Router,
     private accountService: AccountService,
     private dialogService: DialogService) {
   }
 
   ngOnInit() {
+    this.isLoadingMain = true;
     this.burger = [{
       icon: 'pi pi-bars',
       command: () => this.toggleSidenav()
@@ -48,7 +50,6 @@ export class GerontocracyComponent implements OnInit {
       icon: 'pi pi-sign-out'
     }];
 
-    this.isLoading = true;
     this.accountService
       .getCurrentUser()
       .toPromise()
@@ -113,9 +114,17 @@ export class GerontocracyComponent implements OnInit {
 
         this.items = urls;
       })
-      .then(() => this.isLoading = false)
+      .then(() => this.isLoadingMain = false)
       .catch(() => this.accountData = null)
-      .then(() => this.isLoading = false);
+      .then(() => this.isLoadingMain = false);
+  }
+
+  get isLoading(): boolean {
+    return this.sharedService.loading;
+  }
+
+  userClicked(): void {
+    this.router.navigate(['user', this.accountData.userName]);
   }
 
   toggleSidenav(): void {

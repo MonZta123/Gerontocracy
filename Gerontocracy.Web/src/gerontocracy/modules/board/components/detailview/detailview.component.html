@@ -25,7 +25,7 @@
     <div class="mt-5" [ngStyle]="{ 'width' : isPopup ? '800px' : 'unset' }">
         <p-tree [value]="items" [style]="{ 'width' : isPopup ? '800px' : 'unset' }">
             <ng-template let-node pTemplate="default">
-                <div>
+                <div [id]="node.data.id">
                     <p-panel [header]="node.data.userName + ': ' + convertDate(node.data.createdOn)"
                         [style]="{'white-space': 'pre-wrap'}">
                         <div class="ui-g">
