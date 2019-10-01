@@ -14,6 +14,5 @@ namespace Gerontocracy.Core.Interfaces
         UserData GetUserPageData(long id);
         UserData GetUserPageData(ClaimsPrincipal user);
         UserData GetUserPageData(string name);
-
     }
 }
